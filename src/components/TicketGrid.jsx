@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { differenceInMinutes, parseISO } from 'date-fns';
 
 export default function TicketGrid({ tickets, selectedTickets, toggleTicket, isAdmin }) {
@@ -14,14 +14,22 @@ export default function TicketGrid({ tickets, selectedTickets, toggleTicket, isA
   }, []);
 
   // Generamos los 99 números
-  const allNumbers = Array.from({ length: 99 }, (_, i) => i + 1);
+  const allNumbers = useMemo(() => Array.from({ length: 99 }, (_, i) => i + 1), []);
+
+  // Optimización: Convertimos el arreglo de la BD en un diccionario para búsquedas O(1)
+  const ticketMap = useMemo(() => {
+    return tickets.reduce((acc, t) => {
+      acc[t.id] = t;
+      return acc;
+    }, {});
+  }, [tickets]);
 
   return (
     <div className="max-w-6xl mx-auto px-4">
       <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-3">
         {allNumbers.map((num) => {
-          // Buscamos el estado del número en la base de datos
-          const dbTicket = tickets.find((t) => t.id === num);
+          // Buscamos el estado del número de forma instantánea
+          const dbTicket = ticketMap[num];
           let computedStatus = dbTicket ? dbTicket.status : 'disponible';
 
           // -----------------------------------------------------------

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 import { Clock, Copy, CheckCircle2, MessageCircle } from 'lucide-react';
 import { addMinutes, differenceInSeconds } from 'date-fns';
@@ -54,9 +54,14 @@ export default function CheckoutModal({
     }, 300); // 300ms = duration de la transición
   };
 
+  const hasAttemptedReserve = useRef(false);
+
   // Efecto para reservar los tickets al abrir el modal
   useEffect(() => {
     let isMounted = true;
+    
+    if (hasAttemptedReserve.current) return;
+    hasAttemptedReserve.current = true;
     
     const reserveTickets = async () => {
       try {
