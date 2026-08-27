@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { differenceInMinutes, parseISO } from 'date-fns';
 
-export default function TicketGrid({ tickets, selectedTickets, toggleTicket }) {
+export default function TicketGrid({ tickets, selectedTickets, toggleTicket, isAdmin }) {
   // Estado para forzar re-render y evaluar el tiempo real
   const [now, setNow] = useState(new Date());
 
@@ -13,8 +13,8 @@ export default function TicketGrid({ tickets, selectedTickets, toggleTicket }) {
     return () => clearInterval(interval);
   }, []);
 
-  // Generamos los 200 números
-  const allNumbers = Array.from({ length: 200 }, (_, i) => i + 1);
+  // Generamos los 99 números
+  const allNumbers = Array.from({ length: 99 }, (_, i) => i + 1);
 
   return (
     <div className="max-w-6xl mx-auto px-4">
@@ -43,11 +43,11 @@ export default function TicketGrid({ tickets, selectedTickets, toggleTicket }) {
           let isDisabled = false;
 
           if (computedStatus === 'comprado') {
-            buttonClasses += "bg-gray-200 text-gray-400 border border-gray-300 cursor-not-allowed opacity-70";
-            isDisabled = true;
+            buttonClasses += `bg-gray-200 text-gray-400 border border-gray-300 opacity-70 ${isAdmin ? 'cursor-pointer hover:border-gray-500 hover:opacity-100 hover:shadow-md' : 'cursor-not-allowed'}`;
+            isDisabled = !isAdmin;
           } else if (computedStatus === 'reservado') {
-            buttonClasses += "bg-yellow-300 text-yellow-800 border-b-4 border-yellow-500 cursor-not-allowed";
-            isDisabled = true;
+            buttonClasses += `bg-yellow-300 text-yellow-800 border-b-4 border-yellow-500 ${isAdmin ? 'cursor-pointer hover:bg-yellow-400 hover:shadow-md' : 'cursor-not-allowed'}`;
+            isDisabled = !isAdmin;
           } else {
             // Está disponible
             if (isSelected) {

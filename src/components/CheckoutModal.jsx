@@ -12,6 +12,7 @@ export default function CheckoutModal({
   const [isReserving, setIsReserving] = useState(true);
   const [error, setError] = useState(null);
   const [copiedAccount, setCopiedAccount] = useState(null);
+  const [hasSentWhatsApp, setHasSentWhatsApp] = useState(false);
   
   // Estados para animaciones suaves
   const [isVisible, setIsVisible] = useState(false);
@@ -32,7 +33,20 @@ export default function CheckoutModal({
   }, []);
 
   // Función unificada para cerrar con animación
-  const handleClose = () => {
+  const handleClose = async () => {
+    // Si no ha enviado el WhatsApp y no hubo un error previo (como el de concurrencia),
+    // liberamos los números en la base de datos para no secuestrarlos 15 mins.
+    if (!hasSentWhatsApp && !error && !isReserving) {
+      try {
+        await supabase
+          .from('tickets')
+          .update({ status: 'disponible', reserved_at: null })
+          .in('id', selectedTickets);
+      } catch (err) {
+        console.error("Error liberando tickets", err);
+      }
+    }
+
     setIsClosing(true);
     setIsVisible(false);
     setTimeout(() => {
@@ -47,16 +61,35 @@ export default function CheckoutModal({
     const reserveTickets = async () => {
       try {
         const now = new Date().toISOString();
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('tickets')
           .update({ status: 'reservado', reserved_at: now })
-          .in('id', selectedTickets);
+          .in('id', selectedTickets)
+          .eq('status', 'disponible') // PROTECCIÓN DE CONCURRENCIA
+          .select();
 
         if (error) throw error;
         
+        // Verificamos si logramos reservar TODOS los solicitados
+        if (data.length !== selectedTickets.length) {
+          // Alguien más fue más rápido
+          if (data.length > 0) {
+            // Hacemos rollback (liberamos) los que sí habíamos logrado agarrar
+            await supabase
+              .from('tickets')
+              .update({ status: 'disponible', reserved_at: null })
+              .in('id', data.map(t => t.id));
+          }
+          
+          if (isMounted) {
+            setError('¡Ups! Alguien más rápido acaba de reservar uno de tus números. Por favor, vuelve y selecciona otros.');
+            setIsReserving(false);
+          }
+          return;
+        }
+
         if (isMounted) {
           setIsReserving(false);
-          // Opcional: Podrías calcular el tiempo restante exacto basado en la DB aquí
         }
       } catch (err) {
         if (isMounted) {
@@ -96,6 +129,7 @@ export default function CheckoutModal({
   };
 
   const handleWhatsApp = () => {
+    setHasSentWhatsApp(true); // Marca la reserva en firme
     const phone = "573209513083"; // Reemplazar con el número real de WhatsApp
     const message = `¡Hola! Acabo de transferir $${totalAPagar.toLocaleString('es-CO')} para los números: ${selectedTickets.join(', ')}. Aquí está mi comprobante para Bombillo 🐱`;
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
@@ -167,31 +201,17 @@ export default function CheckoutModal({
                   Transfiere a estas cuentas
                 </h3>
                 
-                {/* Llave Breb */}
+                {/* Llave Breb / Nequi */}
                 <div className="group flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all">
                   <div className="flex flex-col">
-                    <span className="text-sm text-gray-500 font-medium">Llave Breb</span>
+                    <span className="text-sm text-gray-500 font-medium">Llave Breb / Nequi</span>
                     <span className="text-lg font-bold text-gray-900 tracking-wide">320 951 3083</span>
                   </div>
                   <button 
-                    onClick={() => handleCopy('3209513083', 'llavebreb')}
+                    onClick={() => handleCopy('3209513083', 'cuenta')}
                     className="p-2 text-blue-600 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors"
                   >
-                    {copiedAccount === 'llavebreb' ? <CheckCircle2 className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-                  </button>
-                </div>
-
-                {/* Nequi */}
-                <div className="group flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:border-purple-300 hover:bg-purple-50/50 transition-all">
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500 font-medium">Nequi</span>
-                    <span className="text-lg font-bold text-gray-900 tracking-wide">320 951 3083</span>
-                  </div>
-                  <button 
-                    onClick={() => handleCopy('3209513083', 'nequi')}
-                    className="p-2 text-purple-600 bg-purple-100 rounded-lg hover:bg-purple-200 transition-colors"
-                  >
-                    {copiedAccount === 'nequi' ? <CheckCircle2 className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                    {copiedAccount === 'cuenta' ? <CheckCircle2 className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
                   </button>
                 </div>
               </div>

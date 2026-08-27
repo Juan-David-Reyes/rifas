@@ -2,14 +2,22 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase } from './supabaseClient'
 import TicketGrid from './components/TicketGrid'
 import CheckoutModal from './components/CheckoutModal'
+import AdminLogin from './components/AdminLogin'
+import AdminModal from './components/AdminModal'
 
 // Ajusta el precio de cada número aquí
-const PRECIO_TICKET = 10000; 
+const PRECIO_TICKET = 12000; 
 
 function App() {
   const [tickets, setTickets] = useState([])
   const [selectedTickets, setSelectedTickets] = useState([])
   const [showModal, setShowModal] = useState(false) // Lo activaremos en el próximo paso
+  
+  // Estados Admin
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [showAdminLogin, setShowAdminLogin] = useState(false)
+  const [adminSelectedTicket, setAdminSelectedTicket] = useState(null)
+  
   const showModalRef = useRef(showModal)
 
   useEffect(() => {
@@ -20,7 +28,16 @@ function App() {
     // 1. Carga inicial de los números
     fetchTickets()
 
-    // 2. Escuchar cambios en vivo (La magia del tiempo real)
+    // 2. Verificar sesión de Admin
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAdmin(!!session)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAdmin(!!session)
+    })
+
+    // 3. Escuchar cambios en vivo (La magia del tiempo real)
     const channel = supabase
       .channel('cambios-tickets')
       .on('postgres_changes', 
@@ -38,7 +55,10 @@ function App() {
       )
       .subscribe()
 
-    return () => supabase.removeChannel(channel)
+    return () => {
+      supabase.removeChannel(channel)
+      subscription.unsubscribe()
+    }
   }, [])
 
   const fetchTickets = async () => {
@@ -47,6 +67,12 @@ function App() {
   }
 
   const toggleTicket = (id) => {
+    if (isAdmin) {
+      const ticket = tickets.find(t => t.id === id);
+      if (ticket) setAdminSelectedTicket(ticket);
+      return;
+    }
+
     setSelectedTickets(prev => 
       prev.includes(id) 
         ? prev.filter(ticketId => ticketId !== id) 
@@ -82,6 +108,7 @@ function App() {
           tickets={tickets} 
           selectedTickets={selectedTickets} 
           toggleTicket={toggleTicket} 
+          isAdmin={isAdmin}
         />
       </main>
 
@@ -114,8 +141,44 @@ function App() {
           totalAPagar={totalAPagar}
           onClose={() => {
             setShowModal(false);
-            setSelectedTickets([]); // Limpiar selección tras cerrar
           }} 
+        />
+      )}
+
+      {/* FOOTER & SECRET ADMIN LOGIN */}
+      <footer className="mt-12 pb-8 text-center text-sm text-gray-400 flex flex-col items-center justify-center">
+        <button 
+          onClick={() => setShowAdminLogin(true)} 
+          className="text-gray-300 hover:text-gray-500 transition-colors p-4"
+          title="Admin Login"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </button>
+        {isAdmin && (
+          <div className="mt-2 text-blue-600 font-bold">
+            Modo Administrador Activo 
+            <button 
+              onClick={() => supabase.auth.signOut()} 
+              className="underline ml-4 text-blue-800 hover:text-blue-900"
+            >
+              Salir
+            </button>
+          </div>
+        )}
+      </footer>
+
+      {/* MODALES DE ADMIN */}
+      {showAdminLogin && (
+        <AdminLogin 
+          onClose={() => setShowAdminLogin(false)} 
+          onLoginSuccess={() => setShowAdminLogin(false)}
+        />
+      )}
+
+      {adminSelectedTicket && (
+        <AdminModal 
+          ticket={adminSelectedTicket} 
+          onClose={() => setAdminSelectedTicket(null)} 
         />
       )}
     </div>
