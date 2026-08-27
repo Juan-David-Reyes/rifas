@@ -11,12 +11,14 @@ const PRECIO_TICKET = 12000;
 function App() {
   const [tickets, setTickets] = useState([])
   const [selectedTickets, setSelectedTickets] = useState([])
-  const [showModal, setShowModal] = useState(false) // Lo activaremos en el próximo paso
+  const [showModal, setShowModal] = useState(false)
+  const [config, setConfig] = useState({ lottery_name: 'Lotería de Boyacá', draw_date: 'Por definir' })
   
   // Estados Admin
   const [isAdmin, setIsAdmin] = useState(false)
   const [showAdminLogin, setShowAdminLogin] = useState(false)
   const [adminSelectedTicket, setAdminSelectedTicket] = useState(null)
+  const [showConfigModal, setShowConfigModal] = useState(false)
   
   const showModalRef = useRef(showModal)
 
@@ -25,8 +27,9 @@ function App() {
   }, [showModal])
 
   useEffect(() => {
-    // 1. Carga inicial de los números
+    // 1. Carga inicial
     fetchTickets()
+    fetchConfig()
 
     // 2. Verificar sesión de Admin
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -55,8 +58,17 @@ function App() {
       )
       .subscribe()
 
+    const configChannel = supabase
+      .channel('cambios-config')
+      .on('postgres_changes', 
+        { event: 'UPDATE', schema: 'public', table: 'config' }, 
+        (payload) => setConfig(payload.new)
+      )
+      .subscribe()
+
     return () => {
       supabase.removeChannel(channel)
+      supabase.removeChannel(configChannel)
       subscription.unsubscribe()
     }
   }, [])
@@ -64,6 +76,11 @@ function App() {
   const fetchTickets = async () => {
     const { data, error } = await supabase.from('tickets').select('*').order('id')
     if (data) setTickets(data)
+  }
+
+  const fetchConfig = async () => {
+    const { data } = await supabase.from('config').select('*').single()
+    if (data) setConfig(data)
   }
 
   const toggleTicket = (id) => {
@@ -96,8 +113,13 @@ function App() {
             Bombillo está recuperándose de su cirugía y necesitamos tu ayuda para cubrir los gastos médicos. 
             ¡Participa y gana <span className="font-bold text-green-600">$300.000 COP</span>!
           </p>
-          <div className="inline-block bg-blue-50 text-blue-800 px-5 py-2 rounded-full font-semibold text-sm border border-blue-100">
-            Valor por número: ${PRECIO_TICKET.toLocaleString('es-CO')}
+          <div className="bg-purple-50 text-purple-800 px-4 py-3 rounded-xl border border-purple-200 mb-5 mx-auto max-w-lg text-sm sm:text-base">
+            🎟️ Juega con las 2 últimas cifras de la <strong>{config.lottery_name}</strong> el <strong>{config.draw_date}</strong>
+          </div>
+          <div>
+            <div className="inline-block bg-blue-50 text-blue-800 px-5 py-2 rounded-full font-semibold text-sm border border-blue-100">
+              Valor por número: ${PRECIO_TICKET.toLocaleString('es-CO')}
+            </div>
           </div>
         </div>
       </header>
@@ -155,13 +177,21 @@ function App() {
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         </button>
         {isAdmin && (
-          <div className="mt-2 text-blue-600 font-bold">
-            Modo Administrador Activo 
+          <div className="mt-2 flex flex-col items-center gap-3">
+            <div className="text-blue-600 font-bold">
+              Modo Administrador Activo 
+              <button 
+                onClick={() => supabase.auth.signOut()} 
+                className="underline ml-4 text-blue-800 hover:text-blue-900"
+              >
+                Salir
+              </button>
+            </div>
             <button 
-              onClick={() => supabase.auth.signOut()} 
-              className="underline ml-4 text-blue-800 hover:text-blue-900"
+              onClick={() => setShowConfigModal(true)}
+              className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-200 transition-colors"
             >
-              Salir
+              ⚙️ Configurar Lotería y Fecha
             </button>
           </div>
         )}
@@ -181,8 +211,16 @@ function App() {
           onClose={() => setAdminSelectedTicket(null)} 
         />
       )}
+
+      {showConfigModal && (
+        <ConfigModal
+          config={config}
+          onClose={() => setShowConfigModal(false)}
+        />
+      )}
     </div>
   )
 }
 
+import ConfigModal from './components/ConfigModal'; // Add at bottom or move to top
 export default App
