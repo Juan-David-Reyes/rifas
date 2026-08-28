@@ -6,7 +6,7 @@ import AdminLogin from './components/AdminLogin'
 import AdminModal from './components/AdminModal'
 
 // Ajusta el precio de cada número aquí
-const PRECIO_TICKET = 12000; 
+const PRECIO_TICKET = 10000; // 2 números x $10.000 = $20.000 total
 
 function App() {
   const [tickets, setTickets] = useState([])
@@ -90,6 +90,11 @@ function App() {
       return;
     }
 
+    if (!selectedTickets.includes(id) && selectedTickets.length >= 2) {
+      alert("Solo puedes seleccionar 2 números por transacción.");
+      return;
+    }
+
     setSelectedTickets(prev => 
       prev.includes(id) 
         ? prev.filter(ticketId => ticketId !== id) 
@@ -140,7 +145,7 @@ function App() {
           <div className="max-w-4xl mx-auto flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500 font-medium mb-1">
-                {selectedTickets.length} {selectedTickets.length === 1 ? 'número seleccionado' : 'números seleccionados'}
+                {selectedTickets.length} / 2 números seleccionados
               </p>
               <p className="text-2xl font-bold text-gray-900 leading-none">
                 Total: ${totalAPagar.toLocaleString('es-CO')}
@@ -148,15 +153,15 @@ function App() {
             </div>
             <button 
               onClick={() => setShowModal(true)}
-              className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all transform active:scale-95"
+              disabled={selectedTickets.length !== 2}
+              className={`${selectedTickets.length === 2 ? 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 shadow-lg transform active:scale-95' : 'bg-gray-300 cursor-not-allowed'} text-white font-bold py-3 px-8 rounded-xl transition-all`}
             >
-              Reservar y Pagar
+              {selectedTickets.length === 2 ? 'Reservar y Pagar' : 'Selecciona 1 más'}
             </button>
           </div>
         </div>
       )}
 
-      {/* MODAL DE CHECKOUT */}
       {showModal && (
         <CheckoutModal 
           selectedTickets={selectedTickets} 
@@ -164,6 +169,9 @@ function App() {
           onClose={() => {
             setShowModal(false);
           }} 
+          onConcurrencyError={(stolenIds) => {
+            setSelectedTickets(prev => prev.filter(id => !stolenIds.includes(id)));
+          }}
         />
       )}
 

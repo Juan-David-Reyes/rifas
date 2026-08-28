@@ -6,7 +6,8 @@ import { addMinutes, differenceInSeconds } from 'date-fns';
 export default function CheckoutModal({ 
   selectedTickets, 
   onClose, 
-  totalAPagar 
+  totalAPagar,
+  onConcurrencyError
 }) {
   const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutos en segundos
   const [isReserving, setIsReserving] = useState(true);
@@ -58,7 +59,6 @@ export default function CheckoutModal({
 
   // Efecto para reservar los tickets al abrir el modal
   useEffect(() => {
-    let isMounted = true;
     
     if (hasAttemptedReserve.current) return;
     hasAttemptedReserve.current = true;
@@ -77,36 +77,34 @@ export default function CheckoutModal({
         
         // Verificamos si logramos reservar TODOS los solicitados
         if (data.length !== selectedTickets.length) {
+          const reservedIds = data.map(t => t.id);
+          const stolenIds = selectedTickets.filter(id => !reservedIds.includes(id));
+
           // Alguien más fue más rápido
           if (data.length > 0) {
             // Hacemos rollback (liberamos) los que sí habíamos logrado agarrar
             await supabase
               .from('tickets')
               .update({ status: 'disponible', reserved_at: null })
-              .in('id', data.map(t => t.id));
+              .in('id', reservedIds);
           }
           
-          if (isMounted) {
-            setError('¡Ups! Alguien más rápido acaba de reservar uno de tus números. Por favor, vuelve y selecciona otros.');
-            setIsReserving(false);
+          setError(`¡Ups! Alguien más rápido acaba de reservar el/los número(s) ${stolenIds.join(' y ')}. Por favor, vuelve y selecciona otros.`);
+          setIsReserving(false);
+          if (onConcurrencyError) {
+            onConcurrencyError(stolenIds);
           }
           return;
         }
 
-        if (isMounted) {
-          setIsReserving(false);
-        }
+        setIsReserving(false);
       } catch (err) {
-        if (isMounted) {
-          setError('Hubo un error al reservar los números. Por favor, intenta de nuevo.');
-          setIsReserving(false);
-        }
+        setError('Hubo un error al reservar los números. Por favor, intenta de nuevo.');
+        setIsReserving(false);
       }
     };
 
     reserveTickets();
-
-    return () => { isMounted = false; };
   }, [selectedTickets]);
 
   // Efecto para el contador regresivo
