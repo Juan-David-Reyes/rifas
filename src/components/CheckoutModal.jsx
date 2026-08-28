@@ -191,15 +191,15 @@ export default function CheckoutModal({
               <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-2 shadow-inner">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
-              <h3 className="text-2xl font-black text-gray-900">¡Gracias por tu aporte!</h3>
+              <h3 className="text-2xl font-black text-gray-900">¡Gracias por tu pago!</h3>
               <p className="text-gray-600">
-                Tu comprobante ha sido enviado. Pronto el administrador validará tu pago.
+                Estaremos validando el comprobante enviado.
               </p>
               <button 
                 onClick={onReset}
                 className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all transform active:scale-95"
               >
-                Hacer otra compra
+                Entendido
               </button>
             </div>
           ) : (
