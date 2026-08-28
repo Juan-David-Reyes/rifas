@@ -12,7 +12,14 @@ function App() {
   const [tickets, setTickets] = useState([])
   const [selectedTickets, setSelectedTickets] = useState([])
   const [showModal, setShowModal] = useState(false)
-  const [config, setConfig] = useState({ lottery_name: 'Lotería de Boyacá', draw_date: 'Por definir' })
+  const [config, setConfig] = useState({ 
+    lottery_name: 'Boyacá', 
+    draw_date: 'Por definir',
+    title: '🐾 Gran Rifa para Bombillo',
+    description: 'Bombillo está recuperándose de su cirugía y necesitamos tu ayuda para cubrir los gastos médicos.',
+    prize: '$300.000 COP',
+    winner_ticket_id: null
+  })
   
   // Estados Admin
   const [isAdmin, setIsAdmin] = useState(false)
@@ -90,6 +97,8 @@ function App() {
       return;
     }
 
+    if (!isAdmin && config.winner_ticket_id) return;
+
     if (!selectedTickets.includes(id) && selectedTickets.length >= 2) {
       alert("Solo puedes seleccionar 2 números por transacción.");
       return;
@@ -106,24 +115,43 @@ function App() {
 
   return (
     // pb-24 da espacio al final para que la Sticky Bar no tape los últimos números
-    <div className="min-h-screen bg-gray-50 pb-24 font-sans"> 
+    <div className="min-h-screen bg-gray-50 font-sans"> 
       
+      {/* TOP NAVBAR / HEADER */}
+      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-center">
+          <span className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            🐾 Bombillo
+          </span>
+        </div>
+      </nav>
+
       {/* HERO SECTION - El contexto de Bombillo */}
-      <header className="bg-white shadow-sm pt-12 pb-8 px-4 text-center">
-        <div className="max-w-2xl mx-auto">
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-3 tracking-tight">
-            🐾 Gran Rifa para Bombillo
+      <header className="bg-gradient-to-b from-blue-50 to-gray-50 pt-16 pb-12 px-4 text-center border-b border-gray-100">
+        <div className="max-w-3xl mx-auto">
+          {config.winner_ticket_id && (
+            <div className="mb-6 inline-flex items-center justify-center bg-green-100 text-green-800 px-6 py-2 rounded-full font-black text-lg animate-bounce border border-green-300 shadow-sm">
+              🏆 ¡Tenemos un ganador: Número {config.winner_ticket_id}! 🏆
+            </div>
+          )}
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+            {config.title}
           </h1>
-          <p className="text-gray-600 text-lg leading-relaxed mb-5">
-            Bombillo está recuperándose de su cirugía y necesitamos tu ayuda para cubrir los gastos médicos. 
-            ¡Participa y gana <span className="font-bold text-green-600">$300.000 COP</span>!
+          <p className="text-gray-600 text-lg sm:text-xl leading-relaxed mb-8 max-w-2xl mx-auto">
+            {config.description} <br className="hidden sm:block" />¡Participa y gana <span className="font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md">{config.prize}</span>!
           </p>
-          <div className="bg-purple-50 text-purple-800 px-4 py-3 rounded-xl border border-purple-200 mb-5 mx-auto max-w-lg text-sm sm:text-base">
-            🎟️ Juega con las 2 últimas cifras de la <strong>{config.lottery_name}</strong> el <strong>{config.draw_date}</strong>
+          <div className="bg-white shadow-sm px-6 py-4 rounded-2xl border border-gray-200 mb-6 mx-auto max-w-lg text-sm sm:text-base flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-2 text-gray-700">
+              <span className="text-xl">🎟️</span> Juega con la lotería de: <strong>{config.lottery_name}</strong>
+            </div>
+            <div className="hidden sm:block w-px h-6 bg-gray-300"></div>
+            <div className="text-gray-500 font-medium text-sm">
+              Sorteo: {config.draw_date}
+            </div>
           </div>
           <div>
-            <div className="inline-block bg-blue-50 text-blue-800 px-5 py-2 rounded-full font-semibold text-sm border border-blue-100">
-              Valor por número: ${PRECIO_TICKET.toLocaleString('es-CO')}
+            <div className="inline-block bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-md shadow-blue-200">
+              Valor 2 números: $20.000 COP
             </div>
           </div>
         </div>
@@ -136,27 +164,28 @@ function App() {
           selectedTickets={selectedTickets} 
           toggleTicket={toggleTicket} 
           isAdmin={isAdmin}
+          winnerTicketId={config.winner_ticket_id}
         />
       </main>
 
       {/* STICKY BAR (CARRITO FLOTANTE) */}
-      {selectedTickets.length > 0 && (
-        <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] p-4 z-40 animate-fade-in-up">
-          <div className="max-w-4xl mx-auto flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500 font-medium mb-1">
-                {selectedTickets.length} / 2 números seleccionados
+      {!config.winner_ticket_id && selectedTickets.length > 0 && (
+        <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1)] p-4 sm:p-5 z-40 animate-fade-in-up">
+          <div className="max-w-4xl mx-auto flex flex-row items-center justify-between gap-4">
+            <div className="flex flex-col">
+              <p className="text-sm text-gray-500 font-semibold mb-1">
+                {selectedTickets.length} / 2 números
               </p>
-              <p className="text-2xl font-bold text-gray-900 leading-none">
-                Total: ${totalAPagar.toLocaleString('es-CO')}
+              <p className="text-2xl sm:text-3xl font-black text-gray-900 leading-none">
+                $20.000
               </p>
             </div>
             <button 
               onClick={() => setShowModal(true)}
               disabled={selectedTickets.length !== 2}
-              className={`${selectedTickets.length === 2 ? 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 shadow-lg transform active:scale-95' : 'bg-gray-300 cursor-not-allowed'} text-white font-bold py-3 px-8 rounded-xl transition-all`}
+              className={`${selectedTickets.length === 2 ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/30 shadow-lg transform active:scale-95' : 'bg-gray-200 text-gray-500 cursor-not-allowed'} font-bold py-3 px-6 sm:px-10 rounded-xl transition-all whitespace-nowrap`}
             >
-              {selectedTickets.length === 2 ? 'Reservar y Pagar' : 'Selecciona 1 más'}
+              {selectedTickets.length === 2 ? 'Pagar ➔' : 'Falta 1 número'}
             </button>
           </div>
         </div>
@@ -165,12 +194,16 @@ function App() {
       {showModal && (
         <CheckoutModal 
           selectedTickets={selectedTickets} 
-          totalAPagar={totalAPagar}
+          totalAPagar={20000}
           onClose={() => {
             setShowModal(false);
           }} 
           onConcurrencyError={(stolenIds) => {
             setSelectedTickets(prev => prev.filter(id => !stolenIds.includes(id)));
+          }}
+          onReset={() => {
+            setSelectedTickets([]);
+            setShowModal(false);
           }}
         />
       )}
@@ -199,7 +232,7 @@ function App() {
               onClick={() => setShowConfigModal(true)}
               className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-200 transition-colors"
             >
-              ⚙️ Configurar Lotería y Fecha
+              ⚙️ Dashboard Administrador
             </button>
           </div>
         )}
@@ -221,14 +254,15 @@ function App() {
       )}
 
       {showConfigModal && (
-        <ConfigModal
+        <AdminDashboard
           config={config}
           onClose={() => setShowConfigModal(false)}
+          onConfigUpdated={(newConfig) => setConfig(prev => ({ ...prev, ...newConfig }))}
         />
       )}
     </div>
   )
 }
 
-import ConfigModal from './components/ConfigModal'; // Add at bottom or move to top
+import AdminDashboard from './components/AdminDashboard';
 export default App

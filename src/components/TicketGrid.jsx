@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { differenceInMinutes, parseISO } from 'date-fns';
 
-export default function TicketGrid({ tickets, selectedTickets, toggleTicket, isAdmin }) {
+export default function TicketGrid({ tickets, selectedTickets, toggleTicket, isAdmin, winnerTicketId }) {
   // Estado para forzar re-render y evaluar el tiempo real
   const [now, setNow] = useState(new Date());
 
@@ -26,7 +26,7 @@ export default function TicketGrid({ tickets, selectedTickets, toggleTicket, isA
 
   return (
     <div className="max-w-6xl mx-auto px-4">
-      <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-3">
+      <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2">
         {allNumbers.map((num) => {
           // Buscamos el estado del número de forma instantánea
           const dbTicket = ticketMap[num];
@@ -47,23 +47,42 @@ export default function TicketGrid({ tickets, selectedTickets, toggleTicket, isA
           const isSelected = selectedTickets.includes(num);
 
           // Determinar clases CSS según el estado calculado
-          let buttonClasses = "relative h-14 w-full rounded-xl font-bold text-lg transition-all transform active:scale-95 shadow-sm ";
+          let buttonClasses = "relative h-14 w-full rounded-xl font-bold text-lg transition-all transform active:scale-95 shadow-sm flex justify-center items-center ";
           let isDisabled = false;
+          let content = num;
 
-          if (computedStatus === 'comprado') {
-            buttonClasses += `bg-gray-200 text-gray-400 border border-gray-300 opacity-70 ${isAdmin ? 'cursor-pointer hover:border-gray-500 hover:opacity-100 hover:shadow-md' : 'cursor-not-allowed'}`;
-            isDisabled = !isAdmin;
-          } else if (computedStatus === 'reservado') {
-            buttonClasses += `bg-yellow-300 text-yellow-800 border-b-4 border-yellow-500 ${isAdmin ? 'cursor-pointer hover:bg-yellow-400 hover:shadow-md' : 'cursor-not-allowed'}`;
-            isDisabled = !isAdmin;
-          } else {
-            // Está disponible
-            if (isSelected) {
-              // Seleccionado por MÍ
-              buttonClasses += "bg-blue-600 text-white border-b-4 border-blue-800 shadow-md ring-2 ring-blue-300 ring-offset-2";
+          // MODO GANADOR ABSOLUTO
+          if (winnerTicketId) {
+            isDisabled = true;
+            if (num === parseInt(winnerTicketId)) {
+              buttonClasses += "bg-green-500 text-white border-b-4 border-green-700 shadow-xl ring-4 ring-green-300 scale-105 z-10";
+              content = <span className="flex items-center gap-1 text-xl">🏆 {num}</span>;
             } else {
-              // Disponible para seleccionar
-              buttonClasses += "bg-white text-gray-700 border border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:shadow-md";
+              buttonClasses += "bg-gray-100 text-gray-400 border border-gray-200 opacity-40 cursor-not-allowed";
+            }
+          } else {
+            // FLUJO NORMAL
+            if (computedStatus === 'comprado') {
+              buttonClasses += `bg-gray-200 text-gray-400 border border-gray-300 opacity-70 ${isAdmin ? 'cursor-pointer hover:border-gray-500 hover:opacity-100 hover:shadow-md' : 'cursor-not-allowed'}`;
+              isDisabled = !isAdmin;
+            } else if (computedStatus === 'reservado') {
+              buttonClasses += `bg-yellow-300 text-yellow-800 border-b-4 border-yellow-500 ${isAdmin ? 'cursor-pointer hover:bg-yellow-400 hover:shadow-md' : 'cursor-not-allowed'}`;
+              isDisabled = !isAdmin;
+            } else {
+              // Está disponible
+              if (isSelected) {
+                // Seleccionado por MÍ
+                buttonClasses += "bg-blue-600 text-white border-b-4 border-blue-800 shadow-md ring-2 ring-blue-300 ring-offset-2 z-10 scale-105";
+              } else {
+                // Disponible para seleccionar
+                if (!isAdmin && selectedTickets.length >= 2) {
+                  // Si ya seleccionó 2, bloqueamos los demás para que no de alertas
+                  buttonClasses += "bg-gray-50 text-gray-400 border border-gray-200 cursor-not-allowed opacity-60";
+                  isDisabled = true;
+                } else {
+                  buttonClasses += "bg-white text-gray-700 border border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:shadow-md";
+                }
+              }
             }
           }
 
@@ -79,7 +98,7 @@ export default function TicketGrid({ tickets, selectedTickets, toggleTicket, isA
               className={buttonClasses}
               title={`Número ${num} - ${computedStatus}`}
             >
-              {num}
+              {content}
             </button>
           );
         })}

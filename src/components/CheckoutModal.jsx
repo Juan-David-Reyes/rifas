@@ -7,13 +7,16 @@ export default function CheckoutModal({
   selectedTickets, 
   onClose, 
   totalAPagar,
-  onConcurrencyError
+  onConcurrencyError,
+  onReset
 }) {
   const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutos en segundos
   const [isReserving, setIsReserving] = useState(true);
   const [error, setError] = useState(null);
   const [copiedAccount, setCopiedAccount] = useState(null);
   const [hasSentWhatsApp, setHasSentWhatsApp] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [buyerName, setBuyerName] = useState('');
   
   // Estados para animaciones suaves
   const [isVisible, setIsVisible] = useState(false);
@@ -66,11 +69,12 @@ export default function CheckoutModal({
     const reserveTickets = async () => {
       try {
         const now = new Date().toISOString();
+        const fifteenMinsAgo = new Date(Date.now() - 15 * 60000).toISOString();
         const { data, error } = await supabase
           .from('tickets')
           .update({ status: 'reservado', reserved_at: now })
           .in('id', selectedTickets)
-          .eq('status', 'disponible') // PROTECCIÓN DE CONCURRENCIA
+          .or(`status.eq.disponible,and(status.eq.reservado,reserved_at.lt.${fifteenMinsAgo})`) // PROTECCIÓN DE CONCURRENCIA & EVALUACIÓN PEREZOSA
           .select();
 
         if (error) throw error;
@@ -134,9 +138,11 @@ export default function CheckoutModal({
   const handleWhatsApp = () => {
     setHasSentWhatsApp(true); // Marca la reserva en firme
     const phone = "573209513083"; // Reemplazar con el número real de WhatsApp
-    const message = `¡Hola! Acabo de transferir $${totalAPagar.toLocaleString('es-CO')} para los números: ${selectedTickets.join(', ')}. Aquí está mi comprobante para Bombillo 🐱`;
+    const nombreStr = buyerName.trim() ? ` Soy ${buyerName.trim()}.` : '';
+    const message = `¡Hola! Acabo de transferir $${totalAPagar.toLocaleString('es-CO')} para los números: ${selectedTickets.join(', ')}.${nombreStr} Aquí está mi comprobante para Bombillo 🐱`;
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
+    setIsSuccess(true);
   };
 
   const formatTime = (seconds) => {
@@ -178,6 +184,22 @@ export default function CheckoutModal({
                 className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-6 rounded-xl transition-colors"
               >
                 Volver
+              </button>
+            </div>
+          ) : isSuccess ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center space-y-4 animate-fade-in-up">
+              <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-2 shadow-inner">
+                <CheckCircle2 className="w-10 h-10" />
+              </div>
+              <h3 className="text-2xl font-black text-gray-900">¡Gracias por tu aporte!</h3>
+              <p className="text-gray-600">
+                Tu comprobante ha sido enviado. Pronto el administrador validará tu pago.
+              </p>
+              <button 
+                onClick={onReset}
+                className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all transform active:scale-95"
+              >
+                Hacer otra compra
               </button>
             </div>
           ) : (
@@ -226,6 +248,15 @@ export default function CheckoutModal({
                   <span className="bg-gray-100 text-gray-600 w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">2</span>
                   Envía el comprobante
                 </h3>
+                
+                <input 
+                  type="text" 
+                  placeholder="Tu nombre (opcional)" 
+                  value={buyerName}
+                  onChange={(e) => setBuyerName(e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
+                />
+
                 <button 
                   onClick={handleWhatsApp}
                   className="w-full bg-[#25D366] hover:bg-[#1ebd5b] active:bg-[#1a9d4b] text-white font-bold py-4 rounded-xl shadow-lg shadow-green-200 flex items-center justify-center space-x-2 transition-all transform active:scale-95"
