@@ -6,6 +6,20 @@ export default function ConfigModal({ config, onClose }) {
   const [drawDate, setDrawDate] = useState(config.draw_date || '');
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
+  
+  const [isVisible, setIsVisible] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setIsVisible(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setIsVisible(false);
+    setTimeout(() => onClose(), 300);
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -20,7 +34,7 @@ export default function ConfigModal({ config, onClose }) {
 
       if (error) throw error;
       
-      onClose(); // Cerrar al guardar con éxito
+      handleClose(); // Cerrar al guardar con éxito
     } catch (err) {
       console.error(err);
       setError('Hubo un error al guardar la configuración.');
@@ -29,11 +43,11 @@ export default function ConfigModal({ config, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
+    <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-opacity duration-300 ease-out ${isVisible && !isClosing ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ease-out transform ${isVisible && !isClosing ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
         <div className="bg-blue-600 p-4 text-white flex justify-between items-center">
           <h2 className="text-xl font-bold">⚙️ Configurar Rifa</h2>
-          <button onClick={onClose} className="text-white/80 hover:text-white text-xl">✕</button>
+          <button onClick={handleClose} disabled={isSaving} className="text-white/80 hover:text-white text-xl disabled:opacity-50">✕</button>
         </div>
         
         <form onSubmit={handleSave} className="p-6 space-y-4">

@@ -155,7 +155,8 @@ export default function CheckoutModal({
         <div className="bg-blue-600 p-4 text-white text-center relative">
           <button 
             onClick={handleClose}
-            className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors"
+            disabled={isReserving}
+            className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Cerrar"
           >
             ✕
@@ -165,14 +166,14 @@ export default function CheckoutModal({
         </div>
 
         {/* Content */}
-        <div className="p-4 overflow-y-auto">
+        <div className="p-4 overflow-y-auto relative min-h-[420px] flex flex-col">
           {isReserving ? (
-            <div className="flex flex-col items-center justify-center py-12 space-y-4">
+            <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
               <div className="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
               <p className="text-gray-600 font-medium animate-pulse">Asegurando tus números...</p>
             </div>
           ) : error ? (
-            <div className="text-center py-8">
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
               <p className="text-red-500 font-semibold mb-4">{error}</p>
               <button 
                 onClick={handleClose}
@@ -182,7 +183,7 @@ export default function CheckoutModal({
               </button>
             </div>
           ) : (
-            <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-300">
+            <div className="space-y-6 flex-grow transition-opacity duration-500 ease-in-out opacity-100">
               
               {/* Timer & Summary */}
               <div className="bg-orange-50 border border-orange-100 rounded-2xl p-4 text-center space-y-2">
