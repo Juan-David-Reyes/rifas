@@ -9,6 +9,13 @@ export default function InfoModal({ onClose }) {
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
   const handleClose = () => {
     setIsClosing(true);
     setIsVisible(false);
