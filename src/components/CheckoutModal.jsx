@@ -224,13 +224,13 @@ export default function CheckoutModal({
               <div className="space-y-3">
                 <h3 className="font-bold text-gray-900 flex items-center">
                   <span className="bg-gray-100 text-gray-600 w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">1</span>
-                  Transfiere a estas cuentas
+                  Transfiere a esta cuenta
                 </h3>
                 
-                {/* Llave Breb / Nequi */}
+                {/* Llave Breb */}
                 <div className="group flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all">
                   <div className="flex flex-col">
-                    <span className="text-sm text-gray-500 font-medium">Llave Breb / Nequi</span>
+                    <span className="text-sm text-gray-500 font-medium">Llave Bre-B</span>
                     <span className="text-lg font-bold text-gray-900 tracking-wide">320 951 3083</span>
                   </div>
                   <button 
