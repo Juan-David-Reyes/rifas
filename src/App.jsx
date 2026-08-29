@@ -159,8 +159,8 @@ function App() {
         <h1 className="text-4xl sm:text-5xl italic text-[#06327C] mb-2 tracking-wide" style={{ fontFamily: "'Sansita One', sans-serif" }}>
           {config.title}
         </h1>
-        <p className="text-[#06327C] text-lg sm:text-xl mb-6">
-          Participa y gana <span className="font-extrabold">{config.prize}</span>
+        <p className="text-[#06327C] text-lg sm:text-xl mb-6 leading-relaxed">
+          Participa y gana <span className="font-black text-[#53a403] text-2xl sm:text-3xl mx-1">{config.prize}</span><br />¡con dos oportunidades para ganar!
         </p>
 
         <hr className="border-gray-200 w-[90%] sm:w-3/4 mx-auto mb-6" />
@@ -177,7 +177,7 @@ function App() {
         </div>
 
         <div className="bg-[#0055FF] text-white px-4 py-4 rounded-full text-lg shadow-lg shadow-blue-500/30 mx-auto max-w-sm mb-5">
-          Valor de 2 números: <span className="font-extrabold">$20.000 COP</span>
+          Valor de la boleta: <span className="font-extrabold">$20.000 COP</span>
         </div>
 
         <div className="text-[#06327C] text-[15px] font-medium space-y-1">
