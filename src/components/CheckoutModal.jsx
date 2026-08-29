@@ -139,7 +139,8 @@ export default function CheckoutModal({
     setHasSentWhatsApp(true); // Marca la reserva en firme
     const phone = "573209513083"; // Reemplazar con el número real de WhatsApp
     const nombreStr = buyerName.trim() ? ` Soy ${buyerName.trim()}.` : '';
-    const message = `¡Hola! Acabo de transferir $${totalAPagar.toLocaleString('es-CO')} para los números: ${selectedTickets.join(', ')}.${nombreStr} Aquí está mi comprobante para Bombillo 🐱`;
+    const formattedTickets = selectedTickets.map(id => String(id).padStart(2, '0')).join(', ');
+    const message = `¡Hola! Acabo de transferir $${totalAPagar.toLocaleString('es-CO')} para los números: ${formattedTickets}.${nombreStr} Aquí está mi comprobante para Bombillo 🐱`;
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.location.href = url;
     setIsSuccess(true);
@@ -215,7 +216,7 @@ export default function CheckoutModal({
                   Transfiere antes de que el tiempo expire para no perder tus números.
                 </p>
                 <div className="pt-2 flex justify-between items-center border-t border-orange-100/50 mt-2 text-gray-800">
-                  <span className="font-medium">Números: {selectedTickets.join(', ')}</span>
+                  <span className="font-medium">Números: {selectedTickets.map(id => String(id).padStart(2, '0')).join(', ')}</span>
                   <span className="text-xl font-black">${totalAPagar.toLocaleString('es-CO')}</span>
                 </div>
               </div>

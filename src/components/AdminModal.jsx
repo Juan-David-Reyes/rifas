@@ -66,7 +66,7 @@ export default function AdminModal({ ticket, onClose }) {
             onClick={handleClose}
             className="absolute top-4 right-4 text-white/80 hover:text-white"
           >✕</button>
-          <h2 className="text-2xl font-extrabold mb-1">Número {ticket.id}</h2>
+          <h2 className="text-2xl font-extrabold mb-1">Número {String(ticket.id).padStart(2, '0')}</h2>
           <p className="text-white/90 text-sm font-medium uppercase tracking-widest">
             {ticket.status}
           </p>

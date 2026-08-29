@@ -152,7 +152,7 @@ function App() {
       <div className="relative z-10 bg-white rounded-t-[2.5rem] sm:rounded-t-[3rem] -mt-10 pt-10 pb-8 px-4 mx-auto max-w-3xl text-center border-t border-gray-100">
         {config.winner_ticket_id && (
           <div className="mb-6 inline-flex items-center justify-center bg-green-100 text-green-800 px-6 py-2 rounded-full font-black text-lg animate-bounce border border-green-300 shadow-sm">
-            🏆 ¡Tenemos un ganador: Número {config.winner_ticket_id}! 🏆
+            🏆 ¡Tenemos un ganador: Número {String(config.winner_ticket_id).padStart(2, '0')}! 🏆
           </div>
         )}
 

@@ -49,14 +49,14 @@ export default function TicketGrid({ tickets, selectedTickets, toggleTicket, isA
           // Determinar clases CSS según el estado calculado
           let buttonClasses = "relative h-14 w-full rounded-xl font-bold text-lg transition-all transform active:scale-95 shadow-sm flex justify-center items-center ";
           let isDisabled = false;
-          let content = num;
+          let content = String(num).padStart(2, '0');
 
           // MODO GANADOR ABSOLUTO
           if (winnerTicketId) {
             isDisabled = true;
             if (num === parseInt(winnerTicketId)) {
               buttonClasses += "bg-green-500 text-white border-b-4 border-green-700 shadow-xl ring-4 ring-green-300 scale-105 z-10";
-              content = <span className="flex items-center gap-1 text-xl">🏆 {num}</span>;
+              content = <span className="flex items-center gap-1 text-xl">🏆 {String(num).padStart(2, '0')}</span>;
             } else {
               buttonClasses += "bg-gray-100 text-gray-400 border border-gray-200 opacity-40 cursor-not-allowed";
             }
@@ -96,7 +96,7 @@ export default function TicketGrid({ tickets, selectedTickets, toggleTicket, isA
               }}
               disabled={isDisabled}
               className={buttonClasses}
-              title={`Número ${num} - ${computedStatus}`}
+              title={`Número ${String(num).padStart(2, '0')} - ${computedStatus}`}
             >
               {content}
             </button>
