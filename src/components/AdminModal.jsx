@@ -8,6 +8,11 @@ export default function AdminModal({ ticket, onClose }) {
   const [name, setName] = useState(ticket?.buyer_name || '');
   const [phone, setPhone] = useState(ticket?.buyer_phone || '');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setName(ticket?.buyer_name || '');
+    setPhone(ticket?.buyer_phone || '');
+  }, [ticket]);
   
   // Animaciones
   const [isVisible, setIsVisible] = useState(false);
