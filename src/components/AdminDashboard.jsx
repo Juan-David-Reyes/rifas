@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import { X, Save, Trophy, Settings, Type, AlignLeft, Gift, Calendar, Hash, BarChart3, Users, DollarSign } from 'lucide-react';
+import { X, Save, Trophy, Settings, Type, AlignLeft, Gift, Calendar, Hash, BarChart3, Users, DollarSign, Download } from 'lucide-react';
 
 export default function AdminDashboard({ config, tickets = [], onClose, onConfigUpdated }) {
   const [activeTab, setActiveTab] = useState('stats'); // 'config' | 'stats'
@@ -23,6 +23,14 @@ export default function AdminDashboard({ config, tickets = [], onClose, onConfig
   useEffect(() => {
     const raf = requestAnimationFrame(() => setIsVisible(true));
     return () => cancelAnimationFrame(raf);
+  }, []);
+
+  // Bloquear el scroll del fondo mientras el dashboard está abierto
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, []);
 
   const handleClose = () => {
@@ -110,7 +118,7 @@ export default function AdminDashboard({ config, tickets = [], onClose, onConfig
         </div>
 
         {/* Content (Scrollable) */}
-        <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
+        <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
           {activeTab === 'config' ? (
           <form id="admin-form" onSubmit={handleSave} className="space-y-6">
             
@@ -127,7 +135,7 @@ export default function AdminDashboard({ config, tickets = [], onClose, onConfig
             )}
 
             {/* SECCIÓN 1: CABECERA */}
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-4">
               <h3 className="font-bold text-gray-800 border-b border-gray-100 pb-2 mb-4">Textos Principales</h3>
               
               <div>
@@ -162,7 +170,7 @@ export default function AdminDashboard({ config, tickets = [], onClose, onConfig
             </div>
 
             {/* SECCIÓN 2: LOTERÍA */}
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-4">
               <h3 className="font-bold text-gray-800 border-b border-gray-100 pb-2 mb-4">Sorteo</h3>
               
               <div>
@@ -267,10 +275,106 @@ function AdminStats({ tickets }) {
     if (t.status === 'comprado') buyersGroup[key].status = 'comprado';
   });
 
-  const buyersList = Object.values(buyersGroup).sort((a, b) => b.numbers.length - a.numbers.length);
+  const buyersList = Object.values(buyersGroup).map(buyer => ({
+    ...buyer,
+    amountToPay: (buyer.numbers.length / 2) * PRECIO_POR_PAR
+  })).sort((a, b) => b.numbers.length - a.numbers.length);
+
+  const handleDownloadPDF = () => {
+    const printWindow = window.open('', '', 'width=900,height=700');
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Reporte de Rifa</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 30px; color: #1a1a1a; }
+            h1 { color: #0055ff; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; }
+            h2 { color: #2d3748; margin-top: 30px; }
+            .grid { display: flex; gap: 20px; margin-bottom: 30px; }
+            .card { background: #f7fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; flex: 1; }
+            .card-title { font-size: 12px; font-weight: bold; color: #718096; text-transform: uppercase; margin-bottom: 5px; }
+            .card-value { font-size: 24px; font-weight: bold; color: #2d3748; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+            th, td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; }
+            th { background-color: #f7fafc; color: #4a5568; font-weight: bold; }
+            tr:nth-child(even) { background-color: #f8fafc; }
+            .badge-green { color: #22c55e; font-weight: bold; }
+            .badge-yellow { color: #eab308; font-weight: bold; }
+          </style>
+        </head>
+        <body>
+          <h1>Reporte de Rifa - Bombillo</h1>
+          
+          <div class="grid">
+            <div class="card">
+              <div class="card-title">Recaudado (Pagado)</div>
+              <div class="card-value">$${totalCollected.toLocaleString('es-CO')}</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Por Validar</div>
+              <div class="card-value">$${totalReservedAmount.toLocaleString('es-CO')}</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Números (Vendidos / Total)</div>
+              <div class="card-value">${boughtTickets + reservedTickets} / 100</div>
+            </div>
+          </div>
+          
+          <h2>Estado de los Números</h2>
+          <ul>
+            <li><strong>Disponibles:</strong> ${availableTickets}</li>
+            <li><strong>Reservados (Pendientes):</strong> ${reservedTickets}</li>
+            <li><strong>Aprobados (Pagados):</strong> ${boughtTickets}</li>
+          </ul>
+          
+          <h2>Listado de Compradores</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Celular</th>
+                <th>Números</th>
+                <th>Estado</th>
+                <th>Total a Pagar</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${buyersList.length === 0 ? '<tr><td colspan="5" style="text-align: center;">No hay reservas registradas</td></tr>' : ''}
+              ${buyersList.map(b => `
+                <tr>
+                  <td>${b.name}</td>
+                  <td>${b.phone || '-'}</td>
+                  <td>${b.numbers.join(', ')}</td>
+                  <td class="${b.status === 'comprado' ? 'badge-green' : 'badge-yellow'}">${b.status === 'comprado' ? 'Pagado' : 'Pendiente'}</td>
+                  <td><strong>$${b.amountToPay.toLocaleString('es-CO')}</strong></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <p style="margin-top: 40px; font-size: 12px; color: #a0aec0; text-align: center;">Generado el ${new Date().toLocaleString('es-CO')}</p>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
+  };
 
   return (
     <div className="space-y-6">
+      {/* Botón de Descarga */}
+      <div className="flex justify-end">
+        <button 
+          onClick={handleDownloadPDF}
+          className="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-lg shadow-md flex items-center gap-2 transition-all active:scale-95 text-sm"
+        >
+          <Download className="w-4 h-4" /> Exportar a PDF
+        </button>
+      </div>
+
       {/* Resumen Financiero */}
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 col-span-2">
@@ -297,7 +401,7 @@ function AdminStats({ tickets }) {
       </div>
 
       {/* Estados de los números */}
-      <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-4">
         <h3 className="font-bold text-gray-800 flex items-center gap-2 border-b border-gray-100 pb-2">
           <BarChart3 className="w-5 h-5 text-blue-500" /> Estado de los números
         </h3>
@@ -330,7 +434,7 @@ function AdminStats({ tickets }) {
       </div>
 
       {/* Lista de Compradores */}
-      <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-4">
         <h3 className="font-bold text-gray-800 flex items-center gap-2 border-b border-gray-100 pb-2">
           <Users className="w-5 h-5 text-purple-500" /> Compradores ({buyersList.length})
         </h3>
@@ -347,8 +451,13 @@ function AdminStats({ tickets }) {
                     {buyer.status === 'comprado' ? 'Pagado' : 'Pendiente'}
                   </div>
                 </div>
-                <div className="text-sm text-gray-500 font-medium">
-                  Números: <span className="text-gray-900">{buyer.numbers.join(', ')}</span>
+                <div className="flex justify-between items-center text-sm font-medium">
+                  <div className="text-gray-500">
+                    Números: <span className="text-gray-900">{buyer.numbers.join(', ')}</span>
+                  </div>
+                  <div className="text-blue-700 font-bold">
+                    ${buyer.amountToPay.toLocaleString('es-CO')}
+                  </div>
                 </div>
                 {buyer.phone && (
                   <div className="text-xs text-gray-400 mt-1">Cel: {buyer.phone}</div>
