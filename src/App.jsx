@@ -288,6 +288,7 @@ function App() {
       {showConfigModal && (
         <AdminDashboard
           config={config}
+          tickets={tickets}
           onClose={() => setShowConfigModal(false)}
           onConfigUpdated={(newConfig) => setConfig(prev => ({ ...prev, ...newConfig }))}
         />

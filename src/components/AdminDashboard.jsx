@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import { X, Save, Trophy, Settings, Type, AlignLeft, Gift, Calendar, Hash } from 'lucide-react';
+import { X, Save, Trophy, Settings, Type, AlignLeft, Gift, Calendar, Hash, BarChart3, Users, DollarSign } from 'lucide-react';
 
-export default function AdminDashboard({ config, onClose, onConfigUpdated }) {
+export default function AdminDashboard({ config, tickets = [], onClose, onConfigUpdated }) {
+  const [activeTab, setActiveTab] = useState('stats'); // 'config' | 'stats'
   const [formData, setFormData] = useState({
     title: config.title || '',
     description: config.description || '',
@@ -80,18 +81,37 @@ export default function AdminDashboard({ config, onClose, onConfigUpdated }) {
       <div className={`relative w-full max-w-md bg-gray-50 h-full shadow-2xl flex flex-col transition-transform duration-300 ease-in-out transform ${isVisible && !isClosing ? 'translate-x-0' : 'translate-x-full'}`}>
         
         {/* Header */}
-        <div className="bg-slate-900 text-white p-6 flex justify-between items-center shrink-0">
-          <div className="flex items-center gap-3">
-            <Settings className="w-6 h-6 text-blue-400" />
-            <h2 className="text-xl font-bold">Dashboard Admin</h2>
+        <div className="bg-slate-900 text-white p-6 flex flex-col shrink-0">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-3">
+              <Settings className="w-6 h-6 text-blue-400" />
+              <h2 className="text-xl font-bold">Dashboard Admin</h2>
+            </div>
+            <button onClick={handleClose} className="p-2 bg-slate-800 rounded-full hover:bg-slate-700 transition-colors">
+              <X className="w-5 h-5 text-gray-300" />
+            </button>
           </div>
-          <button onClick={handleClose} className="p-2 bg-slate-800 rounded-full hover:bg-slate-700 transition-colors">
-            <X className="w-5 h-5 text-gray-300" />
-          </button>
+          
+          {/* Tabs */}
+          <div className="flex gap-2">
+            <button 
+              onClick={() => setActiveTab('stats')}
+              className={`flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-colors ${activeTab === 'stats' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-gray-300 hover:bg-slate-700'}`}
+            >
+              Estadísticas
+            </button>
+            <button 
+              onClick={() => setActiveTab('config')}
+              className={`flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-colors ${activeTab === 'config' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-gray-300 hover:bg-slate-700'}`}
+            >
+              Configuración
+            </button>
+          </div>
         </div>
 
         {/* Content (Scrollable) */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
+          {activeTab === 'config' ? (
           <form id="admin-form" onSubmit={handleSave} className="space-y-6">
             
             {/* Mensajes de Alerta */}
@@ -188,9 +208,13 @@ export default function AdminDashboard({ config, onClose, onConfigUpdated }) {
             </div>
 
           </form>
+          ) : (
+            <AdminStats tickets={tickets} />
+          )}
         </div>
 
         {/* Footer */}
+        {activeTab === 'config' && (
         <div className="p-4 bg-white border-t border-gray-200 shrink-0">
           <button 
             type="submit" 
@@ -208,7 +232,131 @@ export default function AdminDashboard({ config, onClose, onConfigUpdated }) {
             )}
           </button>
         </div>
+        )}
 
+      </div>
+    </div>
+  );
+}
+
+function AdminStats({ tickets }) {
+  const PRECIO_POR_PAR = 20000;
+  const totalTickets = 100;
+  
+  const reservedTickets = tickets.filter(t => t.status === 'reservado').length;
+  const boughtTickets = tickets.filter(t => t.status === 'comprado').length;
+  const availableTickets = totalTickets - (reservedTickets + boughtTickets);
+
+  const totalCollected = (boughtTickets / 2) * PRECIO_POR_PAR;
+  const totalReservedAmount = (reservedTickets / 2) * PRECIO_POR_PAR;
+  const expectedTotal = (totalTickets / 2) * PRECIO_POR_PAR;
+
+  // Group buyers
+  const buyersGroup = {};
+  tickets.filter(t => t.status === 'comprado' || t.status === 'reservado').forEach(t => {
+    const key = t.buyer_name ? t.buyer_name.trim().toLowerCase() : 'desconocido_key_' + t.id;
+    if (!buyersGroup[key]) {
+      buyersGroup[key] = {
+        name: t.buyer_name || 'Sin Nombre',
+        phone: t.buyer_phone || '',
+        numbers: [],
+        status: t.status 
+      };
+    }
+    buyersGroup[key].numbers.push(String(t.id).padStart(2, '0'));
+    if (t.status === 'comprado') buyersGroup[key].status = 'comprado';
+  });
+
+  const buyersList = Object.values(buyersGroup).sort((a, b) => b.numbers.length - a.numbers.length);
+
+  return (
+    <div className="space-y-6">
+      {/* Resumen Financiero */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 col-span-2">
+          <div className="text-gray-500 text-sm font-semibold mb-1 flex items-center gap-2">
+            <DollarSign className="w-4 h-4 text-green-500" /> Recaudado (Pagado)
+          </div>
+          <div className="text-3xl font-black text-gray-900">
+            ${totalCollected.toLocaleString('es-CO')}
+          </div>
+          <div className="text-sm text-gray-400 mt-1">
+            Meta: ${expectedTotal.toLocaleString('es-CO')}
+          </div>
+        </div>
+
+        <div className="bg-yellow-50 p-4 rounded-2xl border border-yellow-100">
+          <div className="text-yellow-700 text-xs font-bold uppercase mb-1">Por Validar</div>
+          <div className="text-xl font-bold text-yellow-900">${totalReservedAmount.toLocaleString('es-CO')}</div>
+        </div>
+
+        <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">
+          <div className="text-blue-700 text-xs font-bold uppercase mb-1">Total Números</div>
+          <div className="text-xl font-bold text-blue-900">{boughtTickets + reservedTickets} / 100</div>
+        </div>
+      </div>
+
+      {/* Estados de los números */}
+      <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+        <h3 className="font-bold text-gray-800 flex items-center gap-2 border-b border-gray-100 pb-2">
+          <BarChart3 className="w-5 h-5 text-blue-500" /> Estado de los números
+        </h3>
+        
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-gray-200 rounded-full"></div>
+              <span className="text-gray-600 font-medium">Disponibles</span>
+            </div>
+            <span className="font-bold text-gray-900">{availableTickets}</span>
+          </div>
+          
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+              <span className="text-gray-600 font-medium">Reservados</span>
+            </div>
+            <span className="font-bold text-gray-900">{reservedTickets}</span>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <span className="text-gray-600 font-medium">Aprobados</span>
+            </div>
+            <span className="font-bold text-gray-900">{boughtTickets}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Lista de Compradores */}
+      <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+        <h3 className="font-bold text-gray-800 flex items-center gap-2 border-b border-gray-100 pb-2">
+          <Users className="w-5 h-5 text-purple-500" /> Compradores ({buyersList.length})
+        </h3>
+        
+        <div className="space-y-4">
+          {buyersList.length === 0 ? (
+            <p className="text-gray-500 text-sm text-center py-4">Aún no hay reservas registradas.</p>
+          ) : (
+            buyersList.map((buyer, idx) => (
+              <div key={idx} className="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                <div className="flex justify-between items-start mb-2">
+                  <div className="font-bold text-gray-900">{buyer.name}</div>
+                  <div className={`text-xs font-bold px-2 py-1 rounded-md ${buyer.status === 'comprado' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                    {buyer.status === 'comprado' ? 'Pagado' : 'Pendiente'}
+                  </div>
+                </div>
+                <div className="text-sm text-gray-500 font-medium">
+                  Números: <span className="text-gray-900">{buyer.numbers.join(', ')}</span>
+                </div>
+                {buyer.phone && (
+                  <div className="text-xs text-gray-400 mt-1">Cel: {buyer.phone}</div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
