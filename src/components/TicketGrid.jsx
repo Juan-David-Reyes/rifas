@@ -13,8 +13,8 @@ export default function TicketGrid({ tickets, selectedTickets, toggleTicket, isA
     return () => clearInterval(interval);
   }, []);
 
-  // Generamos los 50 números
-  const allNumbers = useMemo(() => Array.from({ length: 50 }, (_, i) => i + 1), []);
+  // Generamos los 100 números (del 0 al 99)
+  const allNumbers = useMemo(() => Array.from({ length: 100 }, (_, i) => i), []);
 
   // Optimización: Convertimos el arreglo de la BD en un diccionario para búsquedas O(1)
   const ticketMap = useMemo(() => {

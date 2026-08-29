@@ -1,5 +1,5 @@
--- 1. Eliminar los números del 51 en adelante (ya que ahora la rifa es solo de 1 a 50)
-DELETE FROM public.tickets WHERE id > 50;
+-- 1. Eliminar los números mayores a 99 (ya que ahora la rifa es del 0 al 99)
+DELETE FROM public.tickets WHERE id > 99;
 
 -- 2. Reiniciar todos los números restantes a su estado original (blanco)
 UPDATE public.tickets 
