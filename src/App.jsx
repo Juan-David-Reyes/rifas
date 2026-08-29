@@ -4,6 +4,8 @@ import TicketGrid from './components/TicketGrid'
 import CheckoutModal from './components/CheckoutModal'
 import AdminLogin from './components/AdminLogin'
 import AdminModal from './components/AdminModal'
+import InfoModal from './components/InfoModal'
+import { Info } from 'lucide-react'
 
 // Ajusta el precio de cada número aquí
 const PRECIO_TICKET = 10000; // 2 números x $10.000 = $20.000 total
@@ -26,6 +28,7 @@ function App() {
   const [showAdminLogin, setShowAdminLogin] = useState(false)
   const [adminSelectedTicket, setAdminSelectedTicket] = useState(null)
   const [showConfigModal, setShowConfigModal] = useState(false)
+  const [showInfoModal, setShowInfoModal] = useState(false)
   
   const showModalRef = useRef(showModal)
 
@@ -115,47 +118,73 @@ function App() {
 
   return (
     // pb-24 da espacio al final para que la Sticky Bar no tape los últimos números
-    <div className="min-h-screen bg-gray-50 font-sans"> 
+    <div className="min-h-screen bg-[#FFFFFF] font-sans"> 
       
       {/* TOP NAVBAR / HEADER */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-center">
-          <span className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            🐾 Bombillo
-          </span>
+      <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 rounded-b-3xl shadow-sm relative">
+        <div className="max-w-6xl mx-auto px-5 h-20 flex items-center justify-between">
+          
+          <div className="flex items-center gap-3">
+            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-transparent shrink-0 shadow-sm">
+              <img src="/bombillo.jpeg" alt="Bombillo" className="w-full h-full object-cover" onError={(e) => { e.target.src = 'https://placekitten.com/150/150'; }} />
+            </div>
+            <div className="flex flex-col justify-center">
+              <span className="text-[13px] text-gray-500 font-medium leading-none mb-1">Hola, soy</span>
+              <span className="text-xl font-black text-gray-900 leading-none">Bombillo</span>
+            </div>
+          </div>
+
+          <button 
+            onClick={() => setShowInfoModal(true)}
+            className="p-2 text-gray-600 hover:text-blue-600 transition-colors"
+          >
+            <Info className="w-6 h-6" />
+          </button>
         </div>
       </nav>
 
-      {/* HERO SECTION - El contexto de Bombillo */}
-      <header className="bg-gradient-to-b from-blue-50 to-gray-50 pt-16 pb-12 px-4 text-center border-b border-gray-100">
-        <div className="max-w-3xl mx-auto">
-          {config.winner_ticket_id && (
-            <div className="mb-6 inline-flex items-center justify-center bg-green-100 text-green-800 px-6 py-2 rounded-full font-black text-lg animate-bounce border border-green-300 shadow-sm">
-              🏆 ¡Tenemos un ganador: Número {config.winner_ticket_id}! 🏆
-            </div>
-          )}
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
-            {config.title}
-          </h1>
-          <p className="text-gray-600 text-lg sm:text-xl leading-relaxed mb-8 max-w-2xl mx-auto">
-            {config.description} <br className="hidden sm:block" /><br /><span>¡Participa y gana <br /></span><span className="font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md">{config.prize}</span>!
-          </p>
-          <div className="bg-white shadow-sm px-6 py-4 rounded-2xl border border-gray-200 mb-6 mx-auto max-w-lg text-sm sm:text-base flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
-            <div className="flex items-center gap-2 text-gray-700">
-              <span className="text-xl">🎟️</span> Juega con la lotería de: <strong>{config.lottery_name}</strong>
-            </div>
-            <div className="hidden sm:block w-px h-6 bg-gray-300"></div>
-            <div className="text-gray-500 font-medium text-sm">
-              Sorteo: {config.draw_date}
-            </div>
+      {/* IMAGEN DE BOMBILLO (Edge to Edge) */}
+      <div className="w-full h-[300px] sm:h-[400px] relative -mt-4 z-0 bg-gray-200">
+        <img src="/bombillo.jpeg" alt="Bombillo" className="w-full h-full object-cover object-[center_30%]" onError={(e) => { e.target.src = 'https://placekitten.com/800/400'; }} />
+      </div>
+
+      {/* CONTENEDOR BLANCO SUPERPUESTO */}
+      <div className="relative z-10 bg-white rounded-t-[2.5rem] sm:rounded-t-[3rem] -mt-10 pt-10 pb-8 px-4 mx-auto max-w-3xl text-center border-t border-gray-100">
+        {config.winner_ticket_id && (
+          <div className="mb-6 inline-flex items-center justify-center bg-green-100 text-green-800 px-6 py-2 rounded-full font-black text-lg animate-bounce border border-green-300 shadow-sm">
+            🏆 ¡Tenemos un ganador: Número {config.winner_ticket_id}! 🏆
           </div>
-          <div>
-            <div className="inline-block bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-md shadow-blue-200">
-              Valor 2 números: $20.000 COP
-            </div>
+        )}
+
+        <h1 className="text-4xl sm:text-5xl italic text-[#06327C] mb-2 tracking-wide" style={{ fontFamily: "'Sansita One', sans-serif" }}>
+          {config.title}
+        </h1>
+        <p className="text-[#06327C] text-lg sm:text-xl mb-6">
+          Participa y gana <span className="font-extrabold">{config.prize}</span>
+        </p>
+
+        <hr className="border-gray-200 w-[90%] sm:w-3/4 mx-auto mb-6" />
+
+        <div className="flex flex-row items-center justify-center gap-4 mb-8 text-left max-w-sm mx-auto">
+          <div className="w-20 h-20 bg-white rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center">
+            <img src="/loteria.jpg" alt="Lotería" className="max-w-full max-h-full object-contain" onError={(e) => { e.target.src = 'https://placekitten.com/100/100'; }} />
+          </div>
+          <div className="flex flex-col text-[#06327C]">
+            <span className="text-[15px] font-medium leading-tight mb-1">Juega con la lotería de</span>
+            <span className="text-2xl font-black leading-none">{config.lottery_name}</span>
+            <span className="text-lg font-bold leading-tight mt-1">{config.draw_date}</span>
           </div>
         </div>
-      </header>
+
+        <div className="bg-[#0055FF] text-white px-4 py-4 rounded-full text-lg shadow-lg shadow-blue-500/30 mx-auto max-w-sm mb-5">
+          Valor de 2 números: <span className="font-extrabold">$20.000 COP</span>
+        </div>
+
+        <div className="text-[#06327C] text-[15px] font-medium space-y-1">
+          <p>Agradecemos tu colaboración ❤️‍🩹</p>
+          <p className="font-bold">¡Mucha suerte!</p>
+        </div>
+      </div>
 
       {/* GRILLA DE NÚMEROS */}
       <main className="mt-8">
@@ -212,11 +241,14 @@ function App() {
       <footer className="mt-12 pb-8 text-center text-sm text-gray-400 flex flex-col items-center justify-center">
         <button 
           onClick={() => setShowAdminLogin(true)} 
-          className="text-gray-300 hover:text-gray-500 transition-colors p-4"
+          className="text-gray-300 hover:text-gray-500 transition-colors p-4 pb-2"
           title="Admin Login"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         </button>
+        <p className="text-[12px] text-gray-400 mt-1 mb-4">
+          ® Todos los derechos reservados 2026, diseño y desarrollo por <a href="https://codigonativo.com/" target="_blank" rel="noopener noreferrer" className="font-semibold text-gray-500 hover:text-blue-500 transition-colors">Código Nativo</a>
+        </p>
         {isAdmin && (
           <div className="mt-2 flex flex-col items-center gap-3">
             <div className="text-blue-600 font-bold">
@@ -259,6 +291,10 @@ function App() {
           onClose={() => setShowConfigModal(false)}
           onConfigUpdated={(newConfig) => setConfig(prev => ({ ...prev, ...newConfig }))}
         />
+      )}
+
+      {showInfoModal && (
+        <InfoModal onClose={() => setShowInfoModal(false)} />
       )}
     </div>
   )
