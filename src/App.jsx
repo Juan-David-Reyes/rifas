@@ -138,7 +138,7 @@ function App() {
             {config.title}
           </h1>
           <p className="text-gray-600 text-lg sm:text-xl leading-relaxed mb-8 max-w-2xl mx-auto">
-            {config.description} <br className="hidden sm:block" />¡Participa y gana <span className="font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md">{config.prize}</span>!
+            {config.description} <br className="hidden sm:block" /><br /><span>¡Participa y gana <br /></span><span className="font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md">{config.prize}</span>!
           </p>
           <div className="bg-white shadow-sm px-6 py-4 rounded-2xl border border-gray-200 mb-6 mx-auto max-w-lg text-sm sm:text-base flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
             <div className="flex items-center gap-2 text-gray-700">

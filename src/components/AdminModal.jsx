@@ -97,7 +97,7 @@ export default function AdminModal({ ticket, onClose }) {
             <div className="relative">
               <Phone className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
               <input 
-                type="text" 
+                type="number" 
                 placeholder="Celular / WhatsApp" 
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}

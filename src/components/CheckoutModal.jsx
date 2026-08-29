@@ -141,7 +141,7 @@ export default function CheckoutModal({
     const nombreStr = buyerName.trim() ? ` Soy ${buyerName.trim()}.` : '';
     const message = `¡Hola! Acabo de transferir $${totalAPagar.toLocaleString('es-CO')} para los números: ${selectedTickets.join(', ')}.${nombreStr} Aquí está mi comprobante para Bombillo 🐱`;
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
+    window.location.href = url;
     setIsSuccess(true);
   };
 
@@ -191,9 +191,9 @@ export default function CheckoutModal({
               <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-2 shadow-inner">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
-              <h3 className="text-2xl font-black text-gray-900">¡Gracias por tu pago!</h3>
+              <h3 className="text-2xl font-black text-gray-900">¡Números reservados!</h3>
               <p className="text-gray-600">
-                Estaremos validando el comprobante enviado.
+                Estaremos validando tu transferencia.
               </p>
               <button 
                 onClick={onReset}
@@ -251,7 +251,7 @@ export default function CheckoutModal({
                 
                 <input 
                   type="text" 
-                  placeholder="Tu nombre (opcional)" 
+                  placeholder="Tu nombre (Obligatorio)" 
                   value={buyerName}
                   onChange={(e) => setBuyerName(e.target.value)}
                   className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
@@ -259,7 +259,8 @@ export default function CheckoutModal({
 
                 <button 
                   onClick={handleWhatsApp}
-                  className="w-full bg-[#25D366] hover:bg-[#1ebd5b] active:bg-[#1a9d4b] text-white font-bold py-4 rounded-xl shadow-lg shadow-green-200 flex items-center justify-center space-x-2 transition-all transform active:scale-95"
+                  disabled={buyerName.trim() === ''}
+                  className="w-full bg-[#25D366] hover:bg-[#1ebd5b] active:bg-[#1a9d4b] disabled:bg-gray-300 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none text-white font-bold py-4 rounded-xl shadow-lg shadow-green-200 flex items-center justify-center space-x-2 transition-all transform active:scale-95"
                 >
                   <MessageCircle className="w-6 h-6" />
                   <span>Enviar a WhatsApp</span>
