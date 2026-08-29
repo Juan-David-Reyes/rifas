@@ -135,7 +135,19 @@ export default function CheckoutModal({
     setTimeout(() => setCopiedAccount(null), 2000);
   };
 
-  const handleWhatsApp = () => {
+  const handleWhatsApp = async () => {
+    // Guardar el nombre en la BD para que el admin lo vea
+    if (buyerName.trim()) {
+      try {
+        await supabase
+          .from('tickets')
+          .update({ buyer_name: buyerName.trim() })
+          .in('id', selectedTickets);
+      } catch (err) {
+        console.error("Error guardando el nombre", err);
+      }
+    }
+
     setHasSentWhatsApp(true); // Marca la reserva en firme
     const phone = "573209513083"; // Reemplazar con el número real de WhatsApp
     const nombreStr = buyerName.trim() ? ` Soy ${buyerName.trim()}.` : '';
