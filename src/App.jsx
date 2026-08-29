@@ -144,7 +144,7 @@ function App() {
       </nav>
 
       {/* IMAGEN DE BOMBILLO (Edge to Edge) */}
-      <div className="w-full h-[300px] sm:h-[400px] relative -mt-4 z-0 bg-gray-200">
+      <div className="w-full h-[400px] sm:h-[600px] relative -mt-4 z-0 bg-gray-200">
         <img src="/bombillo.jpeg" alt="Bombillo" className="w-full h-full object-cover object-[center_30%]" onError={(e) => { e.target.src = 'https://placekitten.com/800/400'; }} />
       </div>
 
