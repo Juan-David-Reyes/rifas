@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { X, Save, Trophy, Settings, Type, AlignLeft, Gift, Calendar, Hash, BarChart3, Users, DollarSign, Download } from 'lucide-react';
 
-export default function AdminDashboard({ config, tickets = [], onClose, onConfigUpdated }) {
+export default function AdminDashboard({ config, tickets = [], onClose, onConfigUpdated, isMobileOpen }) {
   const [activeTab, setActiveTab] = useState('stats'); // 'config' | 'stats'
   const [formData, setFormData] = useState({
     title: config.title || '',
@@ -17,26 +17,28 @@ export default function AdminDashboard({ config, tickets = [], onClose, onConfig
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   
-  const [isVisible, setIsVisible] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-
+  // Bloquear el scroll del fondo mientras el dashboard está abierto (solo en móvil)
   useEffect(() => {
-    const raf = requestAnimationFrame(() => setIsVisible(true));
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
-  // Bloquear el scroll del fondo mientras el dashboard está abierto
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
+    const checkScroll = () => {
+      const isMobile = window.innerWidth < 1024;
+      if (isMobile && isMobileOpen) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = 'unset';
+      }
+    };
+    
+    checkScroll();
+    window.addEventListener('resize', checkScroll);
+    
     return () => {
       document.body.style.overflow = 'unset';
+      window.removeEventListener('resize', checkScroll);
     };
-  }, []);
+  }, [isMobileOpen]);
 
   const handleClose = () => {
-    setIsClosing(true);
-    setIsVisible(false);
-    setTimeout(() => onClose(), 300); // 300ms transition
+    onClose();
   };
 
   const handleChange = (e) => {
@@ -80,22 +82,28 @@ export default function AdminDashboard({ config, tickets = [], onClose, onConfig
   };
 
   return (
-    <div className={`fixed inset-0 z-[200] flex justify-end bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-in-out ${isVisible && !isClosing ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`
+      fixed inset-0 z-[200] flex justify-end transition-opacity duration-300 ease-in-out
+      ${isMobileOpen ? 'opacity-100 pointer-events-auto bg-black/60 backdrop-blur-sm' : 'opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-auto lg:bg-transparent lg:backdrop-blur-none lg:w-[28rem] lg:left-auto'}
+    `}>
       
       {/* Clic fuera para cerrar */}
-      <div className="absolute inset-0" onClick={handleClose}></div>
+      <div className={`absolute inset-0 ${isMobileOpen ? 'block' : 'hidden lg:hidden'}`} onClick={handleClose}></div>
       
       {/* Sidecar / Drawer */}
-      <div className={`relative w-full max-w-md bg-gray-50 h-full shadow-2xl flex flex-col transition-transform duration-300 ease-in-out transform ${isVisible && !isClosing ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`relative w-full max-w-md bg-gray-50 h-full shadow-2xl flex flex-col transition-transform duration-300 ease-in-out transform
+        ${isMobileOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
+        lg:border-l lg:border-gray-200 lg:shadow-none
+      `}>
         
         {/* Header */}
         <div className="bg-slate-900 text-white p-6 flex flex-col shrink-0">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-3">
               <Settings className="w-6 h-6 text-blue-400" />
-              <h2 className="text-xl font-bold">Dashboard Admin</h2>
+              <h2 className="text-xl font-bold">Dashboard</h2>
             </div>
-            <button onClick={handleClose} className="p-2 bg-slate-800 rounded-full hover:bg-slate-700 transition-colors">
+            <button onClick={handleClose} className="lg:hidden p-2 bg-slate-800 rounded-full hover:bg-slate-700 transition-colors">
               <X className="w-5 h-5 text-gray-300" />
             </button>
           </div>
@@ -118,7 +126,7 @@ export default function AdminDashboard({ config, tickets = [], onClose, onConfig
         </div>
 
         {/* Content (Scrollable) */}
-        <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
+        <div className="flex-1 overflow-y-auto overscroll-contain p-4 bg-gray-50">
           {activeTab === 'config' ? (
           <form id="admin-form" onSubmit={handleSave} className="space-y-6">
             
@@ -205,7 +213,7 @@ export default function AdminDashboard({ config, tickets = [], onClose, onConfig
               </p>
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-green-800 mb-1 mt-3">
-                  <Hash className="w-4 h-4" /> Número Ganador (1-50)
+                  <Hash className="w-4 h-4" /> Número ganador (00-99)
                 </label>
                 <input 
                   type="number" name="winner_ticket_id" value={formData.winner_ticket_id} onChange={handleChange} min="1" max="50"

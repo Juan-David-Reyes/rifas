@@ -118,7 +118,7 @@ function App() {
 
   return (
     // pb-24 da espacio al final para que la Sticky Bar no tape los últimos números
-    <div className="min-h-screen bg-[#FFFFFF] font-sans"> 
+    <div className={`min-h-screen bg-[#FFFFFF] font-sans ${isAdmin ? 'lg:pr-[28rem]' : ''}`}> 
       
       {/* TOP NAVBAR / HEADER */}
       <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 rounded-b-3xl shadow-sm relative">
@@ -160,7 +160,7 @@ function App() {
           {config.title}
         </h1>
         <p className="text-[#06327C] text-lg sm:text-xl mb-6 leading-relaxed">
-          Participa y gana <span className="font-black text-[#53a403] text-2xl sm:text-3xl mx-1">{config.prize}</span><br />¡con dos oportunidades para ganar!
+          Participa y gana <span className="font-black text-[#53a403] text-2xl sm:text-3xl mx-1">{config.prize}</span><br />¡con dos oportunidades para jugar!
         </p>
 
         <hr className="border-gray-200 w-[90%] sm:w-3/4 mx-auto mb-6" />
@@ -262,7 +262,7 @@ function App() {
             </div>
             <button 
               onClick={() => setShowConfigModal(true)}
-              className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-200 transition-colors"
+              className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-200 transition-colors lg:hidden"
             >
               ⚙️ Dashboard Administrador
             </button>
@@ -285,10 +285,11 @@ function App() {
         />
       )}
 
-      {showConfigModal && (
+      {isAdmin && (
         <AdminDashboard
           config={config}
           tickets={tickets}
+          isMobileOpen={showConfigModal}
           onClose={() => setShowConfigModal(false)}
           onConfigUpdated={(newConfig) => setConfig(prev => ({ ...prev, ...newConfig }))}
         />
