@@ -233,14 +233,29 @@ export default function CheckoutModal({
                 </div>
               </div>
 
-              {/* Payment Info */}
-              <div className="space-y-3">
+              {/* Step 1: Nombre */}
+              <div className="space-y-3 pt-2">
                 <h3 className="font-bold text-gray-900 flex items-center">
                   <span className="bg-gray-100 text-gray-600 w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">1</span>
+                  Nombre del participante
+                </h3>
+                
+                <input 
+                  type="text" 
+                  placeholder="Tu nombre (Obligatorio)" 
+                  value={buyerName}
+                  onChange={(e) => setBuyerName(e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
+                />
+              </div>
+
+              {/* Step 2: Payment Info */}
+              <div className="space-y-3 pt-2">
+                <h3 className="font-bold text-gray-900 flex items-center">
+                  <span className="bg-gray-100 text-gray-600 w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">2</span>
                   Transfiere al siguiente número
                 </h3>
                 
-                {/* Llave Breb */}
                 <div className="group flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all">
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500 font-medium">Llave Bre-B</span>
@@ -255,21 +270,13 @@ export default function CheckoutModal({
                 </div>
               </div>
 
-              {/* Step 2 */}
-              <div className="space-y-3 pt-4">
+              {/* Step 3: Envía el comprobante */}
+              <div className="space-y-3 pt-2">
                 <h3 className="font-bold text-gray-900 flex items-center">
-                  <span className="bg-gray-100 text-gray-600 w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">2</span>
+                  <span className="bg-gray-100 text-gray-600 w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">3</span>
                   Envía el comprobante
                 </h3>
                 
-                <input 
-                  type="text" 
-                  placeholder="Tu nombre (Obligatorio)" 
-                  value={buyerName}
-                  onChange={(e) => setBuyerName(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
-                />
-
                 <button 
                   onClick={handleWhatsApp}
                   disabled={buyerName.trim() === ''}
