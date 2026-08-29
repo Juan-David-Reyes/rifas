@@ -224,7 +224,7 @@ export default function CheckoutModal({
               <div className="space-y-3">
                 <h3 className="font-bold text-gray-900 flex items-center">
                   <span className="bg-gray-100 text-gray-600 w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">1</span>
-                  Transfiere a esta cuenta
+                  Transfiere al siguiente número
                 </h3>
                 
                 {/* Llave Breb */}
