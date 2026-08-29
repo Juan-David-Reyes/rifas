@@ -259,7 +259,7 @@ export default function CheckoutModal({
                 <div className="group flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all">
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500 font-medium">Llave Bre-B</span>
-                    <span className="text-lg font-bold text-gray-900 tracking-wide">320 951 3083</span>
+                    <span className="text-lg font-bold text-gray-900 tracking-wide">3209513083</span>
                   </div>
                   <button 
                     onClick={() => handleCopy('3209513083', 'cuenta')}
