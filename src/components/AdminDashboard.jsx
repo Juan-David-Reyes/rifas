@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import { X, Save, Trophy, Settings, Type, AlignLeft, Gift, Calendar, Hash, BarChart3, Users, DollarSign, Download } from 'lucide-react';
+import { X, Save, Trophy, Settings, Type, AlignLeft, Gift, Calendar, Hash, BarChart3, Users, DollarSign, Download, Search } from 'lucide-react';
 
 export default function AdminDashboard({ config, tickets = [], onClose, onConfigUpdated, isMobileOpen }) {
   const [activeTab, setActiveTab] = useState('stats'); // 'config' | 'stats'
@@ -256,6 +256,7 @@ export default function AdminDashboard({ config, tickets = [], onClose, onConfig
 }
 
 function AdminStats({ tickets }) {
+  const [searchTerm, setSearchTerm] = useState('');
   const PRECIO_POR_PAR = 20000;
   const totalTickets = 100;
   
@@ -287,6 +288,12 @@ function AdminStats({ tickets }) {
     ...buyer,
     amountToPay: (buyer.numbers.length / 2) * PRECIO_POR_PAR
   })).sort((a, b) => b.numbers.length - a.numbers.length);
+
+  const filteredBuyers = buyersList.filter(buyer => {
+    if (!searchTerm) return true;
+    const term = searchTerm.toLowerCase();
+    return buyer.name.toLowerCase().includes(term) || buyer.numbers.some(n => n.includes(term));
+  });
 
   const handleDownloadPDF = () => {
     const printWindow = window.open('', '', 'width=900,height=700');
@@ -447,11 +454,22 @@ function AdminStats({ tickets }) {
           <Users className="w-5 h-5 text-purple-500" /> Compradores ({buyersList.length})
         </h3>
         
+        <div className="relative">
+          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+          <input 
+            type="text" 
+            placeholder="Buscar por nombre o número..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+          />
+        </div>
+        
         <div className="space-y-4">
-          {buyersList.length === 0 ? (
-            <p className="text-gray-500 text-sm text-center py-4">Aún no hay reservas registradas.</p>
+          {filteredBuyers.length === 0 ? (
+            <p className="text-gray-500 text-sm text-center py-4">No se encontraron resultados.</p>
           ) : (
-            buyersList.map((buyer, idx) => (
+            filteredBuyers.map((buyer, idx) => (
               <div key={idx} className="bg-gray-50 rounded-xl p-3 border border-gray-100">
                 <div className="flex justify-between items-start mb-2">
                   <div className="font-bold text-gray-900">{buyer.name}</div>
