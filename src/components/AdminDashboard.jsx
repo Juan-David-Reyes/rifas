@@ -216,7 +216,7 @@ export default function AdminDashboard({ config, tickets = [], onClose, onConfig
                   <Hash className="w-4 h-4" /> Número ganador (00-99)
                 </label>
                 <input 
-                  type="number" name="winner_ticket_id" value={formData.winner_ticket_id} onChange={handleChange} min="1" max="50"
+                  type="number" name="winner_ticket_id" value={formData.winner_ticket_id} onChange={handleChange} min="0" max="99"
                   placeholder="Dejar vacío para seguir jugando"
                   className="w-full px-4 py-3 bg-white border border-green-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none font-bold text-green-700 placeholder:font-normal placeholder:text-green-300"
                 />
