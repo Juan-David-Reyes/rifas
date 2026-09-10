@@ -1,16 +1,19 @@
+'use client'
+
 import { useState, useEffect, useRef } from 'react';
-import { supabase } from '../supabaseClient';
+import { createClient } from '../utils/supabase/client';
 import { Clock, Copy, CheckCircle2, MessageCircle } from 'lucide-react';
-import { addMinutes, differenceInSeconds } from 'date-fns';
 
 export default function CheckoutModal({ 
   selectedTickets, 
+  ticketMap,
+  raffle,
   onClose, 
   totalAPagar,
   onConcurrencyError,
   onReset
 }) {
-  const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutos en segundos
+  const [timeLeft, setTimeLeft] = useState(15 * 60); 
   const [isReserving, setIsReserving] = useState(true);
   const [error, setError] = useState(null);
   const [copiedAccount, setCopiedAccount] = useState(null);
@@ -18,17 +21,15 @@ export default function CheckoutModal({
   const [isSuccess, setIsSuccess] = useState(false);
   const [buyerName, setBuyerName] = useState('');
   
-  // Estados para animaciones suaves
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const supabase = createClient();
 
-  // Activar la animación de entrada justo después de montar
   useEffect(() => {
     const raf = requestAnimationFrame(() => setIsVisible(true));
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  // Bloquear el scroll del fondo mientras el modal está abierto
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
@@ -36,16 +37,17 @@ export default function CheckoutModal({
     };
   }, []);
 
-  // Función unificada para cerrar con animación
+  const getDbTicketIds = () => {
+    return selectedTickets.map(num => ticketMap[num]?.id).filter(Boolean);
+  };
+
   const handleClose = async () => {
-    // Si no ha enviado el WhatsApp y no hubo un error previo (como el de concurrencia),
-    // liberamos los números en la base de datos para no secuestrarlos 15 mins.
     if (!hasSentWhatsApp && !error && !isReserving) {
       try {
         await supabase
           .from('tickets')
           .update({ status: 'disponible', reserved_at: null })
-          .in('id', selectedTickets);
+          .in('id', getDbTicketIds());
       } catch (err) {
         console.error("Error liberando tickets", err);
       }
@@ -55,14 +57,12 @@ export default function CheckoutModal({
     setIsVisible(false);
     setTimeout(() => {
       onClose();
-    }, 300); // 300ms = duration de la transición
+    }, 300);
   };
 
   const hasAttemptedReserve = useRef(false);
 
-  // Efecto para reservar los tickets al abrir el modal
   useEffect(() => {
-    
     if (hasAttemptedReserve.current) return;
     hasAttemptedReserve.current = true;
     
@@ -70,33 +70,33 @@ export default function CheckoutModal({
       try {
         const now = new Date().toISOString();
         const fifteenMinsAgo = new Date(Date.now() - 15 * 60000).toISOString();
+        const dbTicketIds = getDbTicketIds();
+
         const { data, error } = await supabase
           .from('tickets')
           .update({ status: 'reservado', reserved_at: now })
-          .in('id', selectedTickets)
-          .or(`status.eq.disponible,and(status.eq.reservado,reserved_at.lt.${fifteenMinsAgo})`) // PROTECCIÓN DE CONCURRENCIA & EVALUACIÓN PEREZOSA
+          .in('id', dbTicketIds)
+          .or(`status.eq.disponible,and(status.eq.reservado,reserved_at.lt.${fifteenMinsAgo})`)
           .select();
 
         if (error) throw error;
         
-        // Verificamos si logramos reservar TODOS los solicitados
-        if (data.length !== selectedTickets.length) {
+        if (data.length !== dbTicketIds.length) {
           const reservedIds = data.map(t => t.id);
-          const stolenIds = selectedTickets.filter(id => !reservedIds.includes(id));
+          const reservedNumbers = data.map(t => t.ticket_number);
+          const stolenNumbers = selectedTickets.filter(num => !reservedNumbers.includes(num));
 
-          // Alguien más fue más rápido
           if (data.length > 0) {
-            // Hacemos rollback (liberamos) los que sí habíamos logrado agarrar
             await supabase
               .from('tickets')
               .update({ status: 'disponible', reserved_at: null })
               .in('id', reservedIds);
           }
           
-          setError(`¡Ups! Alguien más rápido acaba de reservar el/los número(s) ${stolenIds.join(' y ')}. Por favor, vuelve y selecciona otros.`);
+          setError(`¡Ups! Alguien más rápido acaba de reservar el/los número(s) ${stolenNumbers.join(' y ')}. Por favor, vuelve y selecciona otros.`);
           setIsReserving(false);
           if (onConcurrencyError) {
-            onConcurrencyError(stolenIds);
+            onConcurrencyError(stolenNumbers);
           }
           return;
         }
@@ -109,9 +109,8 @@ export default function CheckoutModal({
     };
 
     reserveTickets();
-  }, [selectedTickets]);
+  }, [selectedTickets, ticketMap]);
 
-  // Efecto para el contador regresivo
   useEffect(() => {
     if (isReserving || error) return;
 
@@ -119,7 +118,7 @@ export default function CheckoutModal({
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          handleClose(); // Cerrar modal con animación si el tiempo expira
+          handleClose();
           return 0;
         }
         return prev - 1;
@@ -127,7 +126,7 @@ export default function CheckoutModal({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isReserving, error, onClose]);
+  }, [isReserving, error]);
 
   const handleCopy = (text, type) => {
     navigator.clipboard.writeText(text);
@@ -136,23 +135,22 @@ export default function CheckoutModal({
   };
 
   const handleWhatsApp = async () => {
-    // Guardar el nombre en la BD para que el admin lo vea
     if (buyerName.trim()) {
       try {
         await supabase
           .from('tickets')
           .update({ buyer_name: buyerName.trim() })
-          .in('id', selectedTickets);
+          .in('id', getDbTicketIds());
       } catch (err) {
         console.error("Error guardando el nombre", err);
       }
     }
 
-    setHasSentWhatsApp(true); // Marca la reserva en firme
-    const phone = "573209513083"; // Reemplazar con el número real de WhatsApp
+    setHasSentWhatsApp(true); 
+    const phone = "573209513083"; 
     const nombreStr = buyerName.trim() ? ` Soy ${buyerName.trim()}.` : '';
     const formattedTickets = selectedTickets.map(id => String(id).padStart(2, '0')).join(', ');
-    const message = `¡Hola! Acabo de transferir $${totalAPagar.toLocaleString('es-CO')} para los números: ${formattedTickets}.${nombreStr} Aquí está mi comprobante para Bombillo 🐱`;
+    const message = `¡Hola! Acabo de transferir $${totalAPagar.toLocaleString('es-CO')} para los números: ${formattedTickets} de la rifa '${raffle.title}'.${nombreStr} Aquí está mi comprobante.`;
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.location.href = url;
     setIsSuccess(true);
@@ -168,8 +166,7 @@ export default function CheckoutModal({
     <div className={`fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm sm:p-4 transition-opacity duration-300 ease-out ${isVisible && !isClosing ? 'opacity-100' : 'opacity-0'}`}>
       <div className={`bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh] transition-transform duration-300 ease-out ${isVisible && !isClosing ? 'translate-y-0 sm:scale-100' : 'translate-y-full sm:translate-y-0 sm:scale-95'}`}>
         
-        {/* Header */}
-        <div className="bg-blue-600 p-4 text-white text-center relative">
+        <div className="bg-primary-600 p-4 text-white text-center relative">
           <button 
             onClick={handleClose}
             disabled={isReserving}
@@ -179,14 +176,13 @@ export default function CheckoutModal({
             ✕
           </button>
           <h2 className="text-2xl font-extrabold mb-1">Completa tu compra</h2>
-          <p className="text-blue-100 text-sm">Reserva para Bombillo 🐾</p>
+          <p className="text-green-100 text-sm">{raffle.title}</p>
         </div>
 
-        {/* Content */}
         <div className="p-4 overflow-y-auto relative min-h-[420px] flex flex-col">
           {isReserving ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
-              <div className="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+              <div className="w-10 h-10 border-4 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
               <p className="text-gray-600 font-medium animate-pulse">Asegurando tus números...</p>
             </div>
           ) : error ? (
@@ -210,7 +206,7 @@ export default function CheckoutModal({
               </p>
               <button 
                 onClick={onReset}
-                className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all transform active:scale-95"
+                className="mt-4 w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all transform active:scale-95"
               >
                 Entendido
               </button>
@@ -218,7 +214,6 @@ export default function CheckoutModal({
           ) : (
             <div className="space-y-6 flex-grow transition-opacity duration-500 ease-in-out opacity-100">
               
-              {/* Timer & Summary */}
               <div className="bg-orange-50 border border-orange-100 rounded-2xl p-4 text-center space-y-2">
                 <div className="flex items-center justify-center space-x-2 text-orange-600 font-bold">
                   <Clock className="w-5 h-5 animate-pulse" />
@@ -233,7 +228,6 @@ export default function CheckoutModal({
                 </div>
               </div>
 
-              {/* Step 1: Nombre */}
               <div className="space-y-3 pt-2">
                 <h3 className="font-bold text-gray-900 flex items-center">
                   <span className="bg-gray-100 text-gray-600 w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">1</span>
@@ -245,32 +239,30 @@ export default function CheckoutModal({
                   placeholder="Tu nombre (Obligatorio)" 
                   value={buyerName}
                   onChange={(e) => setBuyerName(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
                 />
               </div>
 
-              {/* Step 2: Payment Info */}
               <div className="space-y-3 pt-2">
                 <h3 className="font-bold text-gray-900 flex items-center">
                   <span className="bg-gray-100 text-gray-600 w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">2</span>
                   Transfiere al siguiente número
                 </h3>
                 
-                <div className="group flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all">
+                <div className="group flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:border-green-300 hover:bg-green-50/50 transition-all">
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500 font-medium">Llave Bre-B</span>
                     <span className="text-lg font-bold text-gray-900 tracking-wide">3209513083</span>
                   </div>
                   <button 
                     onClick={() => handleCopy('3209513083', 'cuenta')}
-                    className="p-2 text-blue-600 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors"
+                    className="p-2 text-green-600 bg-green-100 rounded-lg hover:bg-green-200 transition-colors"
                   >
                     {copiedAccount === 'cuenta' ? <CheckCircle2 className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
 
-              {/* Step 3: Envía el comprobante */}
               <div className="space-y-3 pt-2">
                 <h3 className="font-bold text-gray-900 flex items-center">
                   <span className="bg-gray-100 text-gray-600 w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">3</span>

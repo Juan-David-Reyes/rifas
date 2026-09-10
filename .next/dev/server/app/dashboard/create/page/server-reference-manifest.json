@@ -1,0 +1,16 @@
+{
+  "node": {
+    "4044ce81cf1ffdbeb416dd57a6b3e412f4235cec80": {
+      "workers": {
+        "app/dashboard/create/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/create/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/dashboard/create/actions.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "createRaffle",
+      "filename": "src/app/dashboard/create/actions.js"
+    }
+  },
+  "edge": {}
+}
