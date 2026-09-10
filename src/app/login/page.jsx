@@ -4,9 +4,22 @@ import { createClient } from '../../utils/supabase/client'
 import { login, signup } from './actions'
 import { useSearchParams } from 'next/navigation'
 
-export default function LoginPage() {
+import { Suspense } from 'react'
+
+function LoginMessage() {
   const searchParams = useSearchParams()
   const message = searchParams.get('message')
+  
+  if (!message) return null
+  
+  return (
+    <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6 font-medium text-center">
+      {message}
+    </div>
+  )
+}
+
+export default function LoginPage() {
   const supabase = createClient()
 
   const handleGoogleLogin = async () => {
@@ -24,11 +37,9 @@ export default function LoginPage() {
         <h1 className="text-3xl font-black text-center font-heading text-gray-900 mb-2">Bienvenido</h1>
         <p className="text-gray-500 text-center mb-8 text-sm">Ingresa a tu panel de organizador</p>
 
-        {message && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6 font-medium text-center">
-            {message}
-          </div>
-        )}
+        <Suspense fallback={null}>
+          <LoginMessage />
+        </Suspense>
 
         {/* Botón de Google */}
         <button 
