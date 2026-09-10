@@ -14,7 +14,7 @@ export default async function DashboardLayout({ children }) {
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-slate-900 text-white flex flex-col">
+      <aside className="fixed inset-y-0 left-0 w-64 bg-slate-900 text-white flex flex-col z-20 h-screen">
         <div className="p-6 border-b border-slate-800">
           <Link href="/dashboard" className="font-heading text-2xl font-extrabold text-primary-400">
             Rifas.io
@@ -44,7 +44,7 @@ export default async function DashboardLayout({ children }) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 ml-64 min-h-screen">
         <div className="p-8 max-w-7xl mx-auto">
           {children}
         </div>
