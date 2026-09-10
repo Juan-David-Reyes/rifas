@@ -11,10 +11,10 @@ export async function GET(request) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      return NextResponse.redirect(\`\${origin}\${next}\`)
+      return NextResponse.redirect(`${origin}${next}`)
     }
   }
 
   // return the user to an error page with some instructions
-  return NextResponse.redirect(\`\${origin}/login?message=No pudimos validar tu sesión de Google\`)
+  return NextResponse.redirect(`${origin}/login?message=No pudimos validar tu sesión de Google`)
 }
