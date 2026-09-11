@@ -6,50 +6,111 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-white overflow-hidden pt-20 pb-24 md:pt-32 md:pb-32">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-green-50 via-white to-white -z-10"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 text-green-700 font-semibold text-sm mb-8 border border-green-100">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            Plataforma 100% autogestionable
-          </div>
-          <h1 className="text-5xl md:text-7xl font-black text-gray-900 font-heading mb-8 leading-tight tracking-tight">
-            Crea tu rifa en línea <br className="hidden md:block"/> 
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary-600 to-green-400">
-              en menos de 5 minutos
-            </span>
-          </h1>
-          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto font-medium">
-            La forma más fácil y segura de organizar sorteos, recaudar fondos para causas solidarias y gestionar participantes. Sin comisiones ocultas.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
-            <Link href="/login" className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-2xl text-lg font-bold shadow-xl shadow-green-200 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
-              Empezar mi Rifa Gratis <ArrowRight className="w-5 h-5" />
-            </Link>
-            <a href="#como-funciona" className="bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-200 px-8 py-4 rounded-2xl text-lg font-bold transition-all flex items-center justify-center">
-              Ver cómo funciona
-            </a>
-          </div>
+      <section className="relative bg-white overflow-hidden pt-24 pb-16 md:pt-32 md:pb-24">
+        {/* Modern Background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] -z-10"></div>
+        <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary-400 opacity-20 blur-[100px]"></div>
 
-          {/* Hero Image Mockup */}
-          <div className="mt-20 relative max-w-4xl mx-auto">
-            <div className="absolute inset-0 bg-linear-to-t from-white via-transparent to-transparent z-10 h-full w-full"></div>
-            <div className="rounded-3xl border border-gray-200 bg-white p-2 shadow-2xl relative overflow-hidden transform rotate-1 hover:rotate-0 transition-transform duration-500">
-              <div className="bg-gray-50 rounded-2xl border border-gray-100 p-8 flex items-center justify-center min-h-75">
-                <div className="text-center space-y-4">
-                  <div className="flex justify-center gap-2 mb-6">
-                    {[1,2,3].map(i => (
-                      <div key={i} className={`w-16 h-16 rounded-xl flex items-center justify-center font-bold text-xl ${i===2 ? 'bg-primary-600 text-white shadow-lg scale-110' : 'bg-white border-2 border-gray-200 text-gray-400'}`}>
-                        {i === 1 ? '01' : i === 2 ? '02' : '03'}
-                      </div>
-                    ))}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-8">
+            
+            {/* Left Column: Copy & CTAs */}
+            <div className="flex-1 text-center lg:text-left pt-10 lg:pt-0">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50/50 text-primary-700 font-semibold text-sm mb-6 border border-primary-100 shadow-sm backdrop-blur-sm">
+                <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
+                La nueva forma de gestionar sorteos
+              </div>
+              <h1 className="text-5xl lg:text-6xl xl:text-7xl font-black text-gray-900 font-heading mb-6 leading-tight tracking-tight">
+                Crea tu Rifa Virtual <br className="hidden lg:block"/> 
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-primary-600 to-green-400">
+                  en 5 Minutos
+                </span>
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed">
+                Organiza sorteos y recauda fondos de forma 100% automatizada. Sin mensualidades ni comisiones por ventas, el dinero va directo a tu cuenta.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
+                <Link href="/login" className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-2xl text-lg font-bold shadow-xl shadow-primary-200/50 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                  Empezar Gratis <ArrowRight className="w-5 h-5" />
+                </Link>
+                <a href="#como-funciona" className="bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-200 px-8 py-4 rounded-2xl text-lg font-bold transition-all flex items-center justify-center shadow-sm">
+                  Ver cómo funciona
+                </a>
+              </div>
+
+              {/* Pricing Disclaimer */}
+              <div className="mt-6 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 text-sm text-gray-600 font-medium bg-gray-50/80 p-3 rounded-xl border border-gray-100 w-fit mx-auto lg:mx-0 backdrop-blur-sm">
+                <div className="bg-green-100 text-green-700 p-1.5 rounded-lg">
+                  <DollarSign className="w-4 h-4" />
+                </div>
+                <p>
+                  <strong>Único pago:</strong> El valor de 1 boleta de tu rifa <span className="text-gray-400 font-normal">(Mín. $10.000 COP)</span>.
+                </p>
+              </div>
+              
+              <div className="mt-8 flex items-center justify-center lg:justify-start gap-4 text-sm text-gray-500 font-medium">
+                <div className="flex -space-x-2">
+                  {[1,2,3,4].map(i => (
+                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-200"></div>
+                  ))}
+                </div>
+                <p>+500 organizadores confían en nosotros</p>
+              </div>
+            </div>
+
+            {/* Right Column: Floating UI Mockup */}
+            <div className="flex-1 w-full flex justify-center lg:justify-end relative mt-8 lg:mt-0">
+              <div className="w-full max-w-md relative">
+                <div className="absolute inset-0 bg-linear-to-tr from-primary-100/40 to-green-50/40 rounded-[2.5rem] transform rotate-3 scale-105 -z-10"></div>
+                <div className="bg-white/80 backdrop-blur-xl border border-white/60 shadow-2xl rounded-3xl p-5 md:p-6 transform transition-transform hover:-translate-y-2 duration-500">
+                {/* Mockup Header */}
+                <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-100">
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-lg">Gran Rifa Solidaria</h3>
+                    <p className="text-sm text-green-600 font-medium">Premio: $500.000</p>
                   </div>
-                  <h3 className="font-heading text-2xl text-gray-800">Visualiza tu grilla interactiva</h3>
-                  <p className="text-gray-500">Tus clientes eligen y pagan directamente.</p>
+                  <div className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-bold">
+                    $10.000 / número
+                  </div>
+                </div>
+                
+                {/* Mockup Grid */}
+                <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
+                  {[...Array(15)].map((_, i) => {
+                    let statusClass = "bg-white border-2 border-gray-200 text-gray-700";
+                    let content = String(i + 1).padStart(2, '0');
+                    
+                    if (i === 2 || i === 7) {
+                      statusClass = "bg-gray-200 border-gray-300 text-gray-400";
+                    } else if (i === 4) {
+                      statusClass = "bg-yellow-100 border-yellow-300 text-yellow-700";
+                    } else if (i === 12) {
+                      statusClass = "bg-primary-600 border-primary-600 text-white shadow-md transform scale-105";
+                    }
+                    
+                    return (
+                      <div key={i} className={`aspect-square rounded-xl flex items-center justify-center font-bold text-xs md:text-sm ${statusClass}`}>
+                        {content}
+                      </div>
+                    )
+                  })}
+                </div>
+                
+                {/* Mockup Footer */}
+                <div className="mt-6 pt-6 border-t border-gray-100 flex items-center justify-between">
+                  <div className="flex gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-500 mt-1.5 animate-pulse"></span>
+                    <span className="text-sm text-gray-600 font-medium">85 disponibles</span>
+                  </div>
+                  <button className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm">
+                    Comprar
+                  </button>
+                </div>
                 </div>
               </div>
             </div>
+            
           </div>
         </div>
       </section>
@@ -160,9 +221,8 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gray-900 py-20 relative overflow-hidden">
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-primary-600 rounded-full blur-3xl opacity-20"></div>
-        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+      <section className="pb-24 relative overflow-hidden">
+        <div className="bg-gray-900 rounded-4xl max-w-7xl mx-auto px-4 py-20 text-center relative z-10">
           <h2 className="text-4xl font-black text-white font-heading mb-6">¿Listo para hacer tu primer sorteo?</h2>
           <p className="text-gray-300 text-lg mb-10">Únete a cientos de organizadores que ya han modernizado la forma de recaudar fondos y hacer rifas.</p>
           <Link href="/login" className="inline-block bg-primary-600 hover:bg-primary-700 text-white px-10 py-5 rounded-2xl text-xl font-bold shadow-2xl transition-all transform hover:scale-105">
