@@ -113,7 +113,7 @@ export default function TicketGrid({ initialTickets, raffle, isAdmin }) {
                 content = (
                   <>
                     <span className="relative z-10">{String(num).padStart(2, '0')}</span>
-                    <div className="absolute top-1/2 left-0 w-full h-[2px] bg-gray-400 transform -rotate-45 scale-150 opacity-60"></div>
+                    <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-400 transform -rotate-45 scale-150 opacity-60"></div>
                   </>
                 );
               } else if (computedStatus === 'reservado') {
@@ -168,7 +168,7 @@ export default function TicketGrid({ initialTickets, raffle, isAdmin }) {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 bg-gray-200 rounded-md border border-gray-300 relative overflow-hidden">
-              <div className="absolute top-1/2 left-0 w-full h-[1px] bg-gray-400 transform -rotate-45 scale-150 opacity-60"></div>
+              <div className="absolute top-1/2 left-0 w-full h-px bg-gray-400 transform -rotate-45 scale-150 opacity-60"></div>
             </div>
             <span>Comprado</span>
           </div>

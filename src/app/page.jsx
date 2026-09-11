@@ -6,7 +6,7 @@ export default function LandingPage() {
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
       <section className="relative bg-white overflow-hidden pt-20 pb-24 md:pt-32 md:pb-32">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-green-50 via-white to-white -z-10"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-green-50 via-white to-white -z-10"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 text-green-700 font-semibold text-sm mb-8 border border-green-100">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
@@ -14,7 +14,7 @@ export default function LandingPage() {
           </div>
           <h1 className="text-5xl md:text-7xl font-black text-gray-900 font-heading mb-8 leading-tight tracking-tight">
             Crea tu rifa en línea <br className="hidden md:block"/> 
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-green-400">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary-600 to-green-400">
               en menos de 5 minutos
             </span>
           </h1>
@@ -33,9 +33,9 @@ export default function LandingPage() {
 
           {/* Hero Image Mockup */}
           <div className="mt-20 relative max-w-4xl mx-auto">
-            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent z-10 h-full w-full"></div>
+            <div className="absolute inset-0 bg-linear-to-t from-white via-transparent to-transparent z-10 h-full w-full"></div>
             <div className="rounded-3xl border border-gray-200 bg-white p-2 shadow-2xl relative overflow-hidden transform rotate-1 hover:rotate-0 transition-transform duration-500">
-              <div className="bg-gray-50 rounded-2xl border border-gray-100 p-8 flex items-center justify-center min-h-[300px]">
+              <div className="bg-gray-50 rounded-2xl border border-gray-100 p-8 flex items-center justify-center min-h-75">
                 <div className="text-center space-y-4">
                   <div className="flex justify-center gap-2 mb-6">
                     {[1,2,3].map(i => (
@@ -98,7 +98,7 @@ export default function LandingPage() {
               
               <div className="space-y-8 mt-10">
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-gray-900 text-white font-bold rounded-full flex items-center justify-center text-xl">1</div>
+                  <div className="shrink-0 w-12 h-12 bg-gray-900 text-white font-bold rounded-full flex items-center justify-center text-xl">1</div>
                   <div>
                     <h4 className="text-xl font-bold text-gray-900 mb-2">Crea tu cuenta y tu rifa</h4>
                     <p className="text-gray-600">Ponle un título, define el premio, el valor de cada número y el sistema generará tu grilla al instante.</p>
@@ -106,7 +106,7 @@ export default function LandingPage() {
                 </div>
                 
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-gray-900 text-white font-bold rounded-full flex items-center justify-center text-xl">2</div>
+                  <div className="shrink-0 w-12 h-12 bg-gray-900 text-white font-bold rounded-full flex items-center justify-center text-xl">2</div>
                   <div>
                     <h4 className="text-xl font-bold text-gray-900 mb-2">Comparte el enlace</h4>
                     <p className="text-gray-600">Pega el link de tu rifa en WhatsApp, Instagram o Facebook. Tus compradores entrarán directamente.</p>
@@ -114,7 +114,7 @@ export default function LandingPage() {
                 </div>
 
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-primary-600 text-white font-bold rounded-full flex items-center justify-center text-xl shadow-lg shadow-green-200">3</div>
+                  <div className="shrink-0 w-12 h-12 bg-primary-600 text-white font-bold rounded-full flex items-center justify-center text-xl shadow-lg shadow-green-200">3</div>
                   <div>
                     <h4 className="text-xl font-bold text-gray-900 mb-2">Recibe el dinero</h4>
                     <p className="text-gray-600">Ellos eligen su número y te envían el comprobante de pago directo a tu WhatsApp. Tú solo apruebas el pago en el sistema.</p>

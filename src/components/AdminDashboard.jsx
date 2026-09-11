@@ -83,8 +83,8 @@ export default function AdminDashboard({ config, tickets = [], onClose, onConfig
 
   return (
     <div className={`
-      fixed inset-0 z-[200] flex justify-end transition-opacity duration-300 ease-in-out
-      ${isMobileOpen ? 'opacity-100 pointer-events-auto bg-black/60 backdrop-blur-sm' : 'opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-auto lg:bg-transparent lg:backdrop-blur-none lg:w-[28rem] lg:left-auto'}
+      fixed inset-0 z-200 flex justify-end transition-opacity duration-300 ease-in-out
+      ${isMobileOpen ? 'opacity-100 pointer-events-auto bg-black/60 backdrop-blur-sm' : 'opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-auto lg:bg-transparent lg:backdrop-blur-none lg:w-md lg:left-auto'}
     `}>
       
       {/* Clic fuera para cerrar */}

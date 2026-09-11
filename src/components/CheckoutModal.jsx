@@ -163,7 +163,7 @@ export default function CheckoutModal({
   };
 
   return (
-    <div className={`fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm sm:p-4 transition-opacity duration-300 ease-out ${isVisible && !isClosing ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`fixed inset-0 z-100 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm sm:p-4 transition-opacity duration-300 ease-out ${isVisible && !isClosing ? 'opacity-100' : 'opacity-0'}`}>
       <div className={`bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh] transition-transform duration-300 ease-out ${isVisible && !isClosing ? 'translate-y-0 sm:scale-100' : 'translate-y-full sm:translate-y-0 sm:scale-95'}`}>
         
         <div className="bg-primary-600 p-4 text-white text-center relative">
@@ -179,7 +179,7 @@ export default function CheckoutModal({
           <p className="text-green-100 text-sm">{raffle.title}</p>
         </div>
 
-        <div className="p-4 overflow-y-auto relative min-h-[420px] flex flex-col">
+        <div className="p-4 overflow-y-auto relative min-h-105 flex flex-col">
           {isReserving ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
               <div className="w-10 h-10 border-4 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
@@ -212,7 +212,7 @@ export default function CheckoutModal({
               </button>
             </div>
           ) : (
-            <div className="space-y-6 flex-grow transition-opacity duration-500 ease-in-out opacity-100">
+            <div className="space-y-6 grow transition-opacity duration-500 ease-in-out opacity-100">
               
               <div className="bg-orange-50 border border-orange-100 rounded-2xl p-4 text-center space-y-2">
                 <div className="flex items-center justify-center space-x-2 text-orange-600 font-bold">
