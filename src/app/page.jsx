@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Ticket, Users, Zap, ShieldCheck, ArrowRight, Share2, DollarSign } from 'lucide-react';
+import FaqAccordion from '../components/FaqAccordion';
 
 export default function LandingPage() {
   return (
@@ -100,7 +101,7 @@ export default function LandingPage() {
                 <div className="flex gap-4">
                   <div className="shrink-0 w-12 h-12 bg-gray-900 text-white font-bold rounded-full flex items-center justify-center text-xl">1</div>
                   <div>
-                    <h4 className="text-xl font-bold text-gray-900 mb-2">Crea tu cuenta y tu rifa</h4>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Crea tu cuenta y tu rifa</h3>
                     <p className="text-gray-600">Ponle un título, define el premio, el valor de cada número y el sistema generará tu grilla al instante.</p>
                   </div>
                 </div>
@@ -108,7 +109,7 @@ export default function LandingPage() {
                 <div className="flex gap-4">
                   <div className="shrink-0 w-12 h-12 bg-gray-900 text-white font-bold rounded-full flex items-center justify-center text-xl">2</div>
                   <div>
-                    <h4 className="text-xl font-bold text-gray-900 mb-2">Comparte el enlace</h4>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Comparte el enlace</h3>
                     <p className="text-gray-600">Pega el link de tu rifa en WhatsApp, Instagram o Facebook. Tus compradores entrarán directamente.</p>
                   </div>
                 </div>
@@ -116,7 +117,7 @@ export default function LandingPage() {
                 <div className="flex gap-4">
                   <div className="shrink-0 w-12 h-12 bg-primary-600 text-white font-bold rounded-full flex items-center justify-center text-xl shadow-lg shadow-green-200">3</div>
                   <div>
-                    <h4 className="text-xl font-bold text-gray-900 mb-2">Recibe el dinero</h4>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Recibe el dinero</h3>
                     <p className="text-gray-600">Ellos eligen su número y te envían el comprobante de pago directo a tu WhatsApp. Tú solo apruebas el pago en el sistema.</p>
                   </div>
                 </div>
@@ -143,6 +144,18 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* FAQs Section */}
+      <section className="py-24 bg-gray-50" id="faqs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-black text-gray-900 font-heading mb-4">Preguntas frecuentes</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">Todo lo que necesitas saber antes de crear tu primer sorteo.</p>
+          </div>
+          
+          <FaqAccordion />
         </div>
       </section>
 
