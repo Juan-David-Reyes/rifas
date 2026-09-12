@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { createClient } from '../utils/supabase/client';
 import { Clock, Copy, CheckCircle2, MessageCircle } from 'lucide-react';
+import { formatMoney, formatTicketNumber } from '../utils/formatters';
 
 export default function CheckoutModal({ 
   selectedTickets, 
@@ -147,10 +148,26 @@ export default function CheckoutModal({
     }
 
     setHasSentWhatsApp(true); 
-    const phone = "573209513083"; 
-    const nombreStr = buyerName.trim() ? ` Soy ${buyerName.trim()}.` : '';
-    const formattedTickets = selectedTickets.map(id => String(id).padStart(2, '0')).join(', ');
-    const message = `¡Hola! Acabo de transferir $${totalAPagar.toLocaleString('es-CO')} para los números: ${formattedTickets} de la rifa '${raffle.title}'.${nombreStr} Aquí está mi comprobante.`;
+    
+    let phone = raffle.whatsapp_number || raffle.payment_account_number || "3209513083";
+    // Si el número es colombiano de 10 dígitos y no tiene el 57, se lo agregamos por defecto
+    if (phone.length === 10 && !phone.startsWith("57")) {
+      phone = "57" + phone;
+    }
+    
+    const formattedTickets = selectedTickets.map(id => formatTicketNumber(id)).join(', ');
+    const totalStr = `$${formatMoney(totalAPagar)}`;
+    
+    // Fallback template just in case
+    const defaultTemplate = '¡Hola! Acabo de transferir {{total}} por los números: {{boletas}}. Soy {{nombre}}. Aquí está mi comprobante.';
+    let rawTemplate = raffle.whatsapp_template || defaultTemplate;
+    
+    // Replace Magic Variables
+    let message = rawTemplate
+      .replace(/{{nombre}}/g, buyerName.trim() || 'un comprador')
+      .replace(/{{boletas}}/g, formattedTickets)
+      .replace(/{{total}}/g, totalStr);
+
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.location.href = url;
     setIsSuccess(true);
@@ -223,8 +240,8 @@ export default function CheckoutModal({
                   Transfiere antes de que el tiempo expire para no perder tus números.
                 </p>
                 <div className="pt-2 flex justify-between items-center border-t border-orange-100/50 mt-2 text-gray-800">
-                  <span className="font-medium">Números: {selectedTickets.map(id => String(id).padStart(2, '0')).join(', ')}</span>
-                  <span className="text-xl font-black">${totalAPagar.toLocaleString('es-CO')}</span>
+                  <span className="font-medium">Números: {selectedTickets.map(id => formatTicketNumber(id)).join(', ')}</span>
+                  <span className="text-xl font-black">${formatMoney(totalAPagar)}</span>
                 </div>
               </div>
 
@@ -246,16 +263,16 @@ export default function CheckoutModal({
               <div className="space-y-3 pt-2">
                 <h3 className="font-bold text-gray-900 flex items-center">
                   <span className="bg-gray-100 text-gray-600 w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">2</span>
-                  Transfiere al siguiente número
+                  Transfiere a {raffle.payment_method_name || 'Nequi'}
                 </h3>
                 
                 <div className="group flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:border-green-300 hover:bg-green-50/50 transition-all">
                   <div className="flex flex-col">
-                    <span className="text-sm text-gray-500 font-medium">Llave Bre-B</span>
-                    <span className="text-lg font-bold text-gray-900 tracking-wide">3209513083</span>
+                    <span className="text-sm text-gray-500 font-medium">Cuenta {raffle.payment_method_name || 'Nequi'}</span>
+                    <span className="text-lg font-bold text-gray-900 tracking-wide">{raffle.payment_account_number || '3209513083'}</span>
                   </div>
                   <button 
-                    onClick={() => handleCopy('3209513083', 'cuenta')}
+                    onClick={() => handleCopy(raffle.payment_account_number || '3209513083', 'cuenta')}
                     className="p-2 text-green-600 bg-green-100 rounded-lg hover:bg-green-200 transition-colors"
                   >
                     {copiedAccount === 'cuenta' ? <CheckCircle2 className="w-5 h-5" /> : <Copy className="w-5 h-5" />}

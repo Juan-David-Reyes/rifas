@@ -12,6 +12,8 @@ export default function CrearRifaWizard() {
     prizeValue: '',
     ticketCount: 100,
     ticketPrice: 10000,
+    paymentMethod: 'Nequi',
+    paymentAccount: '',
   })
   
   const [isAuthenticating, setIsAuthenticating] = useState(false)
@@ -184,13 +186,43 @@ export default function CrearRifaWizard() {
                      <p className="text-sm text-amber-600 mt-2 font-medium">Nota: El valor mínimo de la boleta sugerido es $10.000 COP.</p>
                   )}
                 </div>
+
+                <div className="pt-6 border-t border-gray-100">
+                  <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <DollarSign className="w-5 h-5 text-green-500" />
+                    ¿A dónde te van a pagar?
+                  </h3>
+                  
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-2">Banco o Billetera</label>
+                      <input 
+                        type="text" 
+                        placeholder="Ej. Nequi, Daviplata"
+                        value={formData.paymentMethod}
+                        onChange={(e) => updateForm('paymentMethod', e.target.value)}
+                        className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all font-medium"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-2">Número de Cuenta</label>
+                      <input 
+                        type="text" 
+                        placeholder="Ej. 3001234567"
+                        value={formData.paymentAccount}
+                        onChange={(e) => updateForm('paymentAccount', e.target.value)}
+                        className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all font-medium"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="mt-10 flex justify-between">
                 <button onClick={handleBack} className="text-gray-500 hover:text-gray-900 font-bold px-4">Atrás</button>
                 <button 
                   onClick={handleNext}
-                  disabled={!formData.ticketCount || !formData.ticketPrice}
+                  disabled={!formData.ticketCount || !formData.ticketPrice || !formData.paymentMethod || !formData.paymentAccount}
                   className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-primary-500/30 transition-all transform hover:-translate-y-1 disabled:opacity-50 disabled:transform-none"
                 >
                   Ver Proyección <Calculator className="w-5 h-5" />
