@@ -28,7 +28,7 @@ export default function MarketingLayout({ children }) {
               <Link href="/login" className="text-sm font-medium text-primary-100 hover:text-primary-200 transition-colors px-6 py-2 rounded-lg border border-gray-200">
                 Iniciar Sesión
               </Link>
-              <Link href="/login" className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg text-sm font-bold shadow-sm transition-all">
+              <Link href="/crear" className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg text-sm font-bold shadow-sm transition-all">
                 Crear mi rifa
               </Link>
             </nav>
