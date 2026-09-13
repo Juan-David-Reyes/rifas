@@ -15,12 +15,12 @@ export default function CrearRifaWizard() {
     ticketPrice: 10000,
     paymentMethod: 'Nequi',
     paymentAccount: '',
-    name: '',
     email: '',
-    password: '',
   })
   
   const [isAuthenticating, setIsAuthenticating] = useState(false)
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false)
+  const [otpCode, setOtpCode] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState(null)
 
@@ -60,9 +60,8 @@ export default function CrearRifaWizard() {
     setIsAuthenticating(true)
     const supabase = createClient()
     
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signInWithOtp({
       email: formData.email,
-      password: formData.password,
       options: {
         data: {
           full_name: formData.name
@@ -73,7 +72,27 @@ export default function CrearRifaWizard() {
     setIsAuthenticating(false)
 
     if (error) {
-      alert("Error en el registro: " + error.message)
+      alert("Error enviando el código: " + error.message)
+      return
+    }
+
+    setIsVerifyingOtp(true)
+  }
+
+  const handleVerifyOtp = async () => {
+    setIsAuthenticating(true)
+    const supabase = createClient()
+
+    const { error } = await supabase.auth.verifyOtp({
+      email: formData.email,
+      token: otpCode,
+      type: 'email'
+    })
+
+    setIsAuthenticating(false)
+
+    if (error) {
+      alert("Código incorrecto o expirado.")
       return
     }
 
@@ -357,40 +376,60 @@ export default function CrearRifaWizard() {
                   <div className="w-full border-t border-gray-200"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500 font-medium">O regístrate con tus datos</span>
+                  <span className="px-2 bg-white text-gray-500 font-medium">O usa tu correo (Sin contraseña)</span>
                 </div>
               </div>
 
-              <div className="mt-6 space-y-4">
-                <input 
-                  type="text" 
-                  placeholder="Nombre completo" 
-                  value={formData.name || ''}
-                  onChange={(e) => updateForm('name', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
-                />
-                <input 
-                  type="email" 
-                  placeholder="Correo electrónico" 
-                  value={formData.email || ''}
-                  onChange={(e) => updateForm('email', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
-                />
-                <input 
-                  type="password" 
-                  placeholder="Crea una contraseña" 
-                  value={formData.password || ''}
-                  onChange={(e) => updateForm('password', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
-                />
-                <button 
-                  onClick={handleEmailRegistration}
-                  disabled={isAuthenticating || !formData.name || !formData.email || !formData.password}
-                  className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all disabled:opacity-50"
-                >
-                  {isAuthenticating ? 'Registrando...' : 'Crear Cuenta y Continuar'}
-                </button>
-              </div>
+              {!isVerifyingOtp ? (
+                <div className="mt-6 space-y-4">
+                  <input 
+                    type="text" 
+                    placeholder="Nombre completo" 
+                    value={formData.name || ''}
+                    onChange={(e) => updateForm('name', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                  />
+                  <input 
+                    type="email" 
+                    placeholder="Correo electrónico" 
+                    value={formData.email || ''}
+                    onChange={(e) => updateForm('email', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                  />
+                  <button 
+                    onClick={handleEmailRegistration}
+                    disabled={isAuthenticating || !formData.name || !formData.email}
+                    className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all disabled:opacity-50"
+                  >
+                    {isAuthenticating ? 'Enviando código...' : 'Recibir código y Continuar'}
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-6 space-y-4 animate-in fade-in slide-in-from-right-4">
+                  <p className="text-sm font-bold text-gray-700 text-center mb-2">Ingresa el código de 6 dígitos enviado a {formData.email}</p>
+                  <input 
+                    type="text" 
+                    placeholder="000000" 
+                    maxLength={6}
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ''))}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none text-center font-bold tracking-[0.5em] text-xl"
+                  />
+                  <button 
+                    onClick={handleVerifyOtp}
+                    disabled={isAuthenticating || otpCode.length !== 6}
+                    className="w-full bg-gray-900 hover:bg-black text-white font-bold py-4 rounded-xl shadow-lg transition-all disabled:opacity-50"
+                  >
+                    {isAuthenticating ? 'Verificando...' : 'Verificar e Ir al Pago'}
+                  </button>
+                  <button 
+                    onClick={() => setIsVerifyingOtp(false)}
+                    className="w-full text-center text-sm font-bold text-gray-400 hover:text-gray-600 mt-2"
+                  >
+                    Usar otro correo
+                  </button>
+                </div>
+              )}
               
               <button onClick={() => setStep(5)} className="w-full text-center text-sm font-bold text-gray-400 hover:text-gray-600 mt-6">(Simular Login Exitoso para demo)</button>
 
