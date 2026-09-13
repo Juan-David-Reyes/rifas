@@ -1,6 +1,7 @@
 import { createClient } from '../../../utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { User, Mail, Shield, AlertCircle, Receipt } from 'lucide-react'
+import DeleteAccountButton from './DeleteAccountButton'
 
 export default async function SettingsPage() {
   const supabase = await createClient()
@@ -134,6 +135,8 @@ export default async function SettingsPage() {
           </table>
         </div>
       </div>
+
+      <DeleteAccountButton />
     </div>
   )
 }

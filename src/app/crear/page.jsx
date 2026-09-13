@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Ticket, ArrowRight, CheckCircle2, DollarSign, Calculator, Lock } from 'lucide-react'
 import { createClient } from '../../utils/supabase/client'
+import { createRaffle } from './actions'
 
 export default function CrearRifaWizard() {
   const [step, setStep] = useState(1)
@@ -14,9 +15,14 @@ export default function CrearRifaWizard() {
     ticketPrice: 10000,
     paymentMethod: 'Nequi',
     paymentAccount: '',
+    name: '',
+    email: '',
+    password: '',
   })
   
   const [isAuthenticating, setIsAuthenticating] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState(null)
 
   const handleNext = () => setStep(s => s + 1)
   const handleBack = () => setStep(s => Math.max(1, s - 1))
@@ -48,6 +54,52 @@ export default function CrearRifaWizard() {
         redirectTo: `${window.location.origin}/auth/callback?next=/crear?step=5`,
       },
     })
+  }
+
+  const handleEmailRegistration = async () => {
+    setIsAuthenticating(true)
+    const supabase = createClient()
+    
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options: {
+        data: {
+          full_name: formData.name
+        }
+      }
+    })
+
+    setIsAuthenticating(false)
+
+    if (error) {
+      alert("Error en el registro: " + error.message)
+      return
+    }
+
+    setStep(5)
+  }
+
+  const handlePayment = async () => {
+    setIsSubmitting(true)
+    setError(null)
+    
+    // Simular el pago con un pequeño delay
+    await new Promise(r => setTimeout(r, 1500))
+
+    try {
+      const result = await createRaffle(formData)
+      if (result?.error) {
+        setError(result.error)
+        setIsSubmitting(false)
+        return
+      }
+      // Si fue exitoso, pasar al paso final (éxito)
+      setStep(6)
+    } catch (err) {
+      setError('Ocurrió un error inesperado al procesar la creación.')
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -299,8 +351,48 @@ export default function CrearRifaWizard() {
                 </svg>
                 {isAuthenticating ? 'Conectando...' : 'Continuar con Google'}
               </button>
+
+              <div className="mt-8 relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500 font-medium">O regístrate con tus datos</span>
+                </div>
+              </div>
+
+              <div className="mt-6 space-y-4">
+                <input 
+                  type="text" 
+                  placeholder="Nombre completo" 
+                  value={formData.name || ''}
+                  onChange={(e) => updateForm('name', e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                />
+                <input 
+                  type="email" 
+                  placeholder="Correo electrónico" 
+                  value={formData.email || ''}
+                  onChange={(e) => updateForm('email', e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                />
+                <input 
+                  type="password" 
+                  placeholder="Crea una contraseña" 
+                  value={formData.password || ''}
+                  onChange={(e) => updateForm('password', e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                />
+                <button 
+                  onClick={handleEmailRegistration}
+                  disabled={isAuthenticating || !formData.name || !formData.email || !formData.password}
+                  className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all disabled:opacity-50"
+                >
+                  {isAuthenticating ? 'Registrando...' : 'Crear Cuenta y Continuar'}
+                </button>
+              </div>
               
-              <button onClick={() => setStep(5)} className="w-full text-center text-sm font-bold text-gray-400 hover:text-gray-600 mt-4">(Simular Login Exitoso para demo)</button>
+              <button onClick={() => setStep(5)} className="w-full text-center text-sm font-bold text-gray-400 hover:text-gray-600 mt-6">(Simular Login Exitoso para demo)</button>
 
               <div className="mt-10 pt-6 border-t border-gray-100 flex justify-start">
                 <button onClick={handleBack} className="text-gray-500 hover:text-gray-900 font-bold">Atrás</button>
@@ -321,12 +413,26 @@ export default function CrearRifaWizard() {
                 <p className="text-4xl font-black text-gray-900">{formatMoney(platformFee)}</p>
               </div>
 
+              {error && (
+                <div className="mb-6 bg-red-50 text-red-600 p-4 rounded-xl text-sm font-semibold border border-red-100 flex items-start gap-2">
+                  <span>⚠️</span> {error}
+                </div>
+              )}
+
               <div className="space-y-3">
-                <button onClick={handleNext} className="w-full bg-[#009ee3] hover:bg-[#0089c4] text-white px-8 py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2">
-                   Pagar con MercadoPago
+                <button 
+                  onClick={handlePayment} 
+                  disabled={isSubmitting}
+                  className="w-full bg-[#009ee3] hover:bg-[#0089c4] text-white px-8 py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                >
+                   {isSubmitting ? 'Procesando pago...' : 'Pagar con MercadoPago'}
                 </button>
-                <button onClick={handleNext} className="w-full bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2">
-                   Pagar con ePayco
+                <button 
+                  onClick={handlePayment} 
+                  disabled={isSubmitting}
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                >
+                   {isSubmitting ? 'Procesando pago...' : 'Pagar con ePayco'}
                 </button>
               </div>
               
