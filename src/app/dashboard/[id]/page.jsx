@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import DashboardClient from '../../../components/DashboardClient'
+import { cleanExpiredTickets } from '../../../utils/cleanup'
 
 export default async function RaffleDashboard({ params }) {
   const { id } = await params
@@ -20,6 +21,9 @@ export default async function RaffleDashboard({ params }) {
   if (raffleError || raffle.user_id !== user.id) {
     redirect('/dashboard')
   }
+
+  // JIT Cleanup before fetching tickets
+  await cleanExpiredTickets(id)
 
   // Fetch all tickets for this raffle
   const { data: tickets, error: ticketsError } = await supabase

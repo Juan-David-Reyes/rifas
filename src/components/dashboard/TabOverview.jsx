@@ -1,4 +1,4 @@
-import { DollarSign, BarChart3, Users, Search } from 'lucide-react'
+import { DollarSign, BarChart3, Users, Search, XCircle, Image as ImageIcon, Undo2 } from 'lucide-react'
 import { formatMoney, formatTicketNumber } from '../../utils/formatters'
 
 export default function TabOverview({
@@ -12,6 +12,8 @@ export default function TabOverview({
   searchTerm,
   setSearchTerm,
   handleApprovePayment,
+  handleRejectPayment,
+  handleRevertPayment,
   isApproving
 }) {
   return (
@@ -124,15 +126,55 @@ export default function TabOverview({
                     <div className="text-blue-700 font-black text-lg">
                       ${formatMoney(buyer.amountToPay)}
                     </div>
-                    {buyer.status === 'reservado' && (
-                      <button
-                        onClick={() => handleApprovePayment(buyer.name)}
-                        disabled={isApproving === buyer.name}
-                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-1.5 px-4 rounded-lg text-sm shadow transition-colors disabled:opacity-50"
-                      >
-                        {isApproving === buyer.name ? 'Aprobando...' : 'Aprobar Pago'}
-                      </button>
-                    )}
+                    
+                    <div className="flex flex-col gap-2 w-full sm:w-auto">
+                      {buyer.receipt_url && (
+                        <a 
+                          href={buyer.receipt_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-1.5 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 py-1.5 px-3 rounded-lg transition-colors border border-blue-200"
+                        >
+                          <ImageIcon className="w-3.5 h-3.5" />
+                          Ver Comprobante
+                        </a>
+                      )}
+                      
+                      {buyer.status === 'reservado' && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleRejectPayment(buyer.name)}
+                            disabled={isApproving === buyer.name}
+                            className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-1.5 px-3 rounded-lg text-sm shadow-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-1 flex-1 sm:flex-none"
+                            title="Rechazar y liberar números"
+                          >
+                            <XCircle className="w-4 h-4" />
+                            Rechazar
+                          </button>
+                          <button
+                            onClick={() => handleApprovePayment(buyer.name)}
+                            disabled={isApproving === buyer.name}
+                            className="bg-green-500 hover:bg-green-600 text-white font-bold py-1.5 px-4 rounded-lg text-sm shadow transition-colors disabled:opacity-50 flex-1 sm:flex-none"
+                          >
+                            {isApproving === buyer.name ? 'Aprobando...' : 'Aprobar'}
+                          </button>
+                        </div>
+                      )}
+                      
+                      {buyer.status === 'comprado' && (
+                        <div className="flex gap-2 mt-1 justify-end">
+                          <button
+                            onClick={() => handleRevertPayment(buyer.name)}
+                            disabled={isApproving === buyer.name}
+                            className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-1.5 px-3 rounded-lg text-sm shadow-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-1 flex-1 sm:flex-none"
+                            title="Deshacer aprobación y liberar números"
+                          >
+                            <Undo2 className="w-4 h-4" />
+                            Revertir
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))

@@ -10,7 +10,7 @@ export function createAdminClient() {
 
   if (!supabaseUrl || !supabaseServiceKey) {
     console.warn('⚠️ SUPABASE_SERVICE_ROLE_KEY no está definida en .env.local')
-    // Creamos un cliente dummy o fallamos si se intenta usar sin la llave
+    return null
   }
 
   return createClient(supabaseUrl, supabaseServiceKey, {

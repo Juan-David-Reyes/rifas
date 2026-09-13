@@ -1,38 +1,41 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import { createClient } from '../../utils/supabase/server'
 
-export async function sendOtp(email) {
+export async function login(formData) {
   const supabase = await createClient()
   
-  const { error } = await supabase.auth.signInWithOtp({
-    email: email,
-    options: {
-      shouldCreateUser: true // Permitimos que nuevos usuarios se registren
-    }
-  })
-
-  if (error) {
-    return { error: 'No pudimos enviar el código. Verifica el correo e intenta de nuevo.' }
+  const data = {
+    email: formData.get('email'),
+    password: formData.get('password'),
   }
 
-  return { success: true }
-}
-
-export async function verifyOtpCode(email, code) {
-  const supabase = await createClient()
-
-  const { error } = await supabase.auth.verifyOtp({
-    email,
-    token: code,
-    type: 'email'
-  })
+  const { error } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
-    return { error: 'El código es incorrecto o ha expirado.' }
+    return redirect('/login?message=Error de autenticación: Verifica tus credenciales')
   }
 
   revalidatePath('/', 'layout')
-  return { success: true }
+  redirect('/dashboard')
+}
+
+export async function signup(formData) {
+  const supabase = await createClient()
+
+  const data = {
+    email: formData.get('email'),
+    password: formData.get('password'),
+  }
+
+  const { error } = await supabase.auth.signUp(data)
+
+  if (error) {
+    return redirect('/login?message=Error al registrarse: ' + error.message)
+  }
+
+  revalidatePath('/', 'layout')
+  redirect('/dashboard')
 }

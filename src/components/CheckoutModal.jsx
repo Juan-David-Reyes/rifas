@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { createClient } from '../utils/supabase/client';
-import { Clock, Copy, CheckCircle2, MessageCircle } from 'lucide-react';
+import { Clock, Copy, CheckCircle2, MessageCircle, Upload, Image as ImageIcon } from 'lucide-react';
 import { formatMoney, formatTicketNumber } from '../utils/formatters';
+import { uploadReceiptAction } from '../utils/uploadAction';
 
 export default function CheckoutModal({ 
   selectedTickets, 
@@ -21,6 +22,8 @@ export default function CheckoutModal({
   const [hasSentWhatsApp, setHasSentWhatsApp] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [buyerName, setBuyerName] = useState('');
+  const [receiptFile, setReceiptFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -135,22 +138,43 @@ export default function CheckoutModal({
     setTimeout(() => setCopiedAccount(null), 2000);
   };
 
-  const handleWhatsApp = async () => {
-    if (buyerName.trim()) {
-      try {
-        await supabase
-          .from('tickets')
-          .update({ buyer_name: buyerName.trim() })
-          .in('id', getDbTicketIds());
-      } catch (err) {
-        console.error("Error guardando el nombre", err);
-      }
+  const handleUploadAndNotify = async () => {
+    if (!buyerName.trim() || !receiptFile) return;
+    
+    setIsUploading(true);
+    setError(null);
+    let receiptUrl = null;
+
+    try {
+      // 1. Subir la imagen a Supabase Storage via Server Action
+      const formData = new FormData();
+      formData.append('file', receiptFile);
+      
+      receiptUrl = await uploadReceiptAction(formData);
+
+      // 2. Actualizar la base de datos con nombre y receipt_url
+      const { error: dbError } = await supabase
+        .from('tickets')
+        .update({ 
+          buyer_name: buyerName.trim(),
+          receipt_url: receiptUrl 
+        })
+        .in('id', getDbTicketIds());
+
+      if (dbError) throw dbError;
+
+    } catch (err) {
+      console.error("Error al procesar pago", err);
+      setError("Error al subir el comprobante. Por favor intenta de nuevo.");
+      setIsUploading(false);
+      return;
     }
 
+    setIsUploading(false);
     setHasSentWhatsApp(true); 
     
+    // 3. Redirigir a WhatsApp
     let phone = raffle.whatsapp_number || raffle.payment_account_number || "3209513083";
-    // Si el número es colombiano de 10 dígitos y no tiene el 57, se lo agregamos por defecto
     if (phone.length === 10 && !phone.startsWith("57")) {
       phone = "57" + phone;
     }
@@ -158,18 +182,16 @@ export default function CheckoutModal({
     const formattedTickets = selectedTickets.map(id => formatTicketNumber(id)).join(', ');
     const totalStr = `$${formatMoney(totalAPagar)}`;
     
-    // Fallback template just in case
-    const defaultTemplate = '¡Hola! Acabo de transferir {{total}} por los números: {{boletas}}. Soy {{nombre}}. Aquí está mi comprobante.';
+    const defaultTemplate = '¡Hola! Ya cargué mi comprobante por {{total}} de los números: {{boletas}}. Soy {{nombre}}.';
     let rawTemplate = raffle.whatsapp_template || defaultTemplate;
     
-    // Replace Magic Variables
     let message = rawTemplate
       .replace(/{{nombre}}/g, buyerName.trim() || 'un comprador')
       .replace(/{{boletas}}/g, formattedTickets)
       .replace(/{{total}}/g, totalStr);
 
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-    window.location.href = url;
+    window.open(url, '_blank'); // Open in new tab so they stay on success screen
     setIsSuccess(true);
   };
 
@@ -283,16 +305,49 @@ export default function CheckoutModal({
               <div className="space-y-3 pt-2">
                 <h3 className="font-bold text-gray-900 flex items-center">
                   <span className="bg-gray-100 text-gray-600 w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">3</span>
-                  Envía el comprobante
+                  Sube tu comprobante
                 </h3>
                 
+                <div className="relative border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:bg-gray-50 transition-colors">
+                  <input 
+                    type="file" 
+                    accept="image/*,.pdf"
+                    onChange={(e) => setReceiptFile(e.target.files[0])}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  />
+                  {!receiptFile ? (
+                    <div className="flex flex-col items-center justify-center space-y-2 pointer-events-none">
+                      <Upload className="w-8 h-8 text-gray-400" />
+                      <span className="text-sm font-medium text-gray-600">Toca para seleccionar imagen</span>
+                      <span className="text-xs text-gray-400">JPG, PNG o PDF</span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center space-y-2 pointer-events-none">
+                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <ImageIcon className="w-5 h-5 text-green-600" />
+                      </div>
+                      <span className="text-sm font-bold text-gray-900 truncate max-w-full px-4">{receiptFile.name}</span>
+                      <span className="text-xs text-primary-600 font-bold">Cambiar archivo</span>
+                    </div>
+                  )}
+                </div>
+
                 <button 
-                  onClick={handleWhatsApp}
-                  disabled={buyerName.trim() === ''}
-                  className="w-full bg-[#25D366] hover:bg-[#1ebd5b] active:bg-[#1a9d4b] disabled:bg-gray-300 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none text-white font-bold py-4 rounded-xl shadow-lg shadow-green-200 flex items-center justify-center space-x-2 transition-all transform active:scale-95"
+                  onClick={handleUploadAndNotify}
+                  disabled={buyerName.trim() === '' || !receiptFile || isUploading}
+                  className="w-full bg-[#25D366] hover:bg-[#1ebd5b] active:bg-[#1a9d4b] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl shadow-lg shadow-green-200 flex items-center justify-center space-x-2 transition-all"
                 >
-                  <MessageCircle className="w-6 h-6" />
-                  <span>Enviar a WhatsApp</span>
+                  {isUploading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Subiendo comprobante...</span>
+                    </>
+                  ) : (
+                    <>
+                      <MessageCircle className="w-6 h-6" />
+                      <span>Notificar Pago vía WhatsApp</span>
+                    </>
+                  )}
                 </button>
               </div>
 

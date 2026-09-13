@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { createClient } from '../utils/supabase/client';
+import { differenceInMinutes, parseISO } from 'date-fns';
 import TabOverview from './dashboard/TabOverview';
 import TabDetails from './dashboard/TabDetails';
 import TabPayments from './dashboard/TabPayments';
+import { approvePaymentAction, rejectPaymentAction } from '../utils/adminActions';
 import TabWhatsApp from './dashboard/TabWhatsApp';
 
 export default function DashboardClient({ raffle, initialTickets, user }) {
@@ -18,6 +20,15 @@ export default function DashboardClient({ raffle, initialTickets, user }) {
   const [success, setSuccess] = useState(false);
   const [isApproving, setIsApproving] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [now, setNow] = useState(new Date());
+
+  // Lazy evaluation timer
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(new Date());
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const [formData, setFormData] = useState({
     title: raffle.title || '',
@@ -97,12 +108,11 @@ export default function DashboardClient({ raffle, initialTickets, user }) {
 
     setIsApproving(buyerName);
     try {
-      const { error } = await supabase
-        .from('tickets')
-        .update({ status: 'comprado' })
-        .in('id', ticketIdsToApprove);
-
-      if (error) throw error;
+      await approvePaymentAction(ticketIdsToApprove);
+      // Optimistic UI Update
+      setTickets(current => current.map(t => 
+        ticketIdsToApprove.includes(t.id) ? { ...t, status: 'comprado' } : t
+      ));
     } catch (error) {
       alert("Error al aprobar pago: " + error.message);
     } finally {
@@ -110,32 +120,118 @@ export default function DashboardClient({ raffle, initialTickets, user }) {
     }
   };
 
-  // Cálculos Financieros
+  const handleRejectPayment = async (buyerName) => {
+    const reason = window.prompt(`¿Por qué vas a rechazar el pago de ${buyerName}? (Obligatorio para auditoría)`);
+    if (!reason || !reason.trim()) {
+      alert("Debes proporcionar un motivo para rechazar el pago.");
+      return;
+    }
+    
+    const ticketIdsToReject = tickets
+      .filter(t => t.buyer_name === buyerName && t.status === 'reservado')
+      .map(t => t.id);
+
+    if (ticketIdsToReject.length === 0) return;
+
+    setIsApproving(buyerName);
+    try {
+      await rejectPaymentAction(ticketIdsToReject, {
+        raffleId: raffle.id,
+        organizerId: user.id,
+        buyerName: buyerName,
+        actionType: 'RECHAZO',
+        reason: reason.trim(),
+        ticketCount: ticketIdsToReject.length
+      });
+      // Optimistic UI Update
+      setTickets(current => current.map(t => 
+        ticketIdsToReject.includes(t.id) 
+          ? { ...t, status: 'disponible', reserved_at: null, buyer_name: null, receipt_url: null } 
+          : t
+      ));
+    } catch (error) {
+      alert("Error al rechazar pago: " + error.message);
+    } finally {
+      setIsApproving(null);
+    }
+  };
+
+  const handleRevertPayment = async (buyerName) => {
+    const reason = window.prompt(`¿Por qué vas a REVERTIR el pago ya aprobado de ${buyerName}? (Obligatorio para auditoría)`);
+    if (!reason || !reason.trim()) {
+      alert("Debes proporcionar un motivo para revertir el pago.");
+      return;
+    }
+    
+    const ticketIdsToRevert = tickets
+      .filter(t => t.buyer_name === buyerName && t.status === 'comprado')
+      .map(t => t.id);
+
+    if (ticketIdsToRevert.length === 0) return;
+
+    setIsApproving(buyerName);
+    try {
+      await rejectPaymentAction(ticketIdsToRevert, {
+        raffleId: raffle.id,
+        organizerId: user.id,
+        buyerName: buyerName,
+        actionType: 'REVERSION',
+        reason: reason.trim(),
+        ticketCount: ticketIdsToRevert.length
+      });
+      // Optimistic UI Update
+      setTickets(current => current.map(t => 
+        ticketIdsToRevert.includes(t.id) 
+          ? { ...t, status: 'disponible', reserved_at: null, buyer_name: null, receipt_url: null } 
+          : t
+      ));
+    } catch (error) {
+      alert("Error al revertir pago: " + error.message);
+    } finally {
+      setIsApproving(null);
+    }
+  };
+
   const PRECIO_POR_TICKET = raffle.ticket_price || 10000;
-  // Ya no asumimos pares, cálculo individual
   const totalTicketsCount = raffle.total_tickets || 100;
   
-  const reservedTicketsCount = tickets.filter(t => t.status === 'reservado').length;
-  const boughtTicketsCount = tickets.filter(t => t.status === 'comprado').length;
+  // Filtrar y procesar tickets con Lazy Evaluation
+  const validTickets = tickets.map(t => {
+    if (t.status === 'reservado' && t.reserved_at) {
+      const minutesPassed = differenceInMinutes(now, parseISO(t.reserved_at));
+      if (minutesPassed >= 15) {
+        return { ...t, status: 'disponible', buyer_name: null };
+      }
+    }
+    return t;
+  });
+
+  const reservedTicketsCount = validTickets.filter(t => t.status === 'reservado').length;
+  const boughtTicketsCount = validTickets.filter(t => t.status === 'comprado').length;
   const availableTicketsCount = totalTicketsCount - (reservedTicketsCount + boughtTicketsCount);
 
   const totalCollected = boughtTicketsCount * PRECIO_POR_TICKET;
   const totalReservedAmount = reservedTicketsCount * PRECIO_POR_TICKET;
   const expectedTotal = totalTicketsCount * PRECIO_POR_TICKET;
 
-  // Agrupar Compradores
+  // Agrupar Compradores usando validTickets
   const buyersGroup = {};
-  tickets.filter(t => t.status === 'comprado' || t.status === 'reservado').forEach(t => {
+  validTickets.filter(t => t.status === 'comprado' || t.status === 'reservado').forEach(t => {
     const key = t.buyer_name ? t.buyer_name.trim().toLowerCase() : 'desconocido_' + t.ticket_number;
     if (!buyersGroup[key]) {
       buyersGroup[key] = {
         name: t.buyer_name || 'Sin Nombre',
         phone: t.buyer_phone || '',
+        receipt_url: t.receipt_url || null,
         numbers: [],
         status: t.status 
       };
     }
     buyersGroup[key].numbers.push(String(t.ticket_number).padStart(2, '0'));
+    // Si algún ticket tiene el receipt_url, lo actualizamos por si los anteriores eran nulos
+    if (t.receipt_url && !buyersGroup[key].receipt_url) {
+      buyersGroup[key].receipt_url = t.receipt_url;
+    }
     if (t.status === 'comprado') buyersGroup[key].status = 'comprado';
   });
 
@@ -189,6 +285,8 @@ export default function DashboardClient({ raffle, initialTickets, user }) {
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           handleApprovePayment={handleApprovePayment}
+          handleRejectPayment={handleRejectPayment}
+          handleRevertPayment={handleRevertPayment}
           isApproving={isApproving}
         />
       )}
