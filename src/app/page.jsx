@@ -1,8 +1,16 @@
 import Link from 'next/link';
 import { Ticket, Users, Zap, ShieldCheck, ArrowRight, Share2, DollarSign } from 'lucide-react';
 import FaqAccordion from '../components/FaqAccordion';
+import { getSiteSettings } from '../utils/settingsActions';
 
-export default function LandingPage() {
+// Forzar actualización dinámica si se cambia la db
+export const dynamic = 'force-dynamic'
+
+export default async function LandingPage() {
+  const settings = await getSiteSettings()
+  
+  const heroTitle = settings?.hero_title || 'Crea tu Rifa Virtual en 5 Minutos'
+  const heroSubtitle = settings?.hero_subtitle || 'Organiza sorteos y recauda fondos de forma 100% automatizada. Sin mensualidades ni comisiones por ventas, el dinero va directo a tu cuenta.'
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -21,13 +29,19 @@ export default function LandingPage() {
                 La nueva forma de gestionar sorteos
               </div>
               <h1 className="text-5xl lg:text-6xl xl:text-7xl font-black text-gray-900 font-heading mb-6 leading-tight tracking-tight">
-                Crea tu Rifa Virtual <br className="hidden lg:block"/> 
-                <span className="text-transparent bg-clip-text bg-linear-to-r from-primary-600 to-green-400">
-                  en 5 Minutos
-                </span>
+                {heroTitle.split(' en ').length > 1 ? (
+                  <>
+                    {heroTitle.split(' en ')[0]} <br className="hidden lg:block"/> 
+                    <span className="text-transparent bg-clip-text bg-linear-to-r from-primary-600 to-green-400">
+                      en {heroTitle.split(' en ')[1]}
+                    </span>
+                  </>
+                ) : (
+                  heroTitle
+                )}
               </h1>
               <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed">
-                Organiza sorteos y recauda fondos de forma 100% automatizada. Sin mensualidades ni comisiones por ventas, el dinero va directo a tu cuenta.
+                {heroSubtitle}
               </p>
               
               <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">

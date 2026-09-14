@@ -3,10 +3,16 @@ import Link from 'next/link';
 
 import MarketingLayout from '../components/MarketingLayout';
 
-export const metadata = {
-  title: 'Rifas.io - Crea y administra tus rifas fácilmente',
-  description: 'La plataforma definitiva para crear y gestionar rifas solidarias, sorteos y loterías personales.',
-};
+import { getSiteSettings } from '../utils/settingsActions';
+
+export async function generateMetadata() {
+  const settings = await getSiteSettings()
+  
+  return {
+    title: settings?.seo_title || 'Rifas.io - Crea y administra tus rifas fácilmente',
+    description: settings?.seo_description || 'La plataforma definitiva para crear y gestionar rifas solidarias, sorteos y loterías personales.',
+  }
+}
 
 export default function RootLayout({ children }) {
   return (
