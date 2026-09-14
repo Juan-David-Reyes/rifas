@@ -1,7 +1,7 @@
 import { createClient } from '../../utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { LayoutDashboard, Globe, Settings, ArrowLeft, Ticket, FileText, DollarSign } from 'lucide-react'
+import { LayoutDashboard, Globe, Settings, ArrowLeft, Ticket, FileText, DollarSign, Users, Shield } from 'lucide-react'
 
 export default async function AdminLayout({ children }) {
   const supabase = await createClient()
@@ -40,6 +40,13 @@ export default async function AdminLayout({ children }) {
             <LayoutDashboard className="w-5 h-5 text-gray-400" />
             Métricas y Auditoría
           </Link>
+          <Link 
+            href="/admin/usuarios"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
+          >
+            <Users className="w-5 h-5 text-orange-400" />
+            Usuarios y Clientes
+          </Link>
 
           <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-2 mt-6">Configuración CMS</div>
           <Link 
@@ -62,6 +69,13 @@ export default async function AdminLayout({ children }) {
           >
             <DollarSign className="w-5 h-5 text-green-400" />
             Monetización y Tarifas
+          </Link>
+          <Link 
+            href="/admin/sistema"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
+          >
+            <Shield className="w-5 h-5 text-red-400" />
+            Sistema y Seguridad
           </Link>
         </nav>
 

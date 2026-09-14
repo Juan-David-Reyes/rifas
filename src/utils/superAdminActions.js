@@ -46,5 +46,50 @@ export async function banUserAction(userId, isBanning) {
   }
 
   revalidatePath('/admin')
+  revalidatePath('/admin/usuarios')
   return true
 }
+
+export async function getAllUsersData() {
+  const supabaseAdmin = createAdminClient()
+  if (!supabaseAdmin) throw new Error("Service key missing")
+
+  // 1. Obtener todos los usuarios de Auth
+  const { data: authData, error: authError } = await supabaseAdmin.auth.admin.listUsers()
+  
+  if (authError) {
+    console.error("Error fetching auth users:", authError)
+    throw new Error('No se pudieron obtener los usuarios')
+  }
+
+  const authUsers = authData.users || []
+
+  // 2. Obtener el conteo de rifas por usuario (agrupación manual rápida)
+  const { data: raffles, error: rafflesError } = await supabaseAdmin
+    .from('raffles')
+    .select('user_id')
+
+  if (rafflesError) {
+    console.error("Error fetching raffles for users:", rafflesError)
+    throw new Error('No se pudieron obtener los conteos de rifas')
+  }
+
+  const raffleCounts = {}
+  raffles.forEach(r => {
+    raffleCounts[r.user_id] = (raffleCounts[r.user_id] || 0) + 1
+  })
+
+  // 3. Combinar datos
+  const usersWithData = authUsers.map(u => ({
+    id: u.id,
+    email: u.email,
+    created_at: u.created_at,
+    last_sign_in_at: u.last_sign_in_at,
+    is_banned: !!u.banned_until,
+    raffle_count: raffleCounts[u.id] || 0
+  }))
+
+  // Ordenar por cantidad de rifas (descendente)
+  return usersWithData.sort((a, b) => b.raffle_count - a.raffle_count)
+}
+

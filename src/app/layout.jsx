@@ -14,7 +14,25 @@ export async function generateMetadata() {
   }
 }
 
-export default function RootLayout({ children }) {
+import { createClient } from '../utils/supabase/server';
+
+export default async function RootLayout({ children }) {
+  const settings = await getSiteSettings()
+  
+  // Checking admin status for maintenance mode override
+  let isAdmin = false;
+  if (settings?.maintenance_mode) {
+    try {
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      isAdmin = user?.email === process.env.ADMIN_EMAIL;
+    } catch (e) {
+      // Ignorar errores de sesión
+    }
+  }
+
+  const showMaintenance = settings?.maintenance_mode && !isAdmin;
+
   return (
     <html lang="es">
       <head>
@@ -23,9 +41,30 @@ export default function RootLayout({ children }) {
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-screen flex flex-col font-body bg-gray-50 text-gray-700">
-        <MarketingLayout>
-          {children}
-        </MarketingLayout>
+        {showMaintenance ? (
+          <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-8 mx-auto">
+              <span className="text-4xl">🛠️</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-black font-heading text-gray-900 mb-4">
+              Estamos en Mantenimiento
+            </h1>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10">
+              Estamos realizando mejoras importantes en la plataforma para ofrecerte un mejor servicio. Volveremos a estar en línea muy pronto.
+            </p>
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-amber-50 text-amber-700 font-bold border border-amber-200">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+              Trabajando en actualizaciones
+            </div>
+            {isAdmin && (
+              <p className="mt-8 text-sm text-gray-400">Si eres admin, deberías poder ver la app (esto no debería renderizarse para ti).</p>
+            )}
+          </div>
+        ) : (
+          <MarketingLayout>
+            {children}
+          </MarketingLayout>
+        )}
       </body>
     </html>
   );
