@@ -59,7 +59,16 @@ export default async function LandingPage() {
                   <DollarSign className="w-4 h-4" />
                 </div>
                 <p>
-                  <strong>Único pago:</strong> El valor de 1 boleta de tu rifa <span className="text-gray-400 font-normal">(Mín. $10.000 COP)</span>.
+                  <strong>Único pago:</strong>{' '}
+                  {settings?.fee_type === 'fixed' ? (
+                    <>
+                      ${(settings?.fee_fixed || 20000).toLocaleString('es-CO')} COP por rifa creada.
+                    </>
+                  ) : (
+                    <>
+                      El valor de 1 boleta de tu rifa <span className="text-gray-400 font-normal">(Mín. $10.000 COP)</span>.
+                    </>
+                  )}
                 </p>
               </div>
               
