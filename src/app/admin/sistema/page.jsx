@@ -1,7 +1,7 @@
 import { getSiteSettings } from '../../../utils/settingsActions'
 import SistemaClient from './SistemaClient'
-
 import { createAdminClient } from '../../../utils/supabase/admin'
+import { Shield } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -38,15 +38,22 @@ export default async function SistemaPage() {
   }
   
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-black font-heading text-gray-900">Sistema y Seguridad</h1>
-        <p className="text-gray-500 mt-2">
-          Control maestro de la plataforma. Usa estos interruptores con precaución para pausar operaciones de forma global.
-        </p>
+    <div className="flex-1 flex flex-col min-h-0">
+      <div className="md:sticky md:top-0 z-20 bg-white border-b border-gray-200 px-6 py-4 md:px-8">
+        <div className="max-w-6xl mx-auto w-full">
+          <h1 className="text-2xl font-black font-heading text-gray-900 flex items-center gap-3">
+            <Shield className="w-8 h-8 text-red-500" />
+            Sistema y Seguridad
+          </h1>
+          <p className="text-gray-500 text-[15px] font-normal">
+            Control maestro de la plataforma. Usa estos interruptores con precaución para pausar operaciones de forma global.
+          </p>
+        </div>
       </div>
 
-      <SistemaClient initialSettings={settings} auditLogs={enrichedLogs} />
+      <div className="p-6 md:p-8 max-w-6xl mx-auto w-full space-y-6">
+        <SistemaClient initialSettings={settings} auditLogs={enrichedLogs} />
+      </div>
     </div>
   )
 }
