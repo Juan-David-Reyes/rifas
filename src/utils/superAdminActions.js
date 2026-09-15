@@ -64,19 +64,20 @@ export async function getAllUsersData() {
 
   const authUsers = authData.users || []
 
-  // 2. Obtener el conteo de rifas por usuario (agrupación manual rápida)
+  // 2. Obtener las rifas y agrupar por usuario
   const { data: raffles, error: rafflesError } = await supabaseAdmin
     .from('raffles')
-    .select('user_id')
+    .select('id, title, status, created_at, ticket_price, user_id')
 
   if (rafflesError) {
     console.error("Error fetching raffles for users:", rafflesError)
-    throw new Error('No se pudieron obtener los conteos de rifas')
+    throw new Error('No se pudieron obtener las rifas')
   }
 
-  const raffleCounts = {}
+  const userRaffles = {}
   raffles.forEach(r => {
-    raffleCounts[r.user_id] = (raffleCounts[r.user_id] || 0) + 1
+    if (!userRaffles[r.user_id]) userRaffles[r.user_id] = []
+    userRaffles[r.user_id].push(r)
   })
 
   // 3. Combinar datos
@@ -86,7 +87,8 @@ export async function getAllUsersData() {
     created_at: u.created_at,
     last_sign_in_at: u.last_sign_in_at,
     is_banned: !!u.banned_until,
-    raffle_count: raffleCounts[u.id] || 0
+    raffle_count: userRaffles[u.id]?.length || 0,
+    raffles: userRaffles[u.id] || []
   }))
 
   // Ordenar por cantidad de rifas (descendente)

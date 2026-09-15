@@ -35,36 +35,16 @@ export default async function AdminDashboardPage() {
     .from('raffles')
     .select('id, title, created_at, user_id, ticket_price, status')
     .order('created_at', { ascending: false })
+    .limit(5)
 
-  const totalRaffles = raffles?.length || 0
+  // Para el conteo total, usamos count
+  const { count: totalRaffles } = await supabaseAdmin
+    .from('raffles')
+    .select('*', { count: 'exact', head: true })
 
   // 3. Calcular Ingresos de la Plataforma (Costo de activación = 10,000 COP por rifa por ahora)
   const platformFee = 10000
-  const totalRevenue = totalRaffles * platformFee
-
-  // 4. Obtener logs de auditoría (Anti-Fraude)
-  let enrichedLogs = []
-  try {
-    const { data: logs } = await supabaseAdmin
-      .from('audit_logs')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(50)
-      
-    if (logs) {
-      enrichedLogs = logs.map(log => {
-        const raffle = raffles?.find(r => r.id === log.raffle_id)
-        const user = usersData?.users?.find(u => u.id === log.organizer_id)
-        return {
-          ...log,
-          raffle_title: raffle?.title || 'Rifa Desconocida',
-          organizer_email: user?.email || log.organizer_id
-        }
-      })
-    }
-  } catch (err) {
-    console.error("No se pudo cargar la auditoría", err)
-  }
+  const totalRevenue = (totalRaffles || 0) * platformFee
 
   return (
     <div className="space-y-8">
@@ -174,75 +154,6 @@ export default async function AdminDashboardPage() {
                     </td>
                   </tr>
                 )})
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Tabla de Auditoría Anti-Fraude */}
-      <div className="bg-white rounded-2xl shadow-sm border border-red-100 overflow-hidden mt-8">
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-red-50/30">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center border border-red-200">
-              <ShieldAlert className="w-5 h-5 text-red-600" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">Registro de Auditoría (Anti-Fraude)</h2>
-              <p className="text-gray-500 text-sm font-medium">Monitorea rechazos y reversiones sospechosas por parte de organizadores.</p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50/80 border-b border-gray-100">
-              <tr>
-                <th className="px-6 py-4 font-bold text-gray-700 uppercase text-xs tracking-wider">Fecha</th>
-                <th className="px-6 py-4 font-bold text-gray-700 uppercase text-xs tracking-wider">Organizador (ID)</th>
-                <th className="px-6 py-4 font-bold text-gray-700 uppercase text-xs tracking-wider">Acción</th>
-                <th className="px-6 py-4 font-bold text-gray-700 uppercase text-xs tracking-wider">Comprador Afectado</th>
-                <th className="px-6 py-4 font-bold text-gray-700 uppercase text-xs tracking-wider">Números</th>
-                <th className="px-6 py-4 font-bold text-gray-700 uppercase text-xs tracking-wider">Motivo Declarado</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {enrichedLogs.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="px-6 py-12 text-center text-gray-500 font-medium">
-                    No hay registros de auditoría. (Verifica si la tabla audit_logs ya fue creada en Supabase).
-                  </td>
-                </tr>
-              ) : (
-                enrichedLogs.map(log => (
-                  <tr key={log.id} className="hover:bg-red-50/30 transition-colors">
-                    <td className="px-6 py-4 text-gray-500 font-medium whitespace-nowrap">
-                      {new Date(log.created_at).toLocaleDateString('es-CO', { 
-                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                      })}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-gray-900 mb-0.5">{log.organizer_email}</div>
-                      <div className="text-xs text-gray-500 truncate max-w-[150px]">{log.raffle_title}</div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`px-2.5 py-1 rounded-md text-xs font-bold inline-flex items-center ${log.action_type === 'REVERSION' ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-orange-100 text-orange-700 border border-orange-200'}`}>
-                        {log.action_type}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 font-bold text-gray-900">
-                      {log.buyer_name}
-                    </td>
-                    <td className="px-6 py-4 font-bold text-blue-600">
-                      {log.ticket_count}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-gray-600 bg-gray-50 p-2 rounded-lg border border-gray-100 text-xs italic line-clamp-2" title={log.reason}>
-                        "{log.reason}"
-                      </div>
-                    </td>
-                  </tr>
-                ))
               )}
             </tbody>
           </table>

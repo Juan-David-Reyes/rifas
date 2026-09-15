@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { Search, ShieldAlert, ShieldCheck, Mail, Calendar, Hash, MoreVertical } from 'lucide-react'
+import { Search, ShieldAlert, ShieldCheck, Mail, Calendar, Hash, MoreVertical, Ticket } from 'lucide-react'
 import { banUserAction } from '../../../utils/superAdminActions'
 
 export default function UsuariosClient({ initialUsers }) {
@@ -11,6 +11,7 @@ export default function UsuariosClient({ initialUsers }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [loadingAction, setLoadingAction] = useState(null)
   const [toast, setToast] = useState(null)
+  const [expandedUser, setExpandedUser] = useState(null)
 
   const showToast = (type, message) => {
     setToast({ type, message, visible: false })
@@ -98,7 +99,8 @@ export default function UsuariosClient({ initialUsers }) {
                 </tr>
               ) : (
                 filteredUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                  <React.Fragment key={user.id}>
+                  <tr className={`hover:bg-gray-50 transition-colors cursor-pointer ${expandedUser === user.id ? 'bg-gray-50' : ''}`} onClick={() => setExpandedUser(expandedUser === user.id ? null : user.id)}>
                     <td className="px-6 py-4">
                       <div className="font-bold text-gray-900">{user.email}</div>
                       <div className="text-xs text-gray-400 mt-1">ID: {user.id.substring(0, 8)}...</div>
@@ -107,8 +109,8 @@ export default function UsuariosClient({ initialUsers }) {
                       {format(new Date(user.created_at), "d 'de' MMMM, yyyy", { locale: es })}
                     </td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary-100 text-primary-700 font-black">
-                        {user.raffle_count}
+                      <span className="inline-flex items-center justify-center px-3 h-8 rounded-full bg-primary-100 text-primary-700 font-black gap-2">
+                        {user.raffle_count} <span className="text-[10px] uppercase font-bold text-primary-500">Ver</span>
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -124,7 +126,10 @@ export default function UsuariosClient({ initialUsers }) {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button
-                        onClick={() => handleToggleBan(user.id, user.is_banned, user.email)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleBan(user.id, user.is_banned, user.email)
+                        }}
                         disabled={loadingAction === user.id}
                         className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-sm disabled:opacity-50 ${
                           user.is_banned 
@@ -142,6 +147,49 @@ export default function UsuariosClient({ initialUsers }) {
                       </button>
                     </td>
                   </tr>
+                  
+                  {expandedUser === user.id && (
+                    <tr className="bg-gray-50/50 border-b border-gray-200">
+                      <td colSpan="5" className="p-0">
+                        <div className="px-8 py-6 bg-gray-100/50 inner-shadow">
+                          <h4 className="text-sm font-bold text-gray-700 mb-4 flex items-center gap-2">
+                            <Ticket className="w-4 h-4 text-gray-400" />
+                            Rifas creadas por este usuario ({user.raffle_count})
+                          </h4>
+                          
+                          {user.raffles && user.raffles.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {user.raffles.map(raffle => (
+                                <div key={raffle.id} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+                                  <div>
+                                    <div className="font-bold text-gray-900">{raffle.title}</div>
+                                    <div className="text-xs text-gray-500 mt-1 flex items-center gap-3">
+                                      <span>Creada: {format(new Date(raffle.created_at), "d MMM, yyyy", { locale: es })}</span>
+                                      <span>Boleto: ${raffle.ticket_price}</span>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold inline-flex items-center border ${
+                                      raffle.status === 'ACTIVE' ? 'bg-green-50 text-green-700 border-green-200' : 
+                                      raffle.status === 'PAUSED' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                                      'bg-gray-50 text-gray-700 border-gray-200'
+                                    }`}>
+                                      {raffle.status}
+                                    </span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-center py-4 bg-white rounded-xl border border-dashed border-gray-300 text-gray-500 text-sm">
+                              Este usuario aún no ha creado ninguna rifa.
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                  </React.Fragment>
                 ))
               )}
             </tbody>

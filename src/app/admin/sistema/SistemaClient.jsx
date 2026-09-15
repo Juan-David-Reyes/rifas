@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
 import { Save, AlertTriangle, ShieldAlert, CheckCircle, PowerOff, PauseCircle } from 'lucide-react'
 import { updateSiteSettings } from '../../../utils/settingsActions'
 
-export default function SistemaClient({ initialSettings }) {
+export default function SistemaClient({ initialSettings, auditLogs }) {
   const [isSaving, setIsSaving] = useState(false)
   const [toast, setToast] = useState(null)
   
@@ -46,8 +48,9 @@ export default function SistemaClient({ initialSettings }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-6 md:p-8">
+    <>
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-6 md:p-8">
         
         {/* Switch 1: Modo Mantenimiento */}
         <div className="flex items-start gap-4 p-6 rounded-2xl border-2 transition-all mb-6 relative overflow-hidden bg-white hover:border-gray-300 border-gray-200">
@@ -140,5 +143,73 @@ export default function SistemaClient({ initialSettings }) {
         </div>
       )}
     </form>
+
+      {/* Tabla de Auditoría Anti-Fraude */}
+      <div className="bg-white rounded-2xl shadow-sm border border-red-100 overflow-hidden mt-12">
+        <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-red-50/30">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center border border-red-200">
+              <ShieldAlert className="w-5 h-5 text-red-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">Registro de Auditoría (Anti-Fraude)</h2>
+              <p className="text-gray-500 text-sm font-medium">Monitorea rechazos y reversiones sospechosas por parte de organizadores.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-gray-50/80 border-b border-gray-100">
+              <tr>
+                <th className="px-6 py-4 font-bold text-gray-700 uppercase text-xs tracking-wider">Fecha</th>
+                <th className="px-6 py-4 font-bold text-gray-700 uppercase text-xs tracking-wider">Organizador (ID)</th>
+                <th className="px-6 py-4 font-bold text-gray-700 uppercase text-xs tracking-wider">Acción</th>
+                <th className="px-6 py-4 font-bold text-gray-700 uppercase text-xs tracking-wider">Comprador Afectado</th>
+                <th className="px-6 py-4 font-bold text-gray-700 uppercase text-xs tracking-wider">Números</th>
+                <th className="px-6 py-4 font-bold text-gray-700 uppercase text-xs tracking-wider">Motivo Declarado</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {!auditLogs || auditLogs.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="px-6 py-12 text-center text-gray-500 font-medium">
+                    No hay registros de auditoría. (Verifica si la tabla audit_logs ya fue creada en Supabase).
+                  </td>
+                </tr>
+              ) : (
+                auditLogs.map(log => (
+                  <tr key={log.id} className="hover:bg-red-50/30 transition-colors">
+                    <td className="px-6 py-4 text-gray-500 font-medium whitespace-nowrap">
+                      {format(new Date(log.created_at), "d MMM, hh:mm a", { locale: es })}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="font-bold text-gray-900 mb-0.5">{log.organizer_email}</div>
+                      <div className="text-xs text-gray-500 truncate max-w-[150px]">{log.raffle_title}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2.5 py-1 rounded-md text-xs font-bold inline-flex items-center ${log.action_type === 'REVERSION' ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-orange-100 text-orange-700 border border-orange-200'}`}>
+                        {log.action_type}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 font-bold text-gray-900">
+                      {log.buyer_name}
+                    </td>
+                    <td className="px-6 py-4 font-bold text-blue-600">
+                      {log.ticket_count}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-gray-600 bg-gray-50 p-2 rounded-lg border border-gray-100 text-xs italic line-clamp-2" title={log.reason}>
+                        "{log.reason}"
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
   )
 }
