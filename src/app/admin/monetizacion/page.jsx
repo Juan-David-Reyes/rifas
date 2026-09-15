@@ -1,6 +1,10 @@
 import { getSiteSettings } from '../../../utils/settingsActions'
 import { DollarSign } from 'lucide-react'
-import MonetizacionClient from './MonetizacionClient'
+import nextDynamic from 'next/dynamic'
+
+const MonetizacionClient = nextDynamic(() => import('./MonetizacionClient'), {
+  loading: () => <div className="h-64 flex items-center justify-center text-gray-400 font-medium">Cargando panel...</div>
+})
 
 export const dynamic = 'force-dynamic'
 

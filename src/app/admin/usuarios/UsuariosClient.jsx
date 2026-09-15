@@ -3,15 +3,19 @@
 import React, { useState } from 'react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { Search, ShieldAlert, ShieldCheck, Mail, Calendar, Hash, MoreVertical, Ticket } from 'lucide-react'
+import { Search, ShieldAlert, ShieldCheck, Mail, Calendar, Hash, Ticket, ChevronLeft, ChevronRight } from 'lucide-react'
 import { banUserAction } from '../../../utils/superAdminActions'
 
 export default function UsuariosClient({ initialUsers }) {
-  const [users, setUsers] = useState(initialUsers)
+  const [users, setUsers] = useState(initialUsers || [])
   const [searchQuery, setSearchQuery] = useState('')
   const [loadingAction, setLoadingAction] = useState(null)
   const [toast, setToast] = useState(null)
   const [expandedUser, setExpandedUser] = useState(null)
+
+  // Paginación
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
 
   const showToast = (type, message) => {
     setToast({ type, message, visible: false })
@@ -53,6 +57,16 @@ export default function UsuariosClient({ initialUsers }) {
     u.email.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  // Calcular paginación
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const paginatedUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage)
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value)
+    setCurrentPage(1) // Reset a página 1 al buscar
+  }
+
   return (
     <div className="space-y-6">
       {/* Buscador */}
@@ -62,7 +76,7 @@ export default function UsuariosClient({ initialUsers }) {
           type="text"
           placeholder="Buscar por correo electrónico..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={handleSearchChange}
           className="w-full bg-transparent border-none focus:ring-0 text-gray-700 font-medium outline-none"
         />
       </div>
@@ -91,14 +105,14 @@ export default function UsuariosClient({ initialUsers }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filteredUsers.length === 0 ? (
+              {paginatedUsers.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="px-6 py-12 text-center text-gray-500 font-medium">
                     No se encontraron usuarios.
                   </td>
                 </tr>
               ) : (
-                filteredUsers.map((user) => (
+                paginatedUsers.map((user) => (
                   <React.Fragment key={user.id}>
                   <tr className={`hover:bg-gray-50 transition-colors cursor-pointer ${expandedUser === user.id ? 'bg-gray-50' : ''}`} onClick={() => setExpandedUser(expandedUser === user.id ? null : user.id)}>
                     <td className="px-6 py-4">
@@ -195,6 +209,34 @@ export default function UsuariosClient({ initialUsers }) {
             </tbody>
           </table>
         </div>
+        
+        {/* Controles de Paginación */}
+        {totalPages > 1 && (
+          <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
+            <span className="text-sm text-gray-500 font-medium">
+              Mostrando <span className="font-bold text-gray-900">{startIndex + 1}</span> a <span className="font-bold text-gray-900">{Math.min(startIndex + itemsPerPage, filteredUsers.length)}</span> de <span className="font-bold text-gray-900">{filteredUsers.length}</span> usuarios
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="p-2 rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <div className="text-sm font-bold text-gray-700 px-2">
+                Página {currentPage} de {totalPages}
+              </div>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Toast Notification */}

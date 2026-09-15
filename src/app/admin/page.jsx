@@ -1,4 +1,4 @@
-import { createAdminClient } from '../../utils/supabase/admin'
+import { getAdminDashboardStats } from '../../utils/superAdminActions'
 import { Users, Ticket, DollarSign, Activity, AlertCircle, ShieldAlert, LayoutDashboard } from 'lucide-react'
 import Link from 'next/link'
 import { RaffleStatusButton, BanUserButton } from './AdminControls'
@@ -7,8 +7,6 @@ import { RaffleStatusButton, BanUserButton } from './AdminControls'
 export const dynamic = 'force-dynamic'
 
 export default async function AdminDashboardPage() {
-  const supabaseAdmin = createAdminClient()
-
   // Revisar si la service key está configurada
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return (
@@ -25,24 +23,10 @@ export default async function AdminDashboardPage() {
     )
   }
 
-  // Obtener datos globales usando el Admin Client
-  // 1. Usuarios Totales (desde auth.users)
-  const { data: usersData, error: usersError } = await supabaseAdmin.auth.admin.listUsers()
-  const totalUsers = usersData?.users?.length || 0
+  // Obtener datos globales desde la caché optimizada
+  const { totalUsers, totalRaffles, recentRaffles, usersData } = await getAdminDashboardStats()
 
-  // 2. Rifas Totales y Datos
-  const { data: raffles, error: rafflesError } = await supabaseAdmin
-    .from('raffles')
-    .select('id, title, created_at, user_id, ticket_price, status')
-    .order('created_at', { ascending: false })
-    .limit(5)
-
-  // Para el conteo total, usamos count
-  const { count: totalRaffles } = await supabaseAdmin
-    .from('raffles')
-    .select('*', { count: 'exact', head: true })
-
-  // 3. Calcular Ingresos de la Plataforma (Costo de activación = 10,000 COP por rifa por ahora)
+  // Calcular Ingresos de la Plataforma (Costo de activación = 10,000 COP por rifa por ahora)
   const platformFee = 10000
   const totalRevenue = (totalRaffles || 0) * platformFee
 
@@ -127,13 +111,13 @@ export default async function AdminDashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {!raffles || raffles.length === 0 ? (
+                {!recentRaffles || recentRaffles.length === 0 ? (
                   <tr>
                     <td colSpan="4" className="px-6 py-12 text-center text-gray-500 font-medium">No hay rifas registradas en la plataforma aún.</td>
                   </tr>
                 ) : (
-                  raffles.map(raffle => {
-                    const orgUser = usersData?.users?.find(u => u.id === raffle.user_id)
+                  recentRaffles.map(raffle => {
+                    const orgUser = usersData?.find(u => u.id === raffle.user_id)
                     const isBanned = orgUser?.banned_until != null
                     
                     return (

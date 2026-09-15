@@ -1,6 +1,10 @@
 import { getSiteSettings } from '../../../utils/settingsActions'
-import LegalFormClient from './LegalFormClient'
 import { Scale } from 'lucide-react'
+import nextDynamic from 'next/dynamic'
+
+const LegalFormClient = nextDynamic(() => import('./LegalFormClient'), {
+  loading: () => <div className="h-64 flex items-center justify-center text-gray-400 font-medium">Cargando editor...</div>
+})
 
 // Fuerza que esta ruta sea dinámica (SSR) para que siempre traiga datos frescos del CMS
 export const dynamic = 'force-dynamic'

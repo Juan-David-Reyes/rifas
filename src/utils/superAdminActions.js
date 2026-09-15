@@ -1,7 +1,7 @@
 'use server'
 
 import { createAdminClient } from './supabase/admin'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 
 export async function toggleRaffleStatus(raffleId, newStatus) {
   const supabaseAdmin = createAdminClient()
@@ -18,6 +18,8 @@ export async function toggleRaffleStatus(raffleId, newStatus) {
   }
 
   revalidatePath('/admin')
+  revalidateTag('admin-users')
+  revalidateTag('admin-dashboard')
   return true
 }
 
@@ -47,51 +49,90 @@ export async function banUserAction(userId, isBanning) {
 
   revalidatePath('/admin')
   revalidatePath('/admin/usuarios')
+  revalidateTag('admin-users')
+  revalidateTag('admin-dashboard')
   return true
 }
 
+// Envuelto en unstable_cache para alto rendimiento
+const getCachedUsersData = unstable_cache(
+  async () => {
+    const supabaseAdmin = createAdminClient()
+    if (!supabaseAdmin) throw new Error("Service key missing")
+
+    // 1. Obtener todos los usuarios de Auth
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.listUsers()
+    
+    if (authError) {
+      console.error("Error fetching auth users:", authError)
+      throw new Error('No se pudieron obtener los usuarios')
+    }
+
+    const authUsers = authData.users || []
+
+    // 2. Obtener las rifas y agrupar por usuario
+    const { data: raffles, error: rafflesError } = await supabaseAdmin
+      .from('raffles')
+      .select('id, title, status, created_at, ticket_price, user_id')
+
+    if (rafflesError) {
+      console.error("Error fetching raffles for users:", rafflesError)
+      throw new Error('No se pudieron obtener las rifas')
+    }
+
+    const userRaffles = {}
+    raffles.forEach(r => {
+      if (!userRaffles[r.user_id]) userRaffles[r.user_id] = []
+      userRaffles[r.user_id].push(r)
+    })
+
+    // 3. Combinar datos
+    const usersWithData = authUsers.map(u => ({
+      id: u.id,
+      email: u.email,
+      created_at: u.created_at,
+      last_sign_in_at: u.last_sign_in_at,
+      is_banned: !!u.banned_until,
+      raffle_count: userRaffles[u.id]?.length || 0,
+      raffles: userRaffles[u.id] || []
+    }))
+
+    // Ordenar por cantidad de rifas (descendente)
+    return usersWithData.sort((a, b) => b.raffle_count - a.raffle_count)
+  },
+  ['all-users-data'], // key cache
+  { tags: ['admin-users'], revalidate: 300 } // TTL 5 min o revalidación por tag
+)
+
 export async function getAllUsersData() {
-  const supabaseAdmin = createAdminClient()
-  if (!supabaseAdmin) throw new Error("Service key missing")
-
-  // 1. Obtener todos los usuarios de Auth
-  const { data: authData, error: authError } = await supabaseAdmin.auth.admin.listUsers()
-  
-  if (authError) {
-    console.error("Error fetching auth users:", authError)
-    throw new Error('No se pudieron obtener los usuarios')
-  }
-
-  const authUsers = authData.users || []
-
-  // 2. Obtener las rifas y agrupar por usuario
-  const { data: raffles, error: rafflesError } = await supabaseAdmin
-    .from('raffles')
-    .select('id, title, status, created_at, ticket_price, user_id')
-
-  if (rafflesError) {
-    console.error("Error fetching raffles for users:", rafflesError)
-    throw new Error('No se pudieron obtener las rifas')
-  }
-
-  const userRaffles = {}
-  raffles.forEach(r => {
-    if (!userRaffles[r.user_id]) userRaffles[r.user_id] = []
-    userRaffles[r.user_id].push(r)
-  })
-
-  // 3. Combinar datos
-  const usersWithData = authUsers.map(u => ({
-    id: u.id,
-    email: u.email,
-    created_at: u.created_at,
-    last_sign_in_at: u.last_sign_in_at,
-    is_banned: !!u.banned_until,
-    raffle_count: userRaffles[u.id]?.length || 0,
-    raffles: userRaffles[u.id] || []
-  }))
-
-  // Ordenar por cantidad de rifas (descendente)
-  return usersWithData.sort((a, b) => b.raffle_count - a.raffle_count)
+  return await getCachedUsersData()
 }
+
+// Caché para las métricas globales del dashboard (se revalida cada 5 min o bajo demanda)
+export const getAdminDashboardStats = unstable_cache(
+  async () => {
+    const supabaseAdmin = createAdminClient()
+    if (!supabaseAdmin) throw new Error("Service key missing")
+
+    // 1. Total usuarios
+    const { data: usersData } = await supabaseAdmin.auth.admin.listUsers()
+    const totalUsers = usersData?.users?.length || 0
+
+    // 2. Total rifas
+    const { count: totalRaffles } = await supabaseAdmin
+      .from('raffles')
+      .select('*', { count: 'exact', head: true })
+
+    // 3. Actividad reciente (últimas 5)
+    const { data: recentRaffles } = await supabaseAdmin
+      .from('raffles')
+      .select('id, title, created_at, user_id, ticket_price, status')
+      .order('created_at', { ascending: false })
+      .limit(5)
+
+    return { totalUsers, totalRaffles, recentRaffles: recentRaffles || [], usersData: usersData?.users || [] }
+  },
+  ['admin-dashboard-stats'],
+  { tags: ['admin-dashboard'], revalidate: 300 }
+)
 
