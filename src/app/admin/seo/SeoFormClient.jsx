@@ -52,7 +52,7 @@ export default function SeoFormClient({ initialSettings }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-3xl">
       {/* Sección SEO */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+      <div className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-200">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
           <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center border border-blue-100">
             <Search className="w-5 h-5 text-blue-600" />
@@ -71,7 +71,7 @@ export default function SeoFormClient({ initialSettings }) {
               name="seo_title"
               value={formData.seo_title}
               onChange={handleChange}
-              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-2xl px-4 py-3 font-medium focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
               required
             />
           </div>
@@ -82,7 +82,7 @@ export default function SeoFormClient({ initialSettings }) {
               value={formData.seo_description}
               onChange={handleChange}
               rows="3"
-              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all resize-none"
+              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-2xl px-4 py-3 font-medium focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all resize-none"
               required
             ></textarea>
           </div>
@@ -90,7 +90,7 @@ export default function SeoFormClient({ initialSettings }) {
       </div>
 
       {/* Sección Hero (Homepage) */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+      <div className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-200">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
           <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center border border-purple-100">
             <Type className="w-5 h-5 text-purple-600" />
@@ -109,7 +109,7 @@ export default function SeoFormClient({ initialSettings }) {
               name="hero_title"
               value={formData.hero_title}
               onChange={handleChange}
-              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-2xl px-4 py-3 font-medium focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
               required
             />
           </div>
@@ -120,7 +120,7 @@ export default function SeoFormClient({ initialSettings }) {
               value={formData.hero_subtitle}
               onChange={handleChange}
               rows="3"
-              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all resize-none"
+              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-2xl px-4 py-3 font-medium focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all resize-none"
               required
             ></textarea>
           </div>
@@ -132,7 +132,7 @@ export default function SeoFormClient({ initialSettings }) {
         <button 
           type="submit"
           disabled={isSaving}
-          className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all flex items-center gap-2 disabled:opacity-70"
+          className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-2xl shadow-lg transition-all flex items-center gap-2 disabled:opacity-70"
         >
           {isSaving ? (
             <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
@@ -145,7 +145,7 @@ export default function SeoFormClient({ initialSettings }) {
 
       {/* Toast Notification */}
       {toast && (
-        <div className={`fixed top-6 right-6 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform z-50 ${
+        <div className={`fixed top-6 right-6 px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform z-50 ${
           toast.visible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
         } ${
           toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-gray-900 text-white'

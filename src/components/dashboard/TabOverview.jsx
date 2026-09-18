@@ -44,7 +44,7 @@ export default function TabOverview({
           </div>
         </div>
 
-        <div className="bg-yellow-50 p-6 rounded-2xl border border-yellow-100 flex flex-col justify-center relative overflow-hidden">
+        <div className="bg-yellow-50 p-6 rounded-3xl border border-yellow-100 flex flex-col justify-center relative overflow-hidden">
           <div className="text-yellow-700 text-xs font-bold uppercase tracking-wider mb-2">Por Validar (Pendientes)</div>
           <div className="text-3xl font-black text-yellow-900">${formatMoney(totalReservedAmount)}</div>
         </div>
@@ -53,7 +53,7 @@ export default function TabOverview({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Status Breakdown */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 md:col-span-1 space-y-4 h-fit">
+        <div className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-100 md:col-span-1 space-y-4 h-fit">
           <h3 className="font-bold text-gray-800 flex items-center gap-2 border-b border-gray-100 pb-3">
             <BarChart3 className="w-5 h-5 text-blue-500" /> Estado de Números
           </h3>
@@ -86,7 +86,7 @@ export default function TabOverview({
         </div>
 
         {/* Buyers List */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 md:col-span-2 flex flex-col">
+        <div className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-100 md:col-span-2 flex flex-col">
           <div className="flex justify-between items-center border-b border-gray-100 pb-3 mb-4">
             <h3 className="font-bold text-gray-800 flex items-center gap-2">
               <Users className="w-5 h-5 text-purple-500" /> Compradores Activos
@@ -108,7 +108,7 @@ export default function TabOverview({
               <p className="text-gray-400 text-sm text-center py-8 font-medium">Aún no hay compradores registrados.</p>
             ) : (
               buyersList.map((buyer, idx) => (
-                <div key={idx} className="bg-gray-50 rounded-xl p-4 border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div key={idx} className="bg-gray-50 rounded-2xl p-4 border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <div className="font-bold text-gray-900">{buyer.name}</div>

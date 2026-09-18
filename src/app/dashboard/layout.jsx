@@ -23,11 +23,11 @@ export default async function DashboardLayout({ children }) {
         </div>
         
         <nav className="flex-1 p-4 space-y-2">
-          <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 bg-slate-800 text-white rounded-xl font-medium transition-colors">
+          <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 bg-slate-800 text-white rounded-2xl font-medium transition-colors">
             <Home className="w-5 h-5" />
             Mis Rifas
           </Link>
-          <Link href="/dashboard/settings" className="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-xl font-medium transition-colors">
+          <Link href="/dashboard/settings" className="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-2xl font-medium transition-colors">
             <Settings className="w-5 h-5" />
             Configuración
           </Link>
@@ -35,7 +35,7 @@ export default async function DashboardLayout({ children }) {
         
         <div className="p-4 border-t border-slate-800">
           <form action="/auth/signout" method="POST">
-            <button className="flex w-full items-center justify-center gap-2 px-4 py-3 bg-slate-800 hover:bg-red-900/50 text-slate-300 hover:text-red-400 rounded-xl font-medium transition-colors">
+            <button className="flex w-full items-center justify-center gap-2 px-4 py-3 bg-slate-800 hover:bg-red-900/50 text-slate-300 hover:text-red-400 rounded-2xl font-medium transition-colors">
               <LogOut className="w-5 h-5" />
               Cerrar Sesión
             </button>

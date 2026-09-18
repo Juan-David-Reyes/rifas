@@ -39,6 +39,16 @@ export default function DashboardClient({ raffle, initialTickets, user }) {
     winner_ticket_id: raffle.winner_ticket_id || '',
     payment_method_name: raffle.payment_method_name || 'Nequi',
     payment_account_number: raffle.payment_account_number || '',
+    paymentMethods: (() => {
+      try {
+        if (raffle.payment_account_number && raffle.payment_account_number.startsWith('[')) {
+          const parsed = JSON.parse(raffle.payment_account_number);
+          if (Array.isArray(parsed)) return parsed;
+        }
+      } catch(e) {}
+      // Fallback
+      return [{ bank: raffle.payment_method_name || 'Nequi', account: raffle.payment_account_number || '' }];
+    })(),
     mercadopago_token: raffle.mercadopago_token || '',
     epayco_token: raffle.epayco_token || '',
     whatsapp_number: raffle.whatsapp_number || '',
@@ -79,8 +89,11 @@ export default function DashboardClient({ raffle, initialTickets, user }) {
     try {
       const dataToSave = {
         ...formData,
+        payment_account_number: JSON.stringify(formData.paymentMethods),
+        payment_method_name: 'Múltiples métodos',
         winner_ticket_id: formData.winner_ticket_id ? parseInt(formData.winner_ticket_id) : null
       };
+      delete dataToSave.paymentMethods;
 
       const { error } = await supabase
         .from('raffles')
@@ -251,7 +264,7 @@ export default function DashboardClient({ raffle, initialTickets, user }) {
     <div className="space-y-6">
       
       {/* Tabs Menu */}
-      <div className="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 flex gap-2 overflow-x-auto no-scrollbar">
+      <div className="bg-white p-2 rounded-[32px] shadow-sm border border-gray-100 flex gap-2 overflow-x-auto no-scrollbar">
         {[
           { id: 'overview', label: 'Resumen', icon: '📊' },
           { id: 'details', label: 'Detalles', icon: '✏️' },
@@ -261,7 +274,7 @@ export default function DashboardClient({ raffle, initialTickets, user }) {
           <button 
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`whitespace-nowrap flex items-center gap-2 py-2 px-4 rounded-xl font-bold text-sm transition-all ${
+            className={`whitespace-nowrap flex items-center gap-2 py-2 px-4 rounded-3xl font-bold text-sm transition-all ${
               activeTab === tab.id 
                 ? 'bg-gray-900 text-white shadow-md' 
                 : 'bg-transparent text-gray-500 hover:bg-gray-50 hover:text-gray-900'
@@ -296,12 +309,12 @@ export default function DashboardClient({ raffle, initialTickets, user }) {
         <form onSubmit={handleSaveConfig} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           
           {error && (
-            <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-bold border border-red-100 mb-6 flex items-start gap-2">
+            <div className="bg-red-50 text-red-600 p-4 rounded-2xl text-sm font-bold border border-red-100 mb-6 flex items-start gap-2">
               <span>⚠️</span> {error}
             </div>
           )}
           {success && (
-            <div className="bg-green-50 text-green-700 p-4 rounded-xl text-sm font-bold border border-green-100 mb-6 flex items-start gap-2">
+            <div className="bg-green-50 text-green-700 p-4 rounded-2xl text-sm font-bold border border-green-100 mb-6 flex items-start gap-2">
               <span>✅</span> Configuración actualizada correctamente.
             </div>
           )}
@@ -335,7 +348,7 @@ export default function DashboardClient({ raffle, initialTickets, user }) {
             <button 
               type="submit" 
               disabled={isSaving}
-              className="bg-gray-900 hover:bg-black text-white px-8 py-3.5 rounded-xl font-bold shadow-lg transition-all disabled:opacity-50 flex items-center gap-2"
+              className="bg-gray-900 hover:bg-black text-white px-8 py-3.5 rounded-2xl font-bold shadow-lg transition-all disabled:opacity-50 flex items-center gap-2"
             >
               {isSaving ? 'Guardando...' : 'Guardar Cambios'}
             </button>

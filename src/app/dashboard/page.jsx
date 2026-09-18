@@ -23,7 +23,7 @@ export default async function DashboardPage() {
         </div>
         <Link 
           href="/dashboard/create" 
-          className="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition-all flex items-center gap-2"
+          className="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-2xl text-sm font-bold shadow-md transition-all flex items-center gap-2"
         >
           <Plus className="w-5 h-5" />
           Nueva Rifa
@@ -31,7 +31,7 @@ export default async function DashboardPage() {
       </div>
 
       {(!raffles || raffles.length === 0) ? (
-        <div className="bg-white border border-gray-200 rounded-3xl p-12 text-center shadow-sm">
+        <div className="bg-white border border-gray-200 rounded-[32px] p-12 text-center shadow-sm">
           <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
             <Ticket className="w-8 h-8 text-primary-500" />
           </div>
@@ -41,7 +41,7 @@ export default async function DashboardPage() {
           </p>
           <Link 
             href="/dashboard/create" 
-            className="inline-flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-xl font-bold transition-all"
+            className="inline-flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-2xl font-bold transition-all"
           >
             Crear mi primera rifa
           </Link>
@@ -49,7 +49,7 @@ export default async function DashboardPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {raffles.map((raffle) => (
-            <div key={raffle.id} className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group flex flex-col">
+            <div key={raffle.id} className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all group flex flex-col">
               <div className="flex-1">
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="font-bold text-lg text-gray-900 line-clamp-1" title={raffle.title}>

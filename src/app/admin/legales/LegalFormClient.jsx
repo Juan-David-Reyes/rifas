@@ -69,7 +69,7 @@ export default function LegalFormClient({ initialSettings }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-[32px] shadow-sm border border-gray-200 overflow-hidden">
         {/* Tabs */}
         <div className="flex flex-wrap border-b border-gray-200 bg-gray-50/50">
           <button
@@ -142,7 +142,7 @@ export default function LegalFormClient({ initialSettings }) {
         <button 
           type="submit"
           disabled={isSaving}
-          className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all flex items-center gap-2 disabled:opacity-70"
+          className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-2xl shadow-lg transition-all flex items-center gap-2 disabled:opacity-70"
         >
           {isSaving ? (
             <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
@@ -155,7 +155,7 @@ export default function LegalFormClient({ initialSettings }) {
 
       {/* Toast Notification */}
       {toast && (
-        <div className={`fixed top-6 right-6 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform z-50 ${
+        <div className={`fixed top-6 right-6 px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform z-50 ${
           toast.visible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
         } ${
           toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-gray-900 text-white'

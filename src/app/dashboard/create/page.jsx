@@ -55,10 +55,10 @@ export default function CreateRafflePage() {
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-[32px] shadow-sm overflow-hidden">
         
         {error && (
-          <div className="m-6 mb-0 bg-red-50 text-red-600 p-4 rounded-xl text-sm font-semibold border border-red-100 flex items-start gap-2">
+          <div className="m-6 mb-0 bg-red-50 text-red-600 p-4 rounded-2xl text-sm font-semibold border border-red-100 flex items-start gap-2">
             <span>⚠️</span> {error}
           </div>
         )}
@@ -90,7 +90,7 @@ export default function CreateRafflePage() {
                 <label className="block text-sm font-bold text-gray-700 mb-1">Título de la Rifa</label>
                 <input 
                   name="title" type="text" required placeholder="Ej. Gran Rifa Solidaria por Bombillo"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                 />
               </div>
 
@@ -98,7 +98,7 @@ export default function CreateRafflePage() {
                 <label className="block text-sm font-bold text-gray-700 mb-1">Descripción / Motivo</label>
                 <textarea 
                   name="description" required rows={3} placeholder="Explica por qué estás haciendo esta rifa..."
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all resize-none"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all resize-none"
                 />
               </div>
 
@@ -106,7 +106,7 @@ export default function CreateRafflePage() {
                 <label className="block text-sm font-bold text-gray-700 mb-1">Premio Prometido</label>
                 <input 
                   name="prize" type="text" required placeholder="Ej. $300.000 COP"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                 />
               </div>
 
@@ -116,7 +116,7 @@ export default function CreateRafflePage() {
                   name="ticket_price" type="number" required min="1000" 
                   value={ticketPrice}
                   onChange={(e) => setTicketPrice(Number(e.target.value))}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                 />
                 <p className="text-xs text-gray-400 mt-1">Precio unitario en tu moneda.</p>
               </div>
@@ -130,14 +130,14 @@ export default function CreateRafflePage() {
                 <label className="block text-sm font-bold text-gray-700 mb-1">Lotería Asignada</label>
                 <input 
                   name="lottery_name" type="text" required placeholder="Ej. Lotería de Boyacá"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                 />
               </div>
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-1">Fecha del Sorteo</label>
                 <input 
                   name="draw_date" type="text" required placeholder="Ej. 15 de Septiembre"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                 />
               </div>
             </div>
@@ -145,7 +145,7 @@ export default function CreateRafflePage() {
             <div className="pt-4">
               <button 
                 type="submit"
-                className="w-full bg-gray-900 hover:bg-black text-white font-bold py-4 rounded-xl shadow-lg transition-all flex justify-center items-center gap-2"
+                className="w-full bg-gray-900 hover:bg-black text-white font-bold py-4 rounded-2xl shadow-lg transition-all flex justify-center items-center gap-2"
               >
                 Continuar al Pago
               </button>
@@ -160,7 +160,7 @@ export default function CreateRafflePage() {
               <p className="text-gray-500 font-medium">Estás a un paso de publicar tu rifa.</p>
             </div>
 
-            <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 mb-8 text-center">
+            <div className="bg-gray-50 rounded-3xl p-6 border border-gray-100 mb-8 text-center">
               <p className="text-gray-500 font-bold mb-1">Tarifa de Plataforma (1 Boleta)</p>
               <p className="text-4xl font-black text-gray-900">${ticketPrice.toLocaleString('es-CO')}</p>
             </div>
@@ -169,14 +169,14 @@ export default function CreateRafflePage() {
               <button 
                 onClick={() => handlePayment('mercadopago')}
                 disabled={isSubmitting}
-                className="w-full bg-[#009ee3] hover:bg-[#0089c4] text-white px-8 py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                className="w-full bg-[#009ee3] hover:bg-[#0089c4] text-white px-8 py-4 rounded-2xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70"
               >
                  {isSubmitting ? 'Procesando...' : 'Pagar con MercadoPago'}
               </button>
               <button 
                 onClick={() => handlePayment('epayco')}
                 disabled={isSubmitting}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70"
               >
                  {isSubmitting ? 'Procesando...' : 'Pagar con ePayco'}
               </button>

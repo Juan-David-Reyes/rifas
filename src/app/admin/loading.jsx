@@ -7,8 +7,8 @@ export default function AdminLoading() {
       <div className="md:sticky md:top-0 z-20 bg-white border-b border-gray-200 px-6 py-4 md:px-8">
         <div className="max-w-6xl mx-auto w-full">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gray-200 rounded-lg"></div>
-            <div className="h-8 bg-gray-200 rounded-lg w-48"></div>
+            <div className="w-8 h-8 bg-gray-200 rounded-2xl"></div>
+            <div className="h-8 bg-gray-200 rounded-2xl w-48"></div>
           </div>
           <div className="h-4 bg-gray-200 rounded w-96 mt-4"></div>
         </div>
@@ -18,9 +18,9 @@ export default function AdminLoading() {
         {/* KPIs Grid Skeleton */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col justify-between">
+            <div key={i} className="bg-white p-6 rounded-[32px] border border-gray-200 flex flex-col justify-between">
               <div className="flex justify-between items-start mb-4">
-                <div className="w-12 h-12 bg-gray-100 rounded-xl"></div>
+                <div className="w-12 h-12 bg-gray-100 rounded-2xl"></div>
                 <div className="h-6 bg-gray-100 rounded-full w-24"></div>
               </div>
               <div>
@@ -32,10 +32,10 @@ export default function AdminLoading() {
         </div>
 
         {/* Tabla Skeleton */}
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden mt-8">
+        <div className="bg-white rounded-[32px] border border-gray-200 overflow-hidden mt-8">
           <div className="p-6 border-b border-gray-100 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gray-100 rounded-lg"></div>
+              <div className="w-10 h-10 bg-gray-100 rounded-2xl"></div>
               <div>
                 <div className="h-6 bg-gray-200 rounded w-48 mb-2"></div>
                 <div className="h-4 bg-gray-100 rounded w-64"></div>

@@ -70,7 +70,7 @@ export default function UsuariosClient({ initialUsers }) {
   return (
     <div className="space-y-6">
       {/* Buscador */}
-      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex items-center">
+      <div className="bg-white p-4 rounded-[32px] shadow-sm border border-gray-200 flex items-center">
         <Search className="w-5 h-5 text-gray-400 ml-2 mr-3" />
         <input 
           type="text"
@@ -82,7 +82,7 @@ export default function UsuariosClient({ initialUsers }) {
       </div>
 
       {/* Tabla */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-[32px] shadow-sm border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -145,7 +145,7 @@ export default function UsuariosClient({ initialUsers }) {
                           handleToggleBan(user.id, user.is_banned, user.email)
                         }}
                         disabled={loadingAction === user.id}
-                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-sm disabled:opacity-50 ${
+                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold transition-all shadow-sm disabled:opacity-50 ${
                           user.is_banned 
                             ? 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
                             : 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-100'
@@ -174,7 +174,7 @@ export default function UsuariosClient({ initialUsers }) {
                           {user.raffles && user.raffles.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               {user.raffles.map(raffle => (
-                                <div key={raffle.id} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+                                <div key={raffle.id} className="bg-white p-4 rounded-3xl border border-gray-200 shadow-sm flex items-center justify-between">
                                   <div>
                                     <div className="font-bold text-gray-900">{raffle.title}</div>
                                     <div className="text-xs text-gray-500 mt-1 flex items-center gap-3">
@@ -195,7 +195,7 @@ export default function UsuariosClient({ initialUsers }) {
                               ))}
                             </div>
                           ) : (
-                            <div className="text-center py-4 bg-white rounded-xl border border-dashed border-gray-300 text-gray-500 text-sm">
+                            <div className="text-center py-4 bg-white rounded-3xl border border-dashed border-gray-300 text-gray-500 text-sm">
                               Este usuario aún no ha creado ninguna rifa.
                             </div>
                           )}
@@ -220,7 +220,7 @@ export default function UsuariosClient({ initialUsers }) {
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="p-2 rounded-2xl border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -230,7 +230,7 @@ export default function UsuariosClient({ initialUsers }) {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="p-2 rounded-2xl border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -241,7 +241,7 @@ export default function UsuariosClient({ initialUsers }) {
 
       {/* Toast Notification */}
       {toast && (
-        <div className={`fixed top-6 right-6 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform z-50 ${
+        <div className={`fixed top-6 right-6 px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform z-50 ${
           toast.visible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
         } ${
           toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-gray-900 text-white'

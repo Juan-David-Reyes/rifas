@@ -50,14 +50,14 @@ export default function SistemaClient({ initialSettings, auditLogs }) {
   return (
     <>
       <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-6 md:p-8">
+        <div className="bg-white rounded-[32px] shadow-sm border border-gray-200 overflow-hidden p-6 md:p-8">
         
         {/* Switch 1: Modo Mantenimiento */}
-        <div className="flex items-start gap-4 p-6 rounded-2xl border-2 transition-all mb-6 relative overflow-hidden bg-white hover:border-gray-300 border-gray-200">
+        <div className="flex items-start gap-4 p-6 rounded-3xl border-2 transition-all mb-6 relative overflow-hidden bg-white hover:border-gray-300 border-gray-200">
           {formData.maintenance_mode && (
             <div className="absolute inset-0 bg-red-50/50 -z-10 pointer-events-none"></div>
           )}
-          <div className={`p-3 rounded-xl shrink-0 ${formData.maintenance_mode ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-500'}`}>
+          <div className={`p-3 rounded-2xl shrink-0 ${formData.maintenance_mode ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-500'}`}>
             <PowerOff className="w-6 h-6" />
           </div>
           <div className="flex-1">
@@ -84,17 +84,17 @@ export default function SistemaClient({ initialSettings, auditLogs }) {
         </div>
 
         {/* Switch 2: Pausar Nuevas Rifas */}
-        <div className="flex items-start gap-4 p-6 rounded-2xl border-2 transition-all relative overflow-hidden bg-white hover:border-gray-300 border-gray-200">
+        <div className="flex items-start gap-4 p-6 rounded-3xl border-2 transition-all relative overflow-hidden bg-white hover:border-gray-300 border-gray-200">
           {!formData.allow_new_raffles && (
             <div className="absolute inset-0 bg-amber-50/50 -z-10 pointer-events-none"></div>
           )}
-          <div className={`p-3 rounded-xl shrink-0 ${!formData.allow_new_raffles ? 'bg-amber-100 text-amber-600' : 'bg-gray-100 text-gray-500'}`}>
+          <div className={`p-3 rounded-2xl shrink-0 ${!formData.allow_new_raffles ? 'bg-amber-100 text-amber-600' : 'bg-gray-100 text-gray-500'}`}>
             <PauseCircle className="w-6 h-6" />
           </div>
           <div className="flex-1">
             <h3 className={`font-bold text-lg ${!formData.allow_new_raffles ? 'text-amber-900' : 'text-gray-900'}`}>Pausar Creación de Rifas</h3>
             <p className="text-gray-500 text-sm mt-1 mb-4">
-              Desactiva temporalmente el embudo de creación (`/crear`). Las rifas existentes seguirán funcionando con normalidad, pero no se aceptarán nuevos organizadores.
+              Desactiva temporalmente el embudo de creación (`/crear-rifa`). Las rifas existentes seguirán funcionando con normalidad, pero no se aceptarán nuevos organizadores.
             </p>
             <label className="flex items-center cursor-pointer">
               <div className="relative">
@@ -120,7 +120,7 @@ export default function SistemaClient({ initialSettings, auditLogs }) {
         <button 
           type="submit"
           disabled={isSaving}
-          className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all flex items-center gap-2 disabled:opacity-70"
+          className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-2xl shadow-lg transition-all flex items-center gap-2 disabled:opacity-70"
         >
           {isSaving ? (
             <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
@@ -133,7 +133,7 @@ export default function SistemaClient({ initialSettings, auditLogs }) {
 
       {/* Toast Notification */}
       {toast && (
-        <div className={`fixed top-6 right-6 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform z-50 ${
+        <div className={`fixed top-6 right-6 px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform z-50 ${
           toast.visible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
         } ${
           toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-gray-900 text-white'
@@ -145,10 +145,10 @@ export default function SistemaClient({ initialSettings, auditLogs }) {
     </form>
 
       {/* Tabla de Auditoría Anti-Fraude */}
-      <div className="bg-white rounded-2xl shadow-sm border border-red-100 overflow-hidden mt-12">
+      <div className="bg-white rounded-[32px] shadow-sm border border-red-100 overflow-hidden mt-12">
         <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-red-50/30">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center border border-red-200">
+            <div className="w-10 h-10 bg-red-100 rounded-2xl flex items-center justify-center border border-red-200">
               <ShieldAlert className="w-5 h-5 text-red-600" />
             </div>
             <div>
@@ -199,7 +199,7 @@ export default function SistemaClient({ initialSettings, auditLogs }) {
                       {log.ticket_count}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-gray-600 bg-gray-50 p-2 rounded-lg border border-gray-100 text-xs italic line-clamp-2" title={log.reason}>
+                      <div className="text-gray-600 bg-gray-50 p-2 rounded-2xl border border-gray-100 text-xs italic line-clamp-2" title={log.reason}>
                         "{log.reason}"
                       </div>
                     </td>

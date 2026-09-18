@@ -18,7 +18,7 @@ export default function AdminSidebar({ userEmail }) {
 
   const getLinkClassName = (path) => {
     const active = isActive(path)
-    return `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+    return `flex items-center gap-3 px-3 py-2 rounded-2xl text-sm font-medium transition-colors ${
       active 
         ? 'bg-gray-800 text-white' 
         : 'text-gray-400 hover:text-white hover:bg-gray-800'
@@ -29,7 +29,7 @@ export default function AdminSidebar({ userEmail }) {
     <aside className="w-64 bg-gray-900 text-white hidden md:flex flex-col border-r border-gray-800 fixed inset-y-0 left-0 z-40 h-screen">
       <div className="p-6 border-b border-gray-800">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center shadow-lg shadow-primary-600/20">
+          <div className="w-8 h-8 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-600/20">
             <Ticket className="w-5 h-5 text-white transform -rotate-45" />
           </div>
           <div>
@@ -76,7 +76,7 @@ export default function AdminSidebar({ userEmail }) {
         </div>
         <Link 
           href="/dashboard"
-          className="flex items-center justify-center gap-2 text-sm font-bold text-gray-300 bg-gray-800 hover:bg-gray-700 hover:text-white px-4 py-2.5 rounded-lg transition-colors border border-gray-700 w-full"
+          className="flex items-center justify-center gap-2 text-sm font-bold text-gray-300 bg-gray-800 hover:bg-gray-700 hover:text-white px-4 py-2.5 rounded-2xl transition-colors border border-gray-700 w-full"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver a mi cuenta

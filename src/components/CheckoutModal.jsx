@@ -13,10 +13,23 @@ export default function CheckoutModal({
   onClose, 
   totalAPagar,
   onConcurrencyError,
-  onReset
+  onReset,
+  user
 }) {
   const [timeLeft, setTimeLeft] = useState(15 * 60); 
   const [isReserving, setIsReserving] = useState(true);
+  // Si la rifa fue creada por un admin que no es el usuario actual, y el usuario actual NO es organizador
+  const isGuestMode = user ? user.id !== raffle.user_id : true;
+
+  const paymentMethods = (() => {
+    try {
+      if (raffle.payment_account_number && raffle.payment_account_number.startsWith('[')) {
+        const parsed = JSON.parse(raffle.payment_account_number);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch(e) {}
+    return [{ bank: raffle.payment_method_name || 'Nequi', account: raffle.payment_account_number || '3209513083' }];
+  })();
   const [error, setError] = useState(null);
   const [copiedAccount, setCopiedAccount] = useState(null);
   const [hasSentWhatsApp, setHasSentWhatsApp] = useState(false);
@@ -203,7 +216,7 @@ export default function CheckoutModal({
 
   return (
     <div className={`fixed inset-0 z-100 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm sm:p-4 transition-opacity duration-300 ease-out ${isVisible && !isClosing ? 'opacity-100' : 'opacity-0'}`}>
-      <div className={`bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh] transition-transform duration-300 ease-out ${isVisible && !isClosing ? 'translate-y-0 sm:scale-100' : 'translate-y-full sm:translate-y-0 sm:scale-95'}`}>
+      <div className={`bg-white w-full sm:max-w-md rounded-t-[32px] sm:rounded-[32px] shadow-2xl overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh] transition-transform duration-300 ease-out ${isVisible && !isClosing ? 'translate-y-0 sm:scale-100' : 'translate-y-full sm:translate-y-0 sm:scale-95'}`}>
         
         <div className="bg-primary-600 p-4 text-white text-center relative">
           <button 
@@ -229,7 +242,7 @@ export default function CheckoutModal({
               <p className="text-red-500 font-semibold mb-4">{error}</p>
               <button 
                 onClick={handleClose}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-6 rounded-xl transition-colors"
+                className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-6 rounded-2xl transition-colors"
               >
                 Volver
               </button>
@@ -245,7 +258,7 @@ export default function CheckoutModal({
               </p>
               <button 
                 onClick={onReset}
-                className="mt-4 w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all transform active:scale-95"
+                className="mt-4 w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition-all transform active:scale-95"
               >
                 Entendido
               </button>
@@ -278,27 +291,38 @@ export default function CheckoutModal({
                   placeholder="Tu nombre (Obligatorio)" 
                   value={buyerName}
                   onChange={(e) => setBuyerName(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
                 />
               </div>
 
               <div className="space-y-3 pt-2">
                 <h3 className="font-bold text-gray-900 flex items-center">
                   <span className="bg-gray-100 text-gray-600 w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2">2</span>
-                  Transfiere a {raffle.payment_method_name || 'Nequi'}
+                  Transfiere a
                 </h3>
                 
-                <div className="group flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:border-green-300 hover:bg-green-50/50 transition-all">
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500 font-medium">Cuenta {raffle.payment_method_name || 'Nequi'}</span>
-                    <span className="text-lg font-bold text-gray-900 tracking-wide">{raffle.payment_account_number || '3209513083'}</span>
-                  </div>
-                  <button 
-                    onClick={() => handleCopy(raffle.payment_account_number || '3209513083', 'cuenta')}
-                    className="p-2 text-green-600 bg-green-100 rounded-lg hover:bg-green-200 transition-colors"
-                  >
-                    {copiedAccount === 'cuenta' ? <CheckCircle2 className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-                  </button>
+                <div className="space-y-2">
+                  {paymentMethods.map((method, idx) => {
+                    const isWallet = ['Nequi', 'Daviplata', 'Dale!', 'RappiPay', 'Ualá'].includes(method.bank);
+                    const label = method.transferMethod === 'Llave Breb' 
+                      ? `Llave Breb ${method.bank}` 
+                      : (isWallet ? `Cuenta ${method.bank}` : `Cuenta de ${method.accountType || 'Ahorros'} ${method.bank}`);
+                    
+                    return (
+                      <div key={idx} className="group flex items-center justify-between p-3 rounded-2xl border border-gray-200 hover:border-green-300 hover:bg-green-50/50 transition-all">
+                        <div className="flex flex-col">
+                          <span className="text-sm text-gray-500 font-medium">{label}</span>
+                          <span className="text-lg font-bold text-gray-900 tracking-wide">{method.account}</span>
+                        </div>
+                        <button 
+                          onClick={() => handleCopy(method.account, `cuenta_${idx}`)}
+                          className="p-2 text-green-600 bg-green-100 rounded-lg hover:bg-green-200 transition-colors"
+                        >
+                          {copiedAccount === `cuenta_${idx}` ? <CheckCircle2 className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -308,7 +332,7 @@ export default function CheckoutModal({
                   Sube tu comprobante
                 </h3>
                 
-                <div className="relative border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:bg-gray-50 transition-colors">
+                <div className="relative border-2 border-dashed border-gray-300 rounded-2xl p-4 text-center hover:bg-gray-50 transition-colors">
                   <input 
                     type="file" 
                     accept="image/*,.pdf"
@@ -335,7 +359,7 @@ export default function CheckoutModal({
                 <button 
                   onClick={handleUploadAndNotify}
                   disabled={buyerName.trim() === '' || !receiptFile || isUploading}
-                  className="w-full bg-[#25D366] hover:bg-[#1ebd5b] active:bg-[#1a9d4b] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl shadow-lg shadow-green-200 flex items-center justify-center space-x-2 transition-all"
+                  className="w-full bg-[#25D366] hover:bg-[#1ebd5b] active:bg-[#1a9d4b] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl shadow-lg shadow-green-200 flex items-center justify-center space-x-2 transition-all"
                 >
                   {isUploading ? (
                     <>

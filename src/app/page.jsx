@@ -45,7 +45,7 @@ export default async function LandingPage() {
               </p>
               
               <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
-                <Link href="/crear" className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-2xl text-lg font-bold shadow-xl shadow-primary-200/50 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                <Link href="/crear-rifa" className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-2xl text-lg font-bold shadow-xl shadow-primary-200/50 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
                   Empezar Gratis <ArrowRight className="w-5 h-5" />
                 </Link>
                 <a href="#como-funciona" className="bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-200 px-8 py-4 rounded-2xl text-lg font-bold transition-all flex items-center justify-center shadow-sm">
@@ -85,7 +85,7 @@ export default async function LandingPage() {
             {/* Right Column: Floating UI Mockup */}
             <div className="flex-1 w-full flex justify-center lg:justify-end relative mt-8 lg:mt-0">
               <div className="w-full max-w-md relative">
-                <div className="absolute inset-0 bg-linear-to-tr from-primary-100/40 to-green-50/40 rounded-[2.5rem] transform rotate-3 scale-105 -z-10"></div>
+                <div className="absolute inset-0 bg-linear-to-tr from-primary-100/40 to-green-50/40 rounded-[32px] transform rotate-3 scale-105 -z-10"></div>
                 <div className="bg-white/80 backdrop-blur-xl border border-white/60 shadow-2xl rounded-3xl p-5 md:p-6 transform transition-transform hover:-translate-y-2 duration-500">
                 {/* Mockup Header */}
                 <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-100">
@@ -248,7 +248,7 @@ export default async function LandingPage() {
         <div className="bg-gray-900 rounded-4xl max-w-7xl mx-auto px-4 py-20 text-center relative z-10">
           <h2 className="text-4xl font-black text-white font-heading mb-6">¿Listo para hacer tu primer sorteo?</h2>
           <p className="text-gray-300 text-lg mb-10">Únete a cientos de organizadores que ya han modernizado la forma de recaudar fondos y hacer rifas.</p>
-          <Link href="/crear" className="inline-block bg-primary-600 hover:bg-primary-700 text-white px-10 py-5 rounded-2xl text-xl font-bold shadow-2xl transition-all transform hover:scale-105">
+          <Link href="/crear-rifa" className="inline-block bg-primary-600 hover:bg-primary-700 text-white px-10 py-5 rounded-2xl text-xl font-bold shadow-2xl transition-all transform hover:scale-105">
             Crear mi Rifa Ahora
           </Link>
         </div>

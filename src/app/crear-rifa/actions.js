@@ -23,11 +23,13 @@ export async function createRaffle(formData) {
     title: formData.title,
     slug: slug,
     description: formData.title, // En el nuevo wizard no pedimos description, usamos el título
-    prize: formData.prizeValue,
+    prize: formData.prizeType === 'object' ? formData.prizeDescription : (formData.prizeValue ? formData.prizeValue.toString() : ''),
     lottery_name: 'Por definir', // El wizard no pide lotería, podemos poner default
     draw_date: 'Por definir', 
     ticket_price: parseInt(formData.ticketPrice),
-    total_tickets: parseInt(formData.ticketCount)
+    total_tickets: parseInt(formData.ticketCount),
+    payment_method_name: 'Múltiples métodos', // Fallback
+    payment_account_number: JSON.stringify(formData.paymentMethods || [])
   }
 
   // Insert the raffle
