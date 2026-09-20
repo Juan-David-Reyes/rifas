@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Ticket, ArrowRight, CheckCircle2, DollarSign, Calculator, Lock, Plus, Trash2 } from 'lucide-react'
 import { createClient } from '../../utils/supabase/client'
@@ -23,6 +23,21 @@ export default function CrearRifaWizard({ initialSettings }) {
   const [isAuthenticating, setIsAuthenticating] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const stepParam = params.get('step')
+    if (stepParam) {
+      const savedState = localStorage.getItem('crearRifaState')
+      if (savedState) {
+        try {
+          setFormData(JSON.parse(savedState))
+          setStep(parseInt(stepParam, 10))
+        } catch(e) {}
+        localStorage.removeItem('crearRifaState')
+      }
+    }
+  }, [])
 
   const handleNext = () => setStep(s => s + 1)
   const handleBack = () => setStep(s => Math.max(1, s - 1))
@@ -90,12 +105,13 @@ export default function CrearRifaWizard({ initialSettings }) {
 
   const handleGoogleLogin = async () => {
     setIsAuthenticating(true)
+    localStorage.setItem('crearRifaState', JSON.stringify(formData))
     const supabase = createClient()
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         // Redirigir de vuelta al paso 5 (pago) después de auth
-        redirectTo: `${window.location.origin}/auth/callback?next=/crear-rifa?step=5`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent('/crear-rifa?step=5')}`,
       },
     })
   }
