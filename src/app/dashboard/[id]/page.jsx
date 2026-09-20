@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import DashboardClient from '../../../components/DashboardClient'
 import { cleanExpiredTickets } from '../../../utils/cleanup'
+import { OrganizerRaffleControls } from './OrganizerControls'
 
 export default async function RaffleDashboard({ params }) {
   const { id } = await params
@@ -43,12 +44,15 @@ export default async function RaffleDashboard({ params }) {
             <p className="text-gray-500 text-sm">Panel de control de la rifa (debuenas.co/{raffle.slug})</p>
           </div>
         </div>
-        <Link 
-          href={`/${raffle.slug}`} target="_blank"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all"
-        >
-          Ver Rifa Pública
-        </Link>
+        <div className="flex items-center gap-3">
+          <OrganizerRaffleControls raffleId={raffle.id} currentStatus={raffle.status} />
+          <Link 
+            href={`/${raffle.slug}`} target="_blank"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all"
+          >
+            Ver Rifa Pública
+          </Link>
+        </div>
       </div>
 
       <DashboardClient raffle={raffle} initialTickets={tickets || []} user={user} />

@@ -1,6 +1,8 @@
 'use server'
 
 import { createAdminClient } from './supabase/admin'
+import { createClient } from './supabase/server'
+import { revalidatePath, revalidateTag } from 'next/cache'
 
 export async function approvePaymentAction(ticketIds) {
   const supabaseAdmin = createAdminClient()
@@ -49,5 +51,34 @@ export async function rejectPaymentAction(ticketIds, auditMeta) {
     .in('id', ticketIds)
 
   if (error) throw error
+  return true
+}
+
+export async function toggleMyRaffleStatusAction(raffleId, newStatus) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) throw new Error("No estás autenticado")
+
+  // Verificar que el usuario es el dueño de la rifa
+  const { data: raffle, error: checkError } = await supabase
+    .from('raffles')
+    .select('user_id')
+    .eq('id', raffleId)
+    .single()
+
+  if (checkError || !raffle) throw new Error("Rifa no encontrada")
+  if (raffle.user_id !== user.id) throw new Error("No tienes permisos para modificar esta rifa")
+
+  const { error } = await supabase
+    .from('raffles')
+    .update({ status: newStatus })
+    .eq('id', raffleId)
+
+  if (error) throw error
+
+  revalidatePath('/dashboard')
+  revalidatePath(`/dashboard/${raffleId}`)
+  revalidateTag('admin-dashboard')
   return true
 }

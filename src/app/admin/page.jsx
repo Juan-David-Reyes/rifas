@@ -1,7 +1,7 @@
 import { getAdminDashboardStats } from '../../utils/superAdminActions'
 import { Users, Ticket, DollarSign, Activity, AlertCircle, ShieldAlert, LayoutDashboard } from 'lucide-react'
 import Link from 'next/link'
-import { RaffleStatusButton, BanUserButton } from './AdminControls'
+import { RaffleStatusButton, BanUserButton, DeleteRaffleButton } from './AdminControls'
 
 // Fuerza que esta ruta sea dinámica (SSR) para que siempre traiga datos frescos
 export const dynamic = 'force-dynamic'
@@ -140,7 +140,10 @@ export default async function AdminDashboardPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <RaffleStatusButton raffleId={raffle.id} currentStatus={raffle.status || 'ACTIVE'} />
+                        <div className="flex items-center gap-2">
+                          <RaffleStatusButton raffleId={raffle.id} currentStatus={raffle.status || 'ACTIVE'} />
+                          <DeleteRaffleButton raffleId={raffle.id} />
+                        </div>
                       </td>
                     </tr>
                   )})

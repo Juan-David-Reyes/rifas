@@ -23,6 +23,38 @@ export async function toggleRaffleStatus(raffleId, newStatus) {
   return true
 }
 
+export async function deleteRaffleAction(raffleId) {
+  const supabaseAdmin = createAdminClient()
+  if (!supabaseAdmin) throw new Error("Service key missing")
+
+  // Borrar tickets asociados primero (si no hay borrado en cascada configurado en Supabase)
+  const { error: ticketsError } = await supabaseAdmin
+    .from('tickets')
+    .delete()
+    .eq('raffle_id', raffleId)
+
+  if (ticketsError) {
+    console.error("Error deleting tickets:", ticketsError)
+    throw new Error('No se pudieron borrar los tickets de la rifa')
+  }
+
+  // Borrar la rifa
+  const { error: raffleError } = await supabaseAdmin
+    .from('raffles')
+    .delete()
+    .eq('id', raffleId)
+
+  if (raffleError) {
+    console.error("Error deleting raffle:", raffleError)
+    throw new Error('No se pudo eliminar la rifa')
+  }
+
+  revalidatePath('/admin')
+  revalidateTag('admin-users')
+  revalidateTag('admin-dashboard')
+  return true
+}
+
 export async function banUserAction(userId, isBanning) {
   const supabaseAdmin = createAdminClient()
   if (!supabaseAdmin) throw new Error("Service key missing")

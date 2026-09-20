@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { Ban, PauseCircle, PlayCircle } from 'lucide-react'
-import { toggleRaffleStatus, banUserAction } from '../../utils/superAdminActions'
+import { toggleRaffleStatus, banUserAction, deleteRaffleAction } from '../../utils/superAdminActions'
+import { Trash2 } from 'lucide-react'
 
 export function RaffleStatusButton({ raffleId, currentStatus }) {
   const [isLoading, setIsLoading] = useState(false)
@@ -33,6 +34,35 @@ export function RaffleStatusButton({ raffleId, currentStatus }) {
     >
       {isPaused ? <PlayCircle className="w-3.5 h-3.5" /> : <PauseCircle className="w-3.5 h-3.5" />}
       {isPaused ? 'Reactivar' : 'Pausar'}
+    </button>
+  )
+}
+
+export function DeleteRaffleButton({ raffleId }) {
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleDelete = async () => {
+    const confirm = window.confirm('ATENCIÓN: ¿Estás TOTALMENTE SEGURO de eliminar esta rifa? Esta acción borrará todas sus boletas y es irreversible.')
+    if (!confirm) return
+    
+    setIsLoading(true)
+    try {
+      await deleteRaffleAction(raffleId)
+    } catch (err) {
+      alert(err.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <button 
+      onClick={handleDelete}
+      disabled={isLoading}
+      title="Eliminar Rifa Definitivamente"
+      className="p-1.5 rounded-lg transition-colors disabled:opacity-50 bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
+    >
+      <Trash2 className="w-4 h-4" />
     </button>
   )
 }
