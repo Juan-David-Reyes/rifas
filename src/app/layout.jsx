@@ -8,9 +8,40 @@ import { getSiteSettings } from '../utils/settingsActions';
 export async function generateMetadata() {
   const settings = await getSiteSettings()
   
+  const defaultTitle = settings?.seo_title || 'deBuenas - Crea y administra tus rifas fácilmente'
+  const defaultDesc = settings?.seo_description || 'La plataforma definitiva para crear y gestionar rifas solidarias, sorteos y loterías personales.'
+
   return {
-    title: settings?.seo_title || 'deBuenas - Crea y administra tus rifas fácilmente',
-    description: settings?.seo_description || 'La plataforma definitiva para crear y gestionar rifas solidarias, sorteos y loterías personales.',
+    metadataBase: new URL('https://debuenas.co'),
+    title: {
+      default: defaultTitle,
+      template: '%s | deBuenas',
+    },
+    description: defaultDesc,
+    openGraph: {
+      title: defaultTitle,
+      description: defaultDesc,
+      url: 'https://debuenas.co',
+      siteName: 'deBuenas',
+      locale: 'es_CO',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: defaultTitle,
+      description: defaultDesc,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
   }
 }
 

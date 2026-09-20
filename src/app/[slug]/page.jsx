@@ -19,8 +19,21 @@ export async function generateMetadata({ params }) {
   }
 
   return {
-    title: `${raffle.title} | deBuenas`,
+    title: raffle.title,
     description: raffle.description,
+    openGraph: {
+      title: raffle.title,
+      description: raffle.description,
+      url: `https://debuenas.co/${slug}`,
+      siteName: 'deBuenas',
+      type: 'website',
+      // images: [{ url: raffle.image_url }] // Puedes descomentar y usar esto si añades imágenes a las rifas
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: raffle.title,
+      description: raffle.description,
+    },
   }
 }
 
