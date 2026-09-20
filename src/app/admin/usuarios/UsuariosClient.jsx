@@ -3,8 +3,8 @@
 import React, { useState } from 'react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { Search, ShieldAlert, ShieldCheck, Mail, Calendar, Hash, Ticket, ChevronLeft, ChevronRight } from 'lucide-react'
-import { banUserAction } from '../../../utils/superAdminActions'
+import { Search, ShieldAlert, ShieldCheck, Mail, Calendar, Hash, Ticket, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react'
+import { banUserAction, deleteUserAction } from '../../../utils/superAdminActions'
 
 export default function UsuariosClient({ initialUsers }) {
   const [users, setUsers] = useState(initialUsers || [])
@@ -45,6 +45,27 @@ export default function UsuariosClient({ initialUsers }) {
       ))
       
       showToast('success', `Usuario ${accion}do exitosamente.`)
+    } catch (err) {
+      showToast('error', err.message)
+    } finally {
+      setLoadingAction(null)
+    }
+  }
+
+  const handleDeleteUser = async (userId, email) => {
+    if (!window.confirm(`⚠️ ADVERTENCIA DESTRUCTIVA ⚠️\n\n¿Estás absolutamente seguro de que deseas ELIMINAR al usuario ${email}?\n\nEsta acción borrará al usuario, TODAS sus rifas y TODOS los tickets asociados. Esta acción NO se puede deshacer.`)) {
+      return
+    }
+
+    setLoadingAction(`delete-${userId}`)
+    try {
+      await deleteUserAction(userId)
+      
+      // Eliminar el usuario del estado local
+      setUsers(users.filter(u => u.id !== userId))
+      if (expandedUser === userId) setExpandedUser(null)
+      
+      showToast('success', 'Usuario y todos sus datos eliminados correctamente.')
     } catch (err) {
       showToast('error', err.message)
     } finally {
@@ -139,26 +160,44 @@ export default function UsuariosClient({ initialUsers }) {
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggleBan(user.id, user.is_banned, user.email)
-                        }}
-                        disabled={loadingAction === user.id}
-                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold transition-all shadow-sm disabled:opacity-50 ${
-                          user.is_banned 
-                            ? 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
-                            : 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-100'
-                        }`}
-                      >
-                        {loadingAction === user.id ? (
-                          <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
-                        ) : user.is_banned ? (
-                          'Reactivar'
-                        ) : (
-                          'Suspender'
-                        )}
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleBan(user.id, user.is_banned, user.email)
+                          }}
+                          disabled={loadingAction === user.id || loadingAction === `delete-${user.id}`}
+                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold transition-all shadow-sm disabled:opacity-50 ${
+                            user.is_banned 
+                              ? 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                              : 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-100'
+                          }`}
+                        >
+                          {loadingAction === user.id ? (
+                            <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+                          ) : user.is_banned ? (
+                            'Reactivar'
+                          ) : (
+                            'Suspender'
+                          )}
+                        </button>
+                        
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteUser(user.id, user.email)
+                          }}
+                          disabled={loadingAction === user.id || loadingAction === `delete-${user.id}`}
+                          className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 border border-red-100 transition-all shadow-sm disabled:opacity-50 ml-1"
+                          title="Eliminar usuario permanentemente"
+                        >
+                          {loadingAction === `delete-${user.id}` ? (
+                            <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                   

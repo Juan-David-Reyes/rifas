@@ -26,7 +26,7 @@ export default async function SeoAdminPage() {
         </div>
       </div>
 
-      <div className="p-6 md:p-8 max-w-6xl mx-auto w-full space-y-8">
+      <div className="p-6 md:p-8 max-w-6xl mx-auto w-full space-y-8 justify-center flex">
         <SeoFormClient initialSettings={initialSettings} />
       </div>
     </div>

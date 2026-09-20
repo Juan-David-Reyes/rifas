@@ -86,6 +86,37 @@ export async function banUserAction(userId, isBanning) {
   return true
 }
 
+export async function deleteUserAction(userId) {
+  const supabaseAdmin = createAdminClient()
+  if (!supabaseAdmin) throw new Error("Service key missing")
+
+  // 1. Borrar todas las rifas asociadas al usuario. 
+  // Al borrarlas, los tickets vinculados se borrarán en cascada gracias a ON DELETE CASCADE en la BD.
+  const { error: rafflesError } = await supabaseAdmin
+    .from('raffles')
+    .delete()
+    .eq('user_id', userId)
+
+  if (rafflesError) {
+    console.error("Error deleting user's raffles:", rafflesError)
+    throw new Error('No se pudieron eliminar las rifas del usuario')
+  }
+
+  // 2. Borrar el usuario de Supabase Auth
+  const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId)
+
+  if (authError) {
+    console.error("Error deleting auth user:", authError)
+    throw new Error('No se pudo eliminar al usuario del sistema')
+  }
+
+  revalidatePath('/admin')
+  revalidatePath('/admin/usuarios')
+  revalidateTag('admin-users')
+  revalidateTag('admin-dashboard')
+  return true
+}
+
 // Envuelto en unstable_cache para alto rendimiento
 const getCachedUsersData = unstable_cache(
   async () => {

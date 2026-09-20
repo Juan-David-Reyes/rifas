@@ -50,7 +50,7 @@ export default function SeoFormClient({ initialSettings }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 max-w-3xl">
+    <form onSubmit={handleSubmit} className="space-y-8 max-w-3xl w-full">
       {/* Sección SEO */}
       <div className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-200">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
@@ -71,7 +71,7 @@ export default function SeoFormClient({ initialSettings }) {
               name="seo_title"
               value={formData.seo_title}
               onChange={handleChange}
-              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-2xl px-4 py-3 font-medium focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-[16px] px-4 py-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
               required
             />
           </div>
@@ -82,7 +82,7 @@ export default function SeoFormClient({ initialSettings }) {
               value={formData.seo_description}
               onChange={handleChange}
               rows="3"
-              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-2xl px-4 py-3 font-medium focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all resize-none"
+              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-[16px] px-4 py-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all resize-none"
               required
             ></textarea>
           </div>
@@ -97,7 +97,7 @@ export default function SeoFormClient({ initialSettings }) {
           </div>
           <div>
             <h2 className="text-xl font-bold text-gray-900">Textos Principales (Homepage)</h2>
-            <p className="text-gray-500 text-sm font-medium">Cambia lo primero que leen tus usuarios al entrar a deBuenas.</p>
+            <p className="text-gray-500 text-sm">Cambia lo primero que leen tus usuarios al entrar a deBuenas.</p>
           </div>
         </div>
 
@@ -109,7 +109,7 @@ export default function SeoFormClient({ initialSettings }) {
               name="hero_title"
               value={formData.hero_title}
               onChange={handleChange}
-              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-2xl px-4 py-3 font-medium focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-[16px] px-4 py-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
               required
             />
           </div>
@@ -120,7 +120,7 @@ export default function SeoFormClient({ initialSettings }) {
               value={formData.hero_subtitle}
               onChange={handleChange}
               rows="3"
-              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-2xl px-4 py-3 font-medium focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all resize-none"
+              className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-[16px] px-4 py-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all resize-none"
               required
             ></textarea>
           </div>
