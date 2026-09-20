@@ -29,7 +29,8 @@ export async function createRaffle(formData) {
     ticket_price: parseInt(formData.ticketPrice),
     total_tickets: parseInt(formData.ticketCount),
     payment_method_name: 'Múltiples métodos', // Fallback
-    payment_account_number: JSON.stringify(formData.paymentMethods || [])
+    payment_account_number: JSON.stringify(formData.paymentMethods || []),
+    status: 'PENDING_PAYMENT'
   }
 
   // Insert the raffle

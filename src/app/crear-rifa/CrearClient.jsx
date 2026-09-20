@@ -140,24 +140,51 @@ export default function CrearRifaWizard({ initialSettings }) {
     setStep(5)
   }
 
-  const handlePayment = async () => {
+  const handlePayment = async (method) => {
     setIsSubmitting(true)
     setError(null)
     
-    // Simular el pago con un pequeño delay
-    await new Promise(r => setTimeout(r, 1500))
-
     try {
+      // 1. Primero creamos la rifa en la base de datos (con estado PENDING_PAYMENT)
       const result = await createRaffle(formData)
       if (result?.error) {
         setError(result.error)
         setIsSubmitting(false)
         return
       }
-      // Si fue exitoso, pasar al paso final (éxito)
-      setStep(6)
+
+      const raffleId = result.raffleId;
+
+      if (method === 'mercadopago') {
+        // 2. Llamamos a nuestra API para generar la preferencia de pago
+        const mpResponse = await fetch('/api/mercadopago/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: formData.title,
+            unit_price: platformFee, // Pagamos la tarifa de la plataforma
+            raffle_id: raffleId,
+            origin: window.location.origin
+          })
+        });
+
+        const mpData = await mpResponse.json();
+
+        if (mpData.init_point) {
+          // 3. Redirigimos al usuario a MercadoPago
+          window.location.href = mpData.init_point;
+          return; // No cambiamos el step localmente, el navegador se va a MP
+        } else {
+          throw new Error(mpData.error || 'Error al generar link de pago');
+        }
+      } else {
+        // ePayco u otro (Pendiente de implementar)
+        setError('Método de pago no disponible temporalmente.')
+        setIsSubmitting(false)
+      }
+      
     } catch (err) {
-      setError('Ocurrió un error inesperado al procesar la creación.')
+      setError(err.message || 'Ocurrió un error inesperado al procesar la creación.')
       setIsSubmitting(false)
     }
   }
@@ -608,14 +635,14 @@ export default function CrearRifaWizard({ initialSettings }) {
 
               <div className="space-y-3">
                 <button 
-                  onClick={handlePayment} 
+                  onClick={() => handlePayment('mercadopago')} 
                   disabled={isSubmitting}
                   className="w-full bg-[#009ee3] hover:bg-[#0089c4] text-white px-8 py-4 rounded-xl font-bold cursor-pointer shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                    {isSubmitting ? 'Procesando pago...' : 'Pagar con MercadoPago'}
                 </button>
                 <button 
-                  onClick={handlePayment} 
+                  onClick={() => handlePayment('epayco')} 
                   disabled={isSubmitting}
                   className="w-full bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-bold cursor-pointer shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
