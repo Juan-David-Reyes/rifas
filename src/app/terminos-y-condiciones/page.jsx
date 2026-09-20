@@ -11,6 +11,7 @@ export const dynamic = 'force-dynamic';
 export default async function TerminosPage() {
   const settings = await getSiteSettings();
   const htmlContent = settings?.terms_text || '<h2>Términos y Condiciones</h2><p>Contenido no disponible.</p>';
+  const cleanHtmlContent = htmlContent.replace(/&nbsp;/g, ' ');
 
   return (
     <div className="pt-32 pb-24 bg-gray-50 min-h-screen">
@@ -19,7 +20,7 @@ export default async function TerminosPage() {
         
         <div 
           className="prose prose-gray max-w-none text-gray-600 space-y-4 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: htmlContent }}
+          dangerouslySetInnerHTML={{ __html: cleanHtmlContent }}
         />
         
         <div className="mt-12 pt-8 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50/50 p-6 rounded-2xl">

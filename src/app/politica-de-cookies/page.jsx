@@ -10,6 +10,7 @@ export const dynamic = 'force-dynamic';
 export default async function CookiesPage() {
   const settings = await getSiteSettings();
   const htmlContent = settings?.cookies_text || '<h2>Política de Cookies</h2><p>Contenido no disponible.</p>';
+  const cleanHtmlContent = htmlContent.replace(/&nbsp;/g, ' ');
 
   return (
     <div className="pt-32 pb-24 bg-gray-50 min-h-screen">
@@ -18,7 +19,7 @@ export default async function CookiesPage() {
         
         <div 
           className="prose prose-gray max-w-none text-gray-600 space-y-4 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: htmlContent }}
+          dangerouslySetInnerHTML={{ __html: cleanHtmlContent }}
         />
       </div>
     </div>
