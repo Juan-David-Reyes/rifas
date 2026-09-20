@@ -6,7 +6,7 @@ import { ChevronDown } from 'lucide-react';
 const faqs = [
   {
     question: "¿La plataforma cobra comisión por boleto vendido?",
-    answer: "No, Rifas.io es una herramienta de gestión 100% libre de comisiones sobre tus ventas. El dinero nunca pasa por nosotros; tus compradores te transfieren directamente a tus cuentas personales (Nequi, Daviplata, Bancolombia, etc)."
+    answer: "No, deBuenas es una herramienta de gestión 100% libre de comisiones sobre tus ventas. El dinero nunca pasa por nosotros; tus compradores te transfieren directamente a tus cuentas personales (Nequi, Daviplata, Bancolombia, etc)."
   },
   {
     question: "¿Dónde se guarda el dinero de las ventas?",
@@ -14,11 +14,11 @@ const faqs = [
   },
   {
     question: "¿Cómo se garantiza que el sorteo sea transparente?",
-    answer: "Tú decides con qué lotería oficial o sorteo certificado juegas. Rifas.io se encarga de mostrar la fecha y el nombre de la lotería públicamente en la página de tu rifa, brindándole total claridad y confianza a tus participantes."
+    answer: "Tú decides con qué lotería oficial o sorteo certificado juegas. deBuenas se encarga de mostrar la fecha y el nombre de la lotería públicamente en la página de tu rifa, brindándole total claridad y confianza a tus participantes."
   },
   {
     question: "¿Qué documentos necesito para entregar el premio legalmente?",
-    answer: "Rifas.io es una plataforma tecnológica para organizar participantes, no asume responsabilidad legal sobre los sorteos. Dependiendo de tu país, las rifas entre amigos o por montos menores pueden no requerir trámites, pero te sugerimos revisar la normativa local (ej. Coljuegos en Colombia) si planeas un sorteo masivo comercial."
+    answer: "deBuenas es una plataforma tecnológica para organizar participantes, no asume responsabilidad legal sobre los sorteos. Dependiendo de tu país, las rifas entre amigos o por montos menores pueden no requerir trámites, pero te sugerimos revisar la normativa local (ej. Coljuegos en Colombia) si planeas un sorteo masivo comercial."
   },
   {
     question: "¿Qué pasa si alguien reserva un número pero no me paga?",

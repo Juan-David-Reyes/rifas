@@ -17,7 +17,7 @@ export default async function DashboardLayout({ children }) {
       <aside className="fixed inset-y-0 left-0 w-64 bg-slate-900 text-white flex flex-col z-20 h-screen">
         <div className="p-6 border-b border-slate-800">
           <Link href="/dashboard" className="font-heading text-2xl font-extrabold text-primary-400">
-            Rifas.io
+            deBuenas
           </Link>
           <p className="text-slate-400 text-xs mt-2 truncate">{user.email}</p>
         </div>

@@ -70,7 +70,7 @@ export default function CreateRafflePage() {
               <label className="block text-sm font-bold text-gray-700 mb-1">Enlace Personalizado (URL)</label>
               <div className="flex items-center">
                 <span className="bg-gray-100 border border-gray-200 border-r-0 rounded-l-xl px-4 py-3 text-gray-500 text-sm font-medium">
-                  rifas.io/
+                  debuenas.co/
                 </span>
                 <input 
                   name="slug" type="text" required
@@ -79,7 +79,7 @@ export default function CreateRafflePage() {
                   className="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-r-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all font-bold text-gray-800"
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1 ml-1">Tu rifa será visible en: <strong className="text-primary-600">rifas.io/{slugPreview || '...'}</strong></p>
+              <p className="text-xs text-gray-500 mt-1 ml-1">Tu rifa será visible en: <strong className="text-primary-600">debuenas.co/{slugPreview || '...'}</strong></p>
             </div>
 
             <hr className="border-gray-100" />

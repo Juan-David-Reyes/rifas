@@ -33,7 +33,7 @@ export default function AdminSidebar({ userEmail }) {
             <Ticket className="w-5 h-5 text-white transform -rotate-45" />
           </div>
           <div>
-            <span className="font-heading text-xl font-black text-white block leading-none">Rifas.io</span>
+            <span className="font-heading text-xl font-black text-white block leading-none">deBuenas</span>
           </div>
         </div>
         <span className="text-xs font-bold text-primary-400 uppercase tracking-wider">Super Admin</span>

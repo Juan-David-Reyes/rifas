@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { getSiteSettings } from '../../utils/settingsActions';
 
 export const metadata = {
-  title: 'Términos y Condiciones | Rifas.io',
-  description: 'Términos y condiciones de uso de la plataforma Rifas.io',
+  title: 'Términos y Condiciones | deBuenas',
+  description: 'Términos y condiciones de uso de la plataforma deBuenas',
 };
 
 export const dynamic = 'force-dynamic';

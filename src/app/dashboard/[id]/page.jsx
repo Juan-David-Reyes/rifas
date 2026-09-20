@@ -40,7 +40,7 @@ export default async function RaffleDashboard({ params }) {
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">{raffle.title}</h1>
-            <p className="text-gray-500 text-sm">Panel de control de la rifa (rifas.io/{raffle.slug})</p>
+            <p className="text-gray-500 text-sm">Panel de control de la rifa (debuenas.co/{raffle.slug})</p>
           </div>
         </div>
         <Link 

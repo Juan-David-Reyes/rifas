@@ -19,7 +19,7 @@ export async function generateMetadata({ params }) {
   }
 
   return {
-    title: `${raffle.title} | Rifas.io`,
+    title: `${raffle.title} | deBuenas`,
     description: raffle.description,
   }
 }
@@ -139,7 +139,7 @@ export default async function PublicRafflePage({ params }) {
 
       {/* Footer */}
       <footer className="mt-12 py-6 text-center text-gray-400 text-sm">
-        <p>Impulsado por <a href="/" className="font-bold text-primary-600 hover:underline">Rifas.io</a></p>
+        <p>Impulsado por <a href="/" className="font-bold text-primary-600 hover:underline">deBuenas</a></p>
       </footer>
     </div>
   )

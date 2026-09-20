@@ -52,7 +52,7 @@ export default function LoginPage() {
             <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
               <Ticket className="w-5 h-5 text-white transform -rotate-45" />
             </div>
-            <span className="font-heading text-2xl font-black text-gray-900">Rifas.io</span>
+            <span className="font-heading text-2xl font-black text-gray-900">deBuenas</span>
           </div>
 
           <div className="mb-10">
@@ -144,7 +144,7 @@ export default function LoginPage() {
             <div className="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/30">
               <Ticket className="w-6 h-6 text-white transform -rotate-45" />
             </div>
-            <span className="font-heading text-3xl font-black text-white">Rifas.io</span>
+            <span className="font-heading text-3xl font-black text-white">deBuenas</span>
           </div>
 
           <h2 className="text-4xl font-black text-white font-heading leading-tight mb-6">

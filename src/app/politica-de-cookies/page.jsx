@@ -1,8 +1,8 @@
 import { getSiteSettings } from '../../utils/settingsActions';
 
 export const metadata = {
-  title: 'Política de Cookies | Rifas.io',
-  description: 'Información sobre el uso de cookies en Rifas.io',
+  title: 'Política de Cookies | deBuenas',
+  description: 'Información sobre el uso de cookies en deBuenas',
 };
 
 export const dynamic = 'force-dynamic';

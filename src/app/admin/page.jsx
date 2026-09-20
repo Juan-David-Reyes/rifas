@@ -38,7 +38,7 @@ export default async function AdminDashboardPage() {
             <LayoutDashboard className="w-8 h-8 text-gray-700" />
             Resumen Global
           </h1>
-          <p className="text-gray-500 text-[15px] font-normal">Métricas en tiempo real de toda la plataforma Rifas.io</p>
+          <p className="text-gray-500 text-[15px] font-normal">Métricas en tiempo real de toda la plataforma deBuenas</p>
         </div>
       </div>
 

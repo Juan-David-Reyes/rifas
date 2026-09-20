@@ -202,7 +202,7 @@ export default function CrearRifaWizard({ initialSettings }) {
             <div className="w-6 h-6 bg-primary-600 rounded flex items-center justify-center">
               <Ticket className="w-3 h-3 text-white transform -rotate-45" />
             </div>
-            <span className="font-heading font-black text-gray-900 text-lg tracking-tight hidden sm:inline">Rifas.io</span>
+            <span className="font-heading font-black text-gray-900 text-lg tracking-tight hidden sm:inline">deBuenas</span>
           </div>
         </div>
       </header>

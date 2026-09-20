@@ -8,7 +8,7 @@ export default function SeoFormClient({ initialSettings }) {
   const [isSaving, setIsSaving] = useState(false)
   const [toast, setToast] = useState(null)
   const [formData, setFormData] = useState({
-    seo_title: initialSettings?.seo_title || 'Rifas.io - Crea y administra tus rifas fácilmente',
+    seo_title: initialSettings?.seo_title || 'deBuenas - Crea y administra tus rifas fácilmente',
     seo_description: initialSettings?.seo_description || 'La plataforma definitiva para crear y gestionar rifas solidarias, sorteos y loterías personales.',
     hero_title: initialSettings?.hero_title || 'Crea tu Rifa Virtual en 5 Minutos',
     hero_subtitle: initialSettings?.hero_subtitle || 'Organiza sorteos y recauda fondos de forma 100% automatizada. Sin mensualidades ni comisiones por ventas, el dinero va directo a tu cuenta.'
@@ -97,7 +97,7 @@ export default function SeoFormClient({ initialSettings }) {
           </div>
           <div>
             <h2 className="text-xl font-bold text-gray-900">Textos Principales (Homepage)</h2>
-            <p className="text-gray-500 text-sm font-medium">Cambia lo primero que leen tus usuarios al entrar a Rifas.io.</p>
+            <p className="text-gray-500 text-sm font-medium">Cambia lo primero que leen tus usuarios al entrar a deBuenas.</p>
           </div>
         </div>
 

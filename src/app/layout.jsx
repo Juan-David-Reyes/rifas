@@ -1,6 +1,6 @@
 import './globals.css';
 import Link from 'next/link';
-
+import Script from 'next/script';
 import MarketingLayout from '../components/MarketingLayout';
 
 import { getSiteSettings } from '../utils/settingsActions';
@@ -9,7 +9,7 @@ export async function generateMetadata() {
   const settings = await getSiteSettings()
   
   return {
-    title: settings?.seo_title || 'Rifas.io - Crea y administra tus rifas fácilmente',
+    title: settings?.seo_title || 'deBuenas - Crea y administra tus rifas fácilmente',
     description: settings?.seo_description || 'La plataforma definitiva para crear y gestionar rifas solidarias, sorteos y loterías personales.',
   }
 }
@@ -34,13 +34,30 @@ export default async function RootLayout({ children }) {
   const showMaintenance = settings?.maintenance_mode && !isAdmin;
 
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <head>
+        <Script id="google-tag-manager" strategy="afterInteractive">
+          {`
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-K87GGLZS');
+          `}
+        </Script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
       </head>
-      <body className="min-h-screen flex flex-col font-body bg-gray-50 text-gray-700">
+      <body className="min-h-screen flex flex-col font-body bg-gray-50 text-gray-700" suppressHydrationWarning>
+        <noscript>
+          <iframe 
+            src="https://www.googletagmanager.com/ns.html?id=GTM-K87GGLZS"
+            height="0" 
+            width="0" 
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
         {showMaintenance ? (
           <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
             <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-8 mx-auto">
