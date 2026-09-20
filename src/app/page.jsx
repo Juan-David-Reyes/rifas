@@ -244,8 +244,8 @@ export default async function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="pb-24 relative overflow-hidden">
-        <div className="bg-gray-900 rounded-4xl max-w-7xl mx-auto px-4 py-20 text-center relative z-10">
+      <section className="pb-14 relative overflow-hidden">
+        <div className="bg-gray-900 rounded-4xl max-w-7xl mx-auto px-4 py-16 text-center relative z-10">
           <h2 className="text-4xl font-black text-white font-heading mb-6">¿Listo para hacer tu primer sorteo?</h2>
           <p className="text-gray-300 text-lg mb-10">Únete a cientos de organizadores que ya han modernizado la forma de recaudar fondos y hacer rifas.</p>
           <Link href="/crear-rifa" className="inline-block bg-primary-600 hover:bg-primary-700 text-white px-10 py-5 rounded-2xl text-xl font-bold shadow-2xl transition-all transform hover:scale-105">

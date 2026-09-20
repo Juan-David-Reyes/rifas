@@ -1,7 +1,7 @@
 import './globals.css';
 import Link from 'next/link';
 import Script from 'next/script';
-import MarketingLayout from '../components/MarketingLayout';
+import PublicLayout from '../components/PublicLayout';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 
 const inter = Inter({
@@ -131,9 +131,9 @@ export default async function RootLayout({ children }) {
             )}
           </div>
         ) : (
-          <MarketingLayout>
+          <PublicLayout>
             {children}
-          </MarketingLayout>
+          </PublicLayout>
         )}
       </body>
     </html>
