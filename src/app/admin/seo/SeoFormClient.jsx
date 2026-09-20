@@ -52,7 +52,7 @@ export default function SeoFormClient({ initialSettings }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-3xl w-full">
       {/* Sección SEO */}
-      <div className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-200">
+      <div className="bg-white p-6 rounded-[32px] border border-gray-200">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
           <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center border border-blue-100">
             <Search className="w-5 h-5 text-blue-600" />
@@ -90,7 +90,7 @@ export default function SeoFormClient({ initialSettings }) {
       </div>
 
       {/* Sección Hero (Homepage) */}
-      <div className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-200">
+      <div className="bg-white p-6 rounded-[32px] border border-gray-200">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
           <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center border border-purple-100">
             <Type className="w-5 h-5 text-purple-600" />

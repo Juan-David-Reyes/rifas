@@ -39,7 +39,7 @@ export default function MonetizacionClient({ initialSettings }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
-      <div className="bg-white rounded-[32px] shadow-sm border border-gray-200 overflow-hidden p-6 md:p-8">
+      <div className="bg-white rounded-[32px] border border-gray-200 overflow-hidden p-6 md:p-8">
         <h2 className="text-xl font-bold text-gray-900 mb-6">Elige tu Modelo de Cobro</h2>
         
         <div className="grid md:grid-cols-2 gap-4 mb-8">

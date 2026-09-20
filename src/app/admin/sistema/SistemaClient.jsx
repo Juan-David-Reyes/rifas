@@ -49,8 +49,8 @@ export default function SistemaClient({ initialSettings, auditLogs }) {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
-        <div className="bg-white rounded-[32px] shadow-sm border border-gray-200 overflow-hidden p-6 md:p-8">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-white rounded-[32px] border border-gray-200 overflow-hidden p-6 md:p-8">
         
         {/* Switch 1: Modo Mantenimiento */}
         <div className="flex items-start gap-4 p-6 rounded-3xl border-2 transition-all mb-6 relative overflow-hidden bg-white hover:border-gray-300 border-gray-200">
@@ -145,7 +145,7 @@ export default function SistemaClient({ initialSettings, auditLogs }) {
     </form>
 
       {/* Tabla de Auditoría Anti-Fraude */}
-      <div className="bg-white rounded-[32px] shadow-sm border border-red-100 overflow-hidden mt-12">
+      <div className="bg-white rounded-[32px] border border-red-100 overflow-hidden mt-12">
         <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-red-50/30">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-red-100 rounded-2xl flex items-center justify-center border border-red-200">

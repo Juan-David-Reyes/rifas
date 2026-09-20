@@ -91,7 +91,7 @@ export default function UsuariosClient({ initialUsers }) {
   return (
     <div className="space-y-6">
       {/* Buscador */}
-      <div className="bg-white p-4 rounded-[32px] shadow-sm border border-gray-200 flex items-center">
+      <div className="bg-white p-4 rounded-[32px] border border-gray-200 flex items-center">
         <Search className="w-5 h-5 text-gray-400 ml-2 mr-3" />
         <input 
           type="text"
@@ -103,7 +103,7 @@ export default function UsuariosClient({ initialUsers }) {
       </div>
 
       {/* Tabla */}
-      <div className="bg-white rounded-[32px] shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-[32px] border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -167,7 +167,7 @@ export default function UsuariosClient({ initialUsers }) {
                             handleToggleBan(user.id, user.is_banned, user.email)
                           }}
                           disabled={loadingAction === user.id || loadingAction === `delete-${user.id}`}
-                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold transition-all shadow-sm disabled:opacity-50 ${
+                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold transition-all disabled:opacity-50 ${
                             user.is_banned 
                               ? 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
                               : 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-100'
@@ -188,7 +188,7 @@ export default function UsuariosClient({ initialUsers }) {
                             handleDeleteUser(user.id, user.email)
                           }}
                           disabled={loadingAction === user.id || loadingAction === `delete-${user.id}`}
-                          className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 border border-red-100 transition-all shadow-sm disabled:opacity-50 ml-1"
+                          className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 border border-red-100 transition-all disabled:opacity-50 ml-1"
                           title="Eliminar usuario permanentemente"
                         >
                           {loadingAction === `delete-${user.id}` ? (
@@ -213,7 +213,7 @@ export default function UsuariosClient({ initialUsers }) {
                           {user.raffles && user.raffles.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               {user.raffles.map(raffle => (
-                                <div key={raffle.id} className="bg-white p-4 rounded-3xl border border-gray-200 shadow-sm flex items-center justify-between">
+                                <div key={raffle.id} className="bg-white p-4 rounded-3xl border border-gray-200 flex items-center justify-between">
                                   <div>
                                     <div className="font-bold text-gray-900">{raffle.title}</div>
                                     <div className="text-xs text-gray-500 mt-1 flex items-center gap-3">

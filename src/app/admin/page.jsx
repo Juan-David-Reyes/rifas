@@ -45,7 +45,7 @@ export default async function AdminDashboardPage() {
       <div className="p-6 md:p-8 max-w-6xl mx-auto w-full space-y-8">
         {/* KPIs Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-200 flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div className="bg-white p-6 rounded-[32px] border border-gray-200 flex flex-col justify-between transition-shadow">
             <div className="flex justify-between items-start mb-4">
               <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100">
                 <Users className="w-6 h-6 text-blue-600" />
@@ -58,7 +58,7 @@ export default async function AdminDashboardPage() {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-200 flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div className="bg-white p-6 rounded-[32px] border border-gray-200 flex flex-col justify-between transition-shadow">
             <div className="flex justify-between items-start mb-4">
               <div className="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center border border-purple-100">
                 <Ticket className="w-6 h-6 text-purple-600" />
@@ -71,7 +71,7 @@ export default async function AdminDashboardPage() {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-200 flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden">
+          <div className="bg-white p-6 rounded-[32px] border border-gray-200 flex flex-col justify-between transition-shadow relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-[40px] translate-x-8 -translate-y-8"></div>
             <div className="flex justify-between items-start mb-4 relative z-10">
               <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center border border-green-100">
@@ -87,7 +87,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Tabla Maestra de Rifas */}
-        <div className="bg-white rounded-[32px] shadow-sm border border-gray-200 overflow-hidden mt-8">
+        <div className="bg-white rounded-[32px] border border-gray-200 overflow-hidden mt-8">
           <div className="p-6 border-b border-gray-100 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100">

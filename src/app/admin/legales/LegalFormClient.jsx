@@ -69,7 +69,7 @@ export default function LegalFormClient({ initialSettings }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl">
-      <div className="bg-white rounded-[32px] shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-[32px] border border-gray-200 overflow-hidden">
         {/* Tabs */}
         <div className="flex flex-wrap border-b border-gray-200 bg-gray-50/50">
           <button
