@@ -43,11 +43,11 @@ export default function AdminSidebar({ userEmail }) {
         <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-2">Monitor</div>
         <Link href="/admin" className={getLinkClassName('/admin')}>
           <LayoutDashboard className={`w-5 h-5 ${isActive('/admin') ? 'text-gray-300' : 'text-gray-400'}`} />
-          Métricas y Auditoría
+          Métricas y auditoría
         </Link>
         <Link href="/admin/usuarios" className={getLinkClassName('/admin/usuarios')}>
           <Users className={`w-5 h-5 ${isActive('/admin/usuarios') ? 'text-orange-400' : 'text-orange-500/70'}`} />
-          Usuarios y Clientes
+          Usuarios y clientes
         </Link>
 
         <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-2 mt-6">Configuración CMS</div>
@@ -57,15 +57,15 @@ export default function AdminSidebar({ userEmail }) {
         </Link>
         <Link href="/admin/legales" className={getLinkClassName('/admin/legales')}>
           <FileText className={`w-5 h-5 ${isActive('/admin/legales') ? 'text-purple-400' : 'text-purple-500/70'}`} />
-          Páginas Legales
+          Páginas legales
         </Link>
         <Link href="/admin/monetizacion" className={getLinkClassName('/admin/monetizacion')}>
           <DollarSign className={`w-5 h-5 ${isActive('/admin/monetizacion') ? 'text-green-400' : 'text-green-500/70'}`} />
-          Monetización y Tarifas
+          Monetización y tarifas
         </Link>
         <Link href="/admin/sistema" className={getLinkClassName('/admin/sistema')}>
           <Shield className={`w-5 h-5 ${isActive('/admin/sistema') ? 'text-red-400' : 'text-red-500/70'}`} />
-          Sistema y Seguridad
+          Sistema y seguridad
         </Link>
       </nav>
 
