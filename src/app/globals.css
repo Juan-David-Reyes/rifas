@@ -62,3 +62,4 @@
     color: var(--color-gray-900);
   }
 }
+html { scroll-behavior: smooth; }

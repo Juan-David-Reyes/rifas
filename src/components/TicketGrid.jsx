@@ -81,7 +81,7 @@ export default function TicketGrid({ initialTickets, raffle, isAdmin }) {
   return (
     <>
       <div className="max-w-6xl mx-auto px-4 pb-32">
-        <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2">
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2">
           {allNumbers.map((num) => {
             const dbTicket = ticketMap[num];
             let computedStatus = dbTicket ? dbTicket.status : 'disponible';
@@ -155,9 +155,12 @@ export default function TicketGrid({ initialTickets, raffle, isAdmin }) {
             <div>
               <p className="text-gray-500 text-sm font-bold">Números seleccionados</p>
               <div className="flex items-center gap-2">
-                <p className="text-2xl font-black text-primary-700">
+                <p className="text-xl sm:text-2xl font-black text-primary-700 truncate max-w-[140px] sm:max-w-xs">
                   {selectedTickets.map(num => formatTicketNumber(num)).join(', ')}
                 </p>
+                {selectedTickets.length > 3 && (
+                  <span className="text-xs text-gray-400 font-medium">({selectedTickets.length})</span>
+                )}
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -170,9 +173,9 @@ export default function TicketGrid({ initialTickets, raffle, isAdmin }) {
               <button 
                 disabled={selectedTickets.length === 0}
                 onClick={() => setIsModalOpen(true)}
-                className="bg-primary-600 disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-primary-700 text-white px-6 md:px-8 py-3 rounded-xl font-bold text-lg shadow-lg transition-all transform active:scale-95"
+                className="bg-primary-600 disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-primary-700 text-white px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 rounded-xl font-bold text-sm sm:text-lg shadow-lg transition-all transform active:scale-95"
               >
-                Reservar y Pagar
+                Reservar <span className="hidden sm:inline">y Pagar</span>
               </button>
             </div>
           </div>

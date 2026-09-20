@@ -231,7 +231,7 @@ export default function CheckoutModal({
           <p className="text-green-100 text-sm">{raffle.title}</p>
         </div>
 
-        <div className="p-4 overflow-y-auto relative min-h-105 flex flex-col">
+        <div className="p-4 overflow-y-auto relative min-h-[380px] sm:min-h-0 flex flex-col">
           {isReserving ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
               <div className="w-10 h-10 border-4 border-green-200 border-t-green-600 rounded-full animate-spin"></div>

@@ -28,7 +28,7 @@ export default async function LandingPage() {
                 <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
                 La nueva forma de gestionar sorteos
               </div>
-              <h1 className="text-5xl lg:text-6xl xl:text-7xl font-black text-gray-900 font-heading mb-6 leading-tight tracking-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-gray-900 font-heading mb-6 leading-tight tracking-tight">
                 {heroTitle.split(' en ').length > 1 ? (
                   <>
                     {heroTitle.split(' en ')[0]} <br className="hidden lg:block"/> 

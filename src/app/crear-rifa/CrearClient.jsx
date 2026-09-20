@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Ticket, ArrowRight, CheckCircle2, DollarSign, Calculator, Lock, Plus, Trash2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import { ArrowLeft, Ticket, ArrowRight, CheckCircle2, DollarSign, Calculator, Lock, Plus, Trash2, PlusCircle, Loader2 } from 'lucide-react'
 import { createClient } from '../../utils/supabase/client'
 import { createRaffle } from './actions'
 export default function CrearRifaWizard({ initialSettings }) {
@@ -637,25 +639,20 @@ export default function CrearRifaWizard({ initialSettings }) {
                 <button 
                   onClick={() => handlePayment('mercadopago')} 
                   disabled={isSubmitting}
-                  className="w-full bg-[#009ee3] hover:bg-[#0089c4] text-white px-8 py-4 rounded-xl font-bold cursor-pointer shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full bg-[#009ee3] hover:bg-[#0089c4] text-white px-8 py-4 rounded-xl font-bold cursor-pointer shadow-lg transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                   {isSubmitting ? 'Procesando pago...' : 'Pagar con MercadoPago'}
-                </button>
-                <button 
-                  onClick={() => handlePayment('epayco')} 
-                  disabled={isSubmitting}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-bold cursor-pointer shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-                >
-                   {isSubmitting ? 'Procesando pago...' : 'Pagar con ePayco'}
+                   {isSubmitting ? 'Procesando pago...' : (
+                     <>
+                       Pagar con
+                       <Image src="/images/logo-mercado-pago.svg" alt="Mercado Pago" width={72} height={24} className="h-6 w-auto" />
+                     </>
+                   )}
                 </button>
               </div>
               
-              <div className="flex items-center justify-center gap-2 mt-6 opacity-50 grayscale">
-                 <div className="font-black italic text-lg text-[#1a1f71]">VISA</div>
-                 <div className="flex items-center -space-x-1.5 ml-2">
-                    <div className="w-4 h-4 rounded-full bg-[#eb001b]"></div>
-                    <div className="w-4 h-4 rounded-full bg-[#f79e1b]"></div>
-                  </div>
+              <div className="flex flex-wrap items-center justify-center gap-6 mt-6">
+                <Image src="/images/logo-visa.svg" alt="Visa" width={48} height={24} className="h-6 w-auto" />
+                <Image src="/images/Mastercard-logo.svg" alt="Mastercard" width={48} height={28} className="h-7 w-auto" />
               </div>
 
               <div className="mt-10 pt-6 border-t border-gray-100 flex justify-center">
