@@ -1,3 +1,5 @@
+export const metadata = { title: 'Panel de Control' };
+
 import { createClient } from '../../utils/supabase/server'
 import Link from 'next/link'
 import { Plus, Ticket, ArrowRight } from 'lucide-react'

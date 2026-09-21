@@ -1,3 +1,5 @@
+export const metadata = { title: 'Administración' };
+
 import { getAdminDashboardStats } from '../../utils/superAdminActions'
 import { Users, Ticket, DollarSign, Activity, AlertCircle, ShieldAlert, LayoutDashboard } from 'lucide-react'
 import Link from 'next/link'

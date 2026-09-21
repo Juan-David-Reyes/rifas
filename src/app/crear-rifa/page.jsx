@@ -1,3 +1,5 @@
+export const metadata = { title: 'Crear Rifa' };
+
 import { getSiteSettings } from '../../utils/settingsActions'
 import CrearClient from './CrearClient'
 
