@@ -42,7 +42,7 @@ export default function MonetizacionClient({ initialSettings }) {
       <div className="bg-white rounded-[32px] border border-gray-200 overflow-hidden p-6 md:p-8">
         <h2 className="text-xl font-bold text-gray-900 mb-6">Elige tu Modelo de Cobro</h2>
         
-        <div className="grid md:grid-cols-2 gap-4 mb-8">
+        <div className="grid md:grid-cols-2 gap-4">
           {/* Opción 1: Dinámica (1 Boleta) */}
           <label className={`relative flex cursor-pointer rounded-3xl border-2 p-6 focus:outline-none transition-all ${
             formData.fee_type === 'ticket' 

@@ -43,7 +43,7 @@ export default function DeleteAccountButton() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mt-8">
+    <div className="bg-white rounded-[24px] border border-gray-200 overflow-hidden mt-8">
       <div className="p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="flex gap-4">
           <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center shrink-0 border border-gray-100">

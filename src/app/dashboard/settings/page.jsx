@@ -26,7 +26,7 @@ export default async function SettingsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white rounded-[32px] shadow-sm border border-gray-200 overflow-hidden h-fit">
+        <div className="bg-white rounded-[24px] border border-gray-200 overflow-hidden h-fit">
           <div className="p-6 border-b border-gray-100 flex items-center gap-4">
             <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
               <User className="w-6 h-6 text-primary-600" />
@@ -46,7 +46,7 @@ export default async function SettingsPage() {
                 type="text" 
                 disabled 
                 value="Administrador" 
-                className="w-full px-4 py-3 bg-gray-100 border border-gray-200 text-gray-500 rounded-2xl outline-none cursor-not-allowed" 
+                className="w-full px-4 py-3 bg-gray-100 border border-gray-200 text-gray-500 rounded-[16px] outline-none cursor-not-allowed" 
               />
             </div>
 
@@ -58,13 +58,13 @@ export default async function SettingsPage() {
                 type="email" 
                 disabled 
                 value={user.email} 
-                className="w-full px-4 py-3 bg-gray-100 border border-gray-200 text-gray-500 rounded-2xl outline-none cursor-not-allowed font-medium" 
+                className="w-full px-4 py-3 bg-gray-100 border border-gray-200 text-gray-500 rounded-[16px] outline-none cursor-not-allowed font-medium" 
               />
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-[32px] shadow-sm border border-gray-200 overflow-hidden h-fit">
+        <div className="bg-white rounded-[24px] border border-gray-200 overflow-hidden h-fit">
           <div className="p-6 border-b border-gray-100 flex items-center gap-4">
             <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">
               <Shield className="w-6 h-6 text-blue-500" />
@@ -75,8 +75,8 @@ export default async function SettingsPage() {
             </div>
           </div>
           
-          <div className="p-6 space-y-6">
-            <div className="bg-blue-50 text-blue-800 p-4 rounded-2xl text-sm flex gap-3 items-start border border-blue-100">
+          <div className="p-4 space-y-6">
+            <div className="bg-blue-50 text-blue-800 p-4 rounded-[16px] text-sm flex gap-3 items-start border border-blue-100">
               <AlertCircle className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
               <div>
                 <p className="font-bold mb-1">Has iniciado sesión con Google</p>
@@ -87,7 +87,7 @@ export default async function SettingsPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-[32px] shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-[24px] border border-gray-200 overflow-hidden">
         <div className="p-6 border-b border-gray-100 flex items-center gap-4">
           <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center">
             <Receipt className="w-6 h-6 text-green-500" />

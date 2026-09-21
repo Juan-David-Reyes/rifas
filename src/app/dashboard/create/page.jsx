@@ -91,7 +91,7 @@ export default function CreateRafflePage() {
                 <label className="block text-sm font-bold text-gray-700 mb-1">Título de la Rifa</label>
                 <input 
                   name="title" type="text" required placeholder="Ej. Gran Rifa Solidaria por Bombillo"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-[16px] focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                 />
               </div>
 
@@ -99,7 +99,7 @@ export default function CreateRafflePage() {
                 <label className="block text-sm font-bold text-gray-700 mb-1">Descripción / Motivo</label>
                 <textarea 
                   name="description" required rows={3} placeholder="Explica por qué estás haciendo esta rifa..."
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all resize-none"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-[16px] focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all resize-none"
                 />
               </div>
 
@@ -107,7 +107,7 @@ export default function CreateRafflePage() {
                 <label className="block text-sm font-bold text-gray-700 mb-1">Premio Prometido</label>
                 <input 
                   name="prize" type="text" required placeholder="Ej. $300.000 COP"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-[16px] focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                 />
               </div>
 
@@ -117,7 +117,7 @@ export default function CreateRafflePage() {
                   name="ticket_price" type="number" required min="1000" 
                   value={ticketPrice}
                   onChange={(e) => setTicketPrice(Number(e.target.value))}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-[16px] focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                 />
                 <p className="text-xs text-gray-400 mt-1">Precio unitario en tu moneda.</p>
               </div>
@@ -131,14 +131,14 @@ export default function CreateRafflePage() {
                 <label className="block text-sm font-bold text-gray-700 mb-1">Lotería Asignada</label>
                 <input 
                   name="lottery_name" type="text" required placeholder="Ej. Lotería de Boyacá"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-[16px] focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                 />
               </div>
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-1">Fecha del Sorteo</label>
                 <input 
                   name="draw_date" type="text" required placeholder="Ej. 15 de Septiembre"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-[16px] focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                 />
               </div>
             </div>
