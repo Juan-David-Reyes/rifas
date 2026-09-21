@@ -1,5 +1,3 @@
-export const metadata = { title: 'Iniciar Sesión' };
-
 'use client'
 
 import { createClient } from '../../utils/supabase/client'
