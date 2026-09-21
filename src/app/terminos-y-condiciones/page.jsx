@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getSiteSettings } from '../../utils/settingsActions';
 
 export const metadata = {
-  title: 'Términos y Condiciones | deBuenas',
+  title: 'Términos y Condiciones',
   description: 'Términos y condiciones de uso de la plataforma deBuenas',
 };
 

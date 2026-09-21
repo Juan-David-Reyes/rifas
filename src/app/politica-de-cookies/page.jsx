@@ -1,7 +1,7 @@
 import { getSiteSettings } from '../../utils/settingsActions';
 
 export const metadata = {
-  title: 'Política de Cookies | deBuenas',
+  title: 'Política de Cookies',
   description: 'Información sobre el uso de cookies en deBuenas',
 };
 

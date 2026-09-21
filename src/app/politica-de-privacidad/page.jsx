@@ -1,7 +1,7 @@
 import { getSiteSettings } from '../../utils/settingsActions';
 
 export const metadata = {
-  title: 'Política de Privacidad y Uso Aceptable | deBuenas',
+  title: 'Política de Privacidad y Uso Aceptable',
   description: 'Cómo tratamos tus datos y reglas de uso en deBuenas',
 };
 
