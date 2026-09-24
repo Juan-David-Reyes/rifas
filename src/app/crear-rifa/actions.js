@@ -12,7 +12,14 @@ export async function createRaffle(formData) {
   }
 
   // Generate a random slug based on title if no slug was provided in formData
-  let baseSlug = formData.title.toLowerCase().replace(/[^a-z0-9-]/g, '')
+  let baseSlug = formData.title
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // quitar tildes
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-') // reemplazar espacios por guiones
+    .replace(/[^a-z0-9-]/g, '') // quitar caracteres especiales
+    .replace(/-+/g, '-'); // evitar guiones dobles
   if (!baseSlug) baseSlug = 'rifa-' + Math.floor(Math.random() * 1000)
   
   // Append a small random string to avoid collisions

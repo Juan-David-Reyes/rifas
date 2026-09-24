@@ -123,8 +123,11 @@ const getCachedUsersData = unstable_cache(
     const supabaseAdmin = createAdminClient()
     if (!supabaseAdmin) throw new Error("Service key missing")
 
-    // 1. Obtener todos los usuarios de Auth
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.listUsers()
+    // 1. Obtener hasta 1000 usuarios de Auth (Mejora de escalabilidad temporal)
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.listUsers({
+      page: 1,
+      perPage: 1000
+    })
     
     if (authError) {
       console.error("Error fetching auth users:", authError)
@@ -136,7 +139,7 @@ const getCachedUsersData = unstable_cache(
     // 2. Obtener las rifas y agrupar por usuario
     const { data: raffles, error: rafflesError } = await supabaseAdmin
       .from('raffles')
-      .select('id, title, status, created_at, ticket_price, user_id')
+      .select('id, title, slug, status, created_at, ticket_price, user_id')
 
     if (rafflesError) {
       console.error("Error fetching raffles for users:", rafflesError)
@@ -169,6 +172,28 @@ const getCachedUsersData = unstable_cache(
 
 export async function getAllUsersData() {
   return await getCachedUsersData()
+}
+
+export async function getPaginatedUsersData(page = 1, search = '', limit = 10) {
+  const allUsers = await getCachedUsersData();
+  
+  // 1. Filtrar en memoria (extremadamente rápido porque los datos están cacheados en RAM)
+  const filteredUsers = search 
+    ? allUsers.filter(u => u.email.toLowerCase().includes(search.toLowerCase()))
+    : allUsers;
+  
+  // 2. Paginar
+  const totalUsers = filteredUsers.length;
+  const totalPages = Math.ceil(totalUsers / limit);
+  const startIndex = (page - 1) * limit;
+  const paginatedUsers = filteredUsers.slice(startIndex, startIndex + limit);
+  
+  return {
+    users: paginatedUsers,
+    totalUsers,
+    totalPages,
+    currentPage: page
+  };
 }
 
 // Caché para las métricas globales del dashboard (se revalida cada 5 min o bajo demanda)

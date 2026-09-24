@@ -274,6 +274,10 @@ export default function CrearRifaWizard({ initialSettings }) {
                     onChange={(e) => updateForm('title', e.target.value)}
                     className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all font-medium text-lg placeholder:font-normal placeholder:text-base"
                   />
+                  <p className="text-xs text-gray-500 mt-2 flex items-start gap-1">
+                    <span className="text-amber-500 mt-0.5">⚠️</span> 
+                    <span>La URL pública de la rifa se generará a partir de este nombre y <strong>no se podrá modificar después</strong> para evitar enlaces rotos. Podrás cambiar el nombre a tu gusto más adelante.</span>
+                  </p>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-3">Tipo de Premio</label>

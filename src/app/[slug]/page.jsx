@@ -1,5 +1,6 @@
 import { createClient } from '../../utils/supabase/server'
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import TicketGrid from '../../components/TicketGrid'
 
 import { cleanExpiredTickets } from '../../utils/cleanup'
@@ -10,7 +11,7 @@ export async function generateMetadata({ params }) {
 
   const { data: raffle } = await supabase
     .from('raffles')
-    .select('title, description')
+    .select('title, description, winner_ticket_id, updated_at')
     .eq('slug', slug)
     .single()
 
@@ -18,7 +19,7 @@ export async function generateMetadata({ params }) {
     return { title: 'Rifa no encontrada' }
   }
 
-  return {
+  const baseMetadata = {
     title: raffle.title,
     description: raffle.description,
     openGraph: {
@@ -27,7 +28,6 @@ export async function generateMetadata({ params }) {
       url: `https://debuenas.co/${slug}`,
       siteName: 'deBuenas',
       type: 'website',
-      // images: [{ url: raffle.image_url }] // Puedes descomentar y usar esto si añades imágenes a las rifas
     },
     twitter: {
       card: 'summary_large_image',
@@ -35,6 +35,19 @@ export async function generateMetadata({ params }) {
       description: raffle.description,
     },
   }
+
+  // Lógica SEO: Si la rifa finalizó hace más de 30 días, no la indexamos
+  if (raffle.winner_ticket_id !== null && raffle.updated_at) {
+    const updatedAt = new Date(raffle.updated_at);
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    if (updatedAt < thirtyDaysAgo) {
+      baseMetadata.robots = { index: false, follow: false };
+    }
+  }
+
+  return baseMetadata;
 }
 
 export default async function PublicRafflePage({ params }) {
@@ -126,11 +139,27 @@ export default async function PublicRafflePage({ params }) {
         </div>
 
         {raffle.winner_ticket_id !== null ? (
-          <div className="bg-secondary-600 text-white p-8 rounded-3xl text-center shadow-lg transform hover:scale-105 transition-transform duration-500 mb-10">
-            <h2 className="text-2xl font-bold mb-2">¡Rifa Finalizada! 🎉</h2>
-            <p className="text-secondary-100 mb-6">El número ganador oficial es:</p>
-            <div className="text-8xl font-black font-heading drop-shadow-md">
-              {String(raffle.winner_ticket_id).padStart(2, '0')}
+          <div className="flex flex-col items-center animate-in fade-in zoom-in duration-500">
+            <div className="bg-gradient-to-br from-green-500 to-green-600 text-white p-10 rounded-[32px] w-full text-center shadow-xl mb-8 border-4 border-green-400">
+              <h2 className="text-3xl md:text-4xl font-black mb-3 font-heading">¡Rifa Finalizada! 🎉</h2>
+              <p className="text-green-100 font-medium text-lg md:text-xl mb-8">El número ganador oficial es:</p>
+              <div className="text-8xl md:text-9xl font-black font-heading drop-shadow-2xl text-yellow-300">
+                {String(raffle.winner_ticket_id).padStart(2, '0')}
+              </div>
+            </div>
+            
+            <div className="bg-white p-8 rounded-[32px] w-full max-w-lg text-center shadow-lg border border-gray-100 mb-10 transform hover:-translate-y-1 transition-all">
+              <div className="text-4xl mb-4">💡</div>
+              <h3 className="text-2xl font-black text-gray-900 mb-3 font-heading">¿Necesitas recolectar dinero?</h3>
+              <p className="text-gray-500 mb-6 font-medium">
+                Crea tu propia rifa en 2 minutos. Es fácil, seguro y el dinero va directo a tu cuenta bancaria.
+              </p>
+              <Link 
+                href="/crear-rifa" 
+                className="inline-block bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg shadow-primary-500/30 transition-all w-full sm:w-auto"
+              >
+                Crear mi rifa gratis 👉
+              </Link>
             </div>
           </div>
         ) : (

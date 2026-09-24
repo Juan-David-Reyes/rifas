@@ -1,11 +1,16 @@
-import { getAllUsersData } from '../../../utils/superAdminActions'
+import { getPaginatedUsersData } from '../../../utils/superAdminActions'
 import { Users } from 'lucide-react'
 import UsuariosClient from './UsuariosClient'
 
 export const dynamic = 'force-dynamic'
 
-export default async function UsuariosPage() {
-  const users = await getAllUsersData()
+export default async function UsuariosPage({ searchParams }) {
+  // Manejo de parámetros de URL de forma asíncrona (Requerimiento de Next.js 15+)
+  const params = await searchParams;
+  const page = parseInt(params?.page || '1', 10);
+  const search = params?.search || '';
+
+  const { users, totalPages, totalUsers } = await getPaginatedUsersData(page, search);
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
@@ -22,7 +27,13 @@ export default async function UsuariosPage() {
       </div>
 
       <div className="p-6 md:p-8 max-w-6xl mx-auto w-full space-y-6">
-        <UsuariosClient initialUsers={users} />
+        <UsuariosClient 
+          users={users} 
+          totalPages={totalPages} 
+          totalUsers={totalUsers} 
+          initialPage={page} 
+          initialSearch={search} 
+        />
       </div>
     </div>
   )
