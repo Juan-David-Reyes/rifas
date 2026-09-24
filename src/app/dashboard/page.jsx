@@ -64,7 +64,7 @@ export default async function DashboardPage() {
                   )}
                 </div>
                 <p className="text-gray-500 text-sm mb-4 line-clamp-2">{raffle.description}</p>
-                <div className="bg-gray-50 rounded-lg p-3 text-sm border border-gray-100 mb-6">
+                <div className="bg-gray-50 rounded-[16px] p-3 text-sm border border-gray-100 mb-6">
                   <div className="flex justify-between text-gray-600 mb-1">
                     <span>Premio:</span>
                     <span className="font-bold text-gray-900">{raffle.prize}</span>

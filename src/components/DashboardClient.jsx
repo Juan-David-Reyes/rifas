@@ -332,7 +332,8 @@ export default function DashboardClient({ raffle, initialTickets, user }) {
           <div className={activeTab === 'payments' ? 'block' : 'hidden'}>
             <TabPayments 
               formData={formData} 
-              handleChange={handleChange} 
+              handleChange={handleChange}
+              setFormData={setFormData}
             />
           </div>
 

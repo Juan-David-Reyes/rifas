@@ -21,7 +21,7 @@ export default function TabOverview({
       
       {/* Financial Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 col-span-1 md:col-span-2 relative overflow-hidden">
+        <div className="bg-white p-6 rounded-[32px] border border-gray-100 col-span-1 md:col-span-2 relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-5">
             <DollarSign className="w-24 h-24" />
           </div>
@@ -53,7 +53,7 @@ export default function TabOverview({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Status Breakdown */}
-        <div className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-100 md:col-span-1 space-y-4 h-fit">
+        <div className="bg-white p-6 rounded-[32px] border border-gray-100 md:col-span-1 space-y-4 h-fit">
           <h3 className="font-bold text-gray-800 flex items-center gap-2 border-b border-gray-100 pb-3">
             <BarChart3 className="w-5 h-5 text-blue-500" /> Estado de Números
           </h3>
@@ -86,7 +86,7 @@ export default function TabOverview({
         </div>
 
         {/* Buyers List */}
-        <div className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-100 md:col-span-2 flex flex-col">
+        <div className="bg-white p-6 rounded-[32px] border border-gray-100 md:col-span-2 flex flex-col">
           <div className="flex justify-between items-center border-b border-gray-100 pb-3 mb-4">
             <h3 className="font-bold text-gray-800 flex items-center gap-2">
               <Users className="w-5 h-5 text-purple-500" /> Compradores Activos
@@ -108,11 +108,11 @@ export default function TabOverview({
               <p className="text-gray-400 text-sm text-center py-8 font-medium">Aún no hay compradores registrados.</p>
             ) : (
               buyersList.map((buyer, idx) => (
-                <div key={idx} className="bg-gray-50 rounded-2xl p-4 border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div key={idx} className="bg-gray-50 rounded-[32px] p-4 border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <div className="font-bold text-gray-900">{buyer.name}</div>
-                      <div className={`text-[10px] uppercase tracking-wider font-black px-2 py-0.5 rounded-md ${buyer.status === 'comprado' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                      <div className={`text-[10px] uppercase tracking-wider font-black px-2 py-0.5 rounded-[16px] ${buyer.status === 'comprado' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                         {buyer.status === 'comprado' ? 'Pagado' : 'Pendiente'}
                       </div>
                     </div>
@@ -145,7 +145,7 @@ export default function TabOverview({
                           <button
                             onClick={() => handleRejectPayment(buyer.name)}
                             disabled={isApproving === buyer.name}
-                            className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-1.5 px-3 rounded-lg text-sm shadow-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-1 flex-1 sm:flex-none"
+                            className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-1.5 px-3 rounded-lg text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-1 flex-1 sm:flex-none"
                             title="Rechazar y liberar números"
                           >
                             <XCircle className="w-4 h-4" />
@@ -154,7 +154,7 @@ export default function TabOverview({
                           <button
                             onClick={() => handleApprovePayment(buyer.name)}
                             disabled={isApproving === buyer.name}
-                            className="bg-green-500 hover:bg-green-600 text-white font-bold py-1.5 px-4 rounded-lg text-sm shadow transition-colors disabled:opacity-50 flex-1 sm:flex-none"
+                            className="bg-green-500 hover:bg-green-600 text-white font-bold py-1.5 px-4 rounded-lg text-sm transition-colors disabled:opacity-50 flex-1 sm:flex-none"
                           >
                             {isApproving === buyer.name ? 'Aprobando...' : 'Aprobar'}
                           </button>
@@ -166,7 +166,7 @@ export default function TabOverview({
                           <button
                             onClick={() => handleRevertPayment(buyer.name)}
                             disabled={isApproving === buyer.name}
-                            className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-1.5 px-3 rounded-lg text-sm shadow-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-1 flex-1 sm:flex-none"
+                            className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-1.5 px-3 rounded-lg text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-1 flex-1 sm:flex-none"
                             title="Deshacer aprobación y liberar números"
                           >
                             <Undo2 className="w-4 h-4" />
